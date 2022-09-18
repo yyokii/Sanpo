@@ -1,0 +1,10 @@
+Packages
+.build
+xcuserdata
+DerivedData/
+.DS_Store
+db.sqlite
+.swiftpm
+
+# Firebase
+GoogleService-Info.plist
