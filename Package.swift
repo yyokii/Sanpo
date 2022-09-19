@@ -17,6 +17,10 @@ let package = Package(
     targets: [
         .target(
             name: "Sanpo",
+            dependencies: ["HomeFeature"]
+        ),
+        .target(
+            name: "HomeFeature",
             dependencies: []
         ),
         .plugin(

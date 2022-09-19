@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+import HomeFeature
+
 public struct ContentView: View {
 
     public init() {}
@@ -17,6 +19,8 @@ public struct ContentView: View {
                 .imageScale(.large)
                 .foregroundColor(.accentColor)
             Text("Hello, world!")
+
+            HomeView()
         }
         .padding()
     }
