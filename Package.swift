@@ -11,17 +11,25 @@ let package = Package(
     products: [
         .library(
             name: "App",
-            targets: ["Sanpo"]),
+            targets: ["HomeFeature"]),
     ],
     dependencies: [],
     targets: [
         .target(
-            name: "Sanpo",
-            dependencies: ["HomeFeature"]
+            name: "Constant",
+            dependencies: []
         ),
         .target(
             name: "HomeFeature",
-            dependencies: []
+            dependencies: [
+                "Model"
+            ]
+        ),
+        .target(
+            name: "Model",
+            dependencies: [
+                "Constant"
+            ]
         ),
         .plugin(
             name: "SwiftLintPlugin",
@@ -40,7 +48,7 @@ let package = Package(
         // Test
         .testTarget(
             name: "SanpoTests",
-            dependencies: ["Sanpo"]),
+            dependencies: ["HomeFeature"]),
     ]
 )
 

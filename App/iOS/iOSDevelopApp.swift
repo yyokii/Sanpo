@@ -6,13 +6,17 @@
 //
 
 import SwiftUI
-import Sanpo
+import Model
+import HomeFeature
 
 @main
 struct iOSDevelopApp: App {
+    @StateObject var myGoalStore = MyGoalStore()
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            HomeView()
+                .environmentObject(myGoalStore)
         }
     }
 }

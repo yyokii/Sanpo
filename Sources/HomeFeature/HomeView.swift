@@ -1,16 +1,41 @@
 import SwiftUI
-import Combine
+
+import Model
 
 public struct HomeView: View {
-    @StateObject var homeVM: HomeVM
+    @EnvironmentObject var myGoalStore: MyGoalStore
+    @StateObject var todayStepCountStore = TodayStepCountStore()
 
-    public init(homeVM: HomeVM = HomeVM()) {
-        self._homeVM = StateObject(wrappedValue: homeVM)
-    }
+    @State private var inputGoal = 0
+
+    public init() {}
 
     public var body: some View {
-        VStack {
+        VStack(spacing: 8) {
             Text("Home View")
+
+            Text("my goal is \(myGoalStore.dailyTargetSteps)")
+            TextField("Set Goal", value: $inputGoal, formatter: NumberFormatter())
+            Button {
+                myGoalStore.updateDailyTargetSteps(inputGoal)
+            } label: {
+                Text("Save")
+            }
+
+            switch todayStepCountStore.phase {
+            case .waiting:
+                Text("waiting")
+            case .success:
+                Text("success")
+                Text("\(todayStepCountStore.todayStepCount!.number)")
+                if todayStepCountStore.todayStepCount!.number >= myGoalStore.dailyTargetSteps {
+                    Text("Goal is achieved")
+                } else {
+                    Text("Goal is not achieved")
+                }
+            case .failure(let error):
+                Text("failure \(error.debugDescription)")
+            }
         }
         .padding()
     }
@@ -20,7 +45,7 @@ public struct HomeView: View {
 
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
-        HomeView(homeVM: HomeVM())
+        HomeView()
     }
 }
 
