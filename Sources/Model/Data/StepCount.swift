@@ -10,10 +10,6 @@ public struct StepCount {
     public let number: Int
     public let distance: Int
 
-    public var isAchievedGoal: Bool {
-        false
-    }
-
     public init (
         date: Date,
         number: Int,

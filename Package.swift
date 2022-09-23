@@ -16,6 +16,10 @@ let package = Package(
     dependencies: [],
     targets: [
         .target(
+            name: "Constant",
+            dependencies: []
+        ),
+        .target(
             name: "HomeFeature",
             dependencies: [
                 "Model"
@@ -23,7 +27,9 @@ let package = Package(
         ),
         .target(
             name: "Model",
-            dependencies: []
+            dependencies: [
+                "Constant"
+            ]
         ),
         .plugin(
             name: "SwiftLintPlugin",

@@ -3,20 +3,36 @@ import SwiftUI
 import Model
 
 public struct HomeView: View {
-    @EnvironmentObject var stepCountStore: StepCountStore
+    @EnvironmentObject var myGoalStore: MyGoalStore
+    @StateObject var todayStepCountStore = TodayStepCountStore()
+
+    @State private var inputGoal = 0
 
     public init() {}
 
     public var body: some View {
-        VStack {
+        VStack(spacing: 8) {
             Text("Home View")
 
-            switch stepCountStore.phase {
+            Text("my goal is \(myGoalStore.dailyTargetSteps)")
+            TextField("Set Goal", value: $inputGoal, formatter: NumberFormatter())
+            Button {
+                myGoalStore.updateDailyTargetSteps(inputGoal)
+            } label: {
+                Text("Save")
+            }
+
+            switch todayStepCountStore.phase {
             case .waiting:
                 Text("waiting")
             case .success:
                 Text("success")
-                Text("\(stepCountStore.todayStepCount!.number)")
+                Text("\(todayStepCountStore.todayStepCount!.number)")
+                if todayStepCountStore.todayStepCount!.number >= myGoalStore.dailyTargetSteps {
+                    Text("Goal is achieved")
+                } else {
+                    Text("Goal is not achieved")
+                }
             case .failure(let error):
                 Text("failure \(error.debugDescription)")
             }

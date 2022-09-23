@@ -1,12 +1,15 @@
 import Foundation
 import CoreMotion
 
+import Constant
+
 /**
  State Objects
  */
 @MainActor
-public class StepCountStore: ObservableObject {
+public class TodayStepCountStore: ObservableObject {
     @Published public var todayStepCount: StepCount?
+    @Published public var dailyTargetSteps: Int = 8_000
 
     public enum Phase {
         case waiting
@@ -16,6 +19,7 @@ public class StepCountStore: ObservableObject {
     @Published public var phase: Phase = .waiting
 
     let pedometer = CMPedometer()
+
     public init() {
         loadTodayStepCount()
     }

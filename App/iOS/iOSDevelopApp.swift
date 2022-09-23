@@ -11,12 +11,12 @@ import HomeFeature
 
 @main
 struct iOSDevelopApp: App {
-    @StateObject var stepCountStore = StepCountStore()
+    @StateObject var myGoalStore = MyGoalStore()
 
     var body: some Scene {
         WindowGroup {
             HomeView()
-                .environmentObject(stepCountStore)
+                .environmentObject(myGoalStore)
         }
     }
 }
