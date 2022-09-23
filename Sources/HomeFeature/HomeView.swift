@@ -1,16 +1,26 @@
 import SwiftUI
-import Combine
+
+import Model
 
 public struct HomeView: View {
-    @StateObject var homeVM: HomeVM
+    @EnvironmentObject var stepCountStore: StepCountStore
+    @StateObject var demo = DemoStore()
 
-    public init(homeVM: HomeVM = HomeVM()) {
-        self._homeVM = StateObject(wrappedValue: homeVM)
-    }
+    public init() {}
 
     public var body: some View {
         VStack {
             Text("Home View")
+
+            switch stepCountStore.phase {
+            case .waiting:
+                Text("waiting")
+            case .success:
+                Text("success")
+                Text("\(stepCountStore.todayStepCount!.number)")
+            case .failure(let error):
+                Text("failure \(error.debugDescription)")
+            }
         }
         .padding()
     }
@@ -20,7 +30,7 @@ public struct HomeView: View {
 
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
-        HomeView(homeVM: HomeVM())
+        HomeView()
     }
 }
 

@@ -6,13 +6,17 @@
 //
 
 import SwiftUI
-import Sanpo
+import Model
+import HomeFeature
 
 @main
 struct iOSDevelopApp: App {
+    @StateObject var stepCountStore = StepCountStore()
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            HomeView()
+                .environmentObject(stepCountStore)
         }
     }
 }
