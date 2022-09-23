@@ -6,8 +6,9 @@
 //
 
 import SwiftUI
+
+import MainTab
 import Model
-import HomeFeature
 
 @main
 struct iOSDevelopApp: App {
@@ -15,7 +16,7 @@ struct iOSDevelopApp: App {
 
     var body: some Scene {
         WindowGroup {
-            HomeView()
+            MainTabView()
                 .environmentObject(myGoalStore)
         }
     }

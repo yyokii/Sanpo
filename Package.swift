@@ -11,7 +11,10 @@ let package = Package(
     products: [
         .library(
             name: "App",
-            targets: ["HomeFeature"]),
+            targets: [
+                "MainTab"
+            ]
+        ),
     ],
     dependencies: [],
     targets: [
@@ -23,6 +26,12 @@ let package = Package(
             name: "HomeFeature",
             dependencies: [
                 "Model"
+            ]
+        ),
+        .target(
+            name: "MainTab",
+            dependencies: [
+                "HomeFeature"
             ]
         ),
         .target(
