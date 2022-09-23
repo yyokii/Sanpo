@@ -1,12 +1,6 @@
 import Foundation
 import CoreMotion
 
-public class DemoStore: ObservableObject {
-    @Published public var todayStepCount: Int = 0
-
-    public init() {}
-}
-
 /**
  State Objects
  */

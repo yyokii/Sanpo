@@ -4,7 +4,6 @@ import Model
 
 public struct HomeView: View {
     @EnvironmentObject var stepCountStore: StepCountStore
-    @StateObject var demo = DemoStore()
 
     public init() {}
 
