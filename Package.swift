@@ -23,6 +23,12 @@ let package = Package(
             dependencies: []
         ),
         .target(
+            name: "HistoricalDataFeature",
+            dependencies: [
+                "Model"
+            ]
+        ),
+        .target(
             name: "HomeFeature",
             dependencies: [
                 "Model"
@@ -31,7 +37,8 @@ let package = Package(
         .target(
             name: "MainTab",
             dependencies: [
-                "HomeFeature"
+                "HomeFeature",
+                "HistoricalDataFeature"
             ]
         ),
         .target(

@@ -1,11 +1,12 @@
 import SwiftUI
 
+import HistoricalDataFeature
 import HomeFeature
 
 public struct MainTabView: View {
     enum TabItem {
         case home
-        case calendar
+        case historicalData
     }
     @State var selectedItem: TabItem = .home
 
@@ -20,6 +21,14 @@ public struct MainTabView: View {
 
                 }
                 .tag(TabItem.home)
+
+            HistoricalDataView()
+                .tabItem {
+                    Image(systemName: "clock")
+                    Text("Data")
+
+                }
+                .tag(TabItem.historicalData)
         }
     }
 }
