@@ -23,8 +23,13 @@ let package = Package(
             dependencies: []
         ),
         .target(
+            name: "Extension",
+            dependencies: []
+        ),
+        .target(
             name: "HistoricalDataFeature",
             dependencies: [
+                "Extension",
                 "Model"
             ]
         ),
@@ -44,7 +49,8 @@ let package = Package(
         .target(
             name: "Model",
             dependencies: [
-                "Constant"
+                "Constant",
+                "Extension"
             ]
         ),
         .plugin(
