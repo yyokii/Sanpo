@@ -12,7 +12,8 @@ let package = Package(
         .library(
             name: "App",
             targets: [
-                "MainTab"
+                "MainTab",
+                "Constant"
             ]
         ),
     ],
@@ -24,7 +25,9 @@ let package = Package(
         ),
         .target(
             name: "Extension",
-            dependencies: []
+            dependencies: [
+                "Constant"
+            ]
         ),
         .target(
             name: "HistoricalDataFeature",
@@ -36,7 +39,9 @@ let package = Package(
         .target(
             name: "HomeFeature",
             dependencies: [
-                "Model"
+                "Constant",
+                "Extension",
+                "Model",
             ]
         ),
         .target(

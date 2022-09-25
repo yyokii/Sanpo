@@ -1,9 +1,16 @@
 import SwiftUI
 
+import Constant
+import Extension
 import Model
 
 public struct HomeView: View {
-    @EnvironmentObject var myGoalStore: MyGoalStore
+    @AppStorage(
+        UserDefaultsKey.dailyTargetSteps.rawValue,
+        store: UserDefaults.app
+    )
+    var dailyTargetSteps: Int = 0
+
     @StateObject var todayStepCountStore = TodayStepCountStore()
 
     @State private var inputGoal = 0
@@ -14,10 +21,10 @@ public struct HomeView: View {
         VStack(spacing: 8) {
             Text("Home View")
 
-            Text("my goal is \(myGoalStore.dailyTargetSteps)")
+            Text("my goal is \(dailyTargetSteps)")
             TextField("Set Goal", value: $inputGoal, formatter: NumberFormatter())
             Button {
-                myGoalStore.updateDailyTargetSteps(inputGoal)
+                dailyTargetSteps = inputGoal
             } label: {
                 Text("Save")
             }
@@ -28,7 +35,7 @@ public struct HomeView: View {
             case .success:
                 Text("success")
                 Text("\(todayStepCountStore.todayStepCount!.number)")
-                if todayStepCountStore.todayStepCount!.number >= myGoalStore.dailyTargetSteps {
+                if todayStepCountStore.todayStepCount!.number >= dailyTargetSteps {
                     Text("Goal is achieved")
                 } else {
                     Text("Goal is not achieved")
@@ -38,6 +45,9 @@ public struct HomeView: View {
             }
         }
         .padding()
+        .onAppear {
+            inputGoal = dailyTargetSteps
+        }
     }
 }
 
