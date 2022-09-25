@@ -23,7 +23,7 @@ public struct StepCount {
         self.distance = distance
     }
 
-    static public func range(start: Date, end: Date) async -> [StepCount] {
+    static public func range(start: Date, end: Date) async -> [Date: StepCount] {
         if HKHealthStore.isHealthDataAvailable() {
             let type = HKSampleType.quantityType(forIdentifier: .stepCount)!
             let predicate = HKQuery.predicateForSamples(withStart: start, end: end)
@@ -42,32 +42,34 @@ public struct StepCount {
                 query.initialResultsHandler = { _, collection, error in
                     if let error = error {
                         print(error)
-                        continuation.resume(returning: [])
+                        continuation.resume(returning: [:])
                         return
                     }
 
-                    if let statistics = collection?.statistics() {
-                        let datas: [StepCount] = statistics.map({ data in
-                            let number: Int = Int(
-                                truncating: (data.sumQuantity()?.doubleValue(for: .count()) ?? 0) as NSNumber
-                            )
-                            return StepCount(
-                                date: data.startDate,
-                                number: number,
-                                distance: nil
-                            )
-                        })
-
-                        continuation.resume(returning: datas)
-                    } else {
-                        continuation.resume(returning: [])
+                    guard let statistics = collection?.statistics() else {
+                        continuation.resume(returning: [:])
                         return
                     }
+
+                    var dic: [Date: StepCount] = [:]
+                    statistics.forEach({ data in
+                        let number: Int = Int(
+                            truncating: (data.sumQuantity()?.doubleValue(for: .count()) ?? 0) as NSNumber
+                        )
+                        let stepCount = StepCount(
+                            date: data.startDate,
+                            number: number,
+                            distance: nil
+                        )
+                        dic[data.startDate] = stepCount
+                    })
+
+                    continuation.resume(returning: dic)
                 }
                 HKHealthStore.shared.execute(query)
             }
         } else {
-            return []
+            return [:]
         }
     }
 }

@@ -5,6 +5,8 @@ import Model
 
 public struct HistoricalDataView: View {
     @EnvironmentObject var myGoalStore: MyGoalStore
+    @State var stepCounts: [Date: StepCount] = [:]
+    private let calendar: Calendar = .current
 
     public init() {}
 
@@ -13,10 +15,12 @@ public struct HistoricalDataView: View {
             Text("HistoricalData View")
 
             CalendarView(
-                stepCounts: [],
-                myGoal: myGoalStore) { date in
+                stepCounts: stepCounts,
+                myGoal: myGoalStore,
+                selectDateAction: { date in
                     print(date)
                 }
+            )
         }
         .padding()
         .onAppear {
@@ -53,15 +57,15 @@ private extension HistoricalDataView {
                 try await HKHealthStore.shared.requestAuthorization(toShare: [], read: readTypes)
 
                 let calendar = Calendar.current
-                let startDate = DateComponents(year: 2022, month: 8, day: 23, hour: 0, minute: 0, second: 0)
+                let startDate = DateComponents(year: 2021, month: 8, day: 23, hour: 0, minute: 0, second: 0)
                 let endDate = DateComponents(year: 2022, month: 9, day: 10, hour: 23, minute: 59, second: 59)
-                let datas = await StepCount.range(
+
+                let dic: [Date: StepCount] = await StepCount.range(
                     start: calendar.date(from: startDate)!,
                     end: calendar.date(from: endDate)!
                 )
+                self.stepCounts = dic
 
-                print("📝 in view")
-                print(datas)
             } catch {
                 print(error)
             }

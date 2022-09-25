@@ -3,12 +3,12 @@ import SwiftUI
 import Model
 
 struct CalendarView: UIViewRepresentable {
-    let stepCounts: [StepCount]
+    let stepCounts: [Date: StepCount]
     let myGoal: MyGoalStore
     let selectDateAction: (Date) -> Void
 
     init(
-        stepCounts: [StepCount],
+        stepCounts: [Date: StepCount],
         myGoal: MyGoalStore,
         selectDateAction: @escaping (Date) -> Void
     ) {
@@ -17,11 +17,11 @@ struct CalendarView: UIViewRepresentable {
         self.selectDateAction = selectDateAction
     }
 
-    func makeUIView(context: Context) -> some UIView {
+    func makeUIView(context: Context) -> UICalendarView {
         let view = UICalendarView()
-        view.calendar = Calendar(identifier: .gregorian)
+        view.calendar = Calendar.current
 
-        let fromDate = DateComponents(calendar: Calendar(identifier: .gregorian), year: 1900, month: 1, day: 1).date!
+        let fromDate = DateComponents(calendar: Calendar.current, year: 2007, month: 1, day: 1).date!
         let toDate = Date()
         let calendarViewDateRange = DateInterval(start: fromDate, end: toDate)
         view.availableDateRange = calendarViewDateRange
@@ -32,13 +32,15 @@ struct CalendarView: UIViewRepresentable {
         return view
     }
 
-    func updateUIView(_ uiView: UIViewType, context: Context) {}
+    func updateUIView(_ uiView: UICalendarView, context: Context) {
+        context.coordinator.stepCounts = stepCounts
+//        uiView.reloadDecorations(forDateComponents: [DateComponents(calendar: Calendar.current, year: 2022, month: 9, day: 8)], animated: true)
+    }
 
     func makeCoordinator() -> Coordinator {
         Self.Coordinator(parent: self)
     }
 }
-
 
 // MARK: Coordinator
 
@@ -47,13 +49,26 @@ extension CalendarView {
 
         private let parent: CalendarView
 
+        var stepCounts: [Date: StepCount] = [:]
+
+        private let calendar: Calendar = .current
+
         init(parent: CalendarView) {
             self.parent = parent
         }
 
         func calendarView(_ calendarView: UICalendarView, decorationFor dateComponents: DateComponents) -> UICalendarView.Decoration? {
-
-            return nil
+            let date = dateComponents.date!
+            if stepCounts.keys.contains(date) {
+                let stepCount = stepCounts[date]!
+                if stepCount.number >= 3000 {
+                    return .default(color: .red)
+                } else {
+                    return nil
+                }
+            } else {
+                return nil
+            }
         }
 
         func dateSelection(_ selection: UICalendarSelectionSingleDate, didSelectDate dateComponents: DateComponents?) {
