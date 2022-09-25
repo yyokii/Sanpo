@@ -1,5 +1,5 @@
 import HealthKit
 
-extension HKHealthStore {
-    static public let shared = HKHealthStore()
+public extension HKHealthStore {
+    static let shared = HKHealthStore()
 }
