@@ -32,6 +32,7 @@ let package = Package(
         .target(
             name: "HistoricalDataFeature",
             dependencies: [
+                "Constant",
                 "Extension",
                 "Model"
             ]

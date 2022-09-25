@@ -13,7 +13,6 @@ import Model
 
 @main
 struct iOSDevelopApp: App {
-    @StateObject var myGoalStore = MyGoalStore()
 
     init() {
         let userDefaults = UserDefaults(suiteName: UserDefaultsSuitName.app.rawValue)!
@@ -26,7 +25,6 @@ struct iOSDevelopApp: App {
     var body: some Scene {
         WindowGroup {
             MainTabView()
-                .environmentObject(myGoalStore)
         }
     }
 }

@@ -1,19 +1,22 @@
 import SwiftUI
 
 import Model
+import Constant
 
 struct CalendarView: UIViewRepresentable {
     let stepCounts: [Date: StepCount]
-    let myGoal: MyGoalStore
+    @AppStorage(
+        UserDefaultsKey.dailyTargetSteps.rawValue,
+        store: UserDefaults.app
+    )
+    var dailyTargetSteps: Int = 0
     let selectDateAction: (Date) -> Void
 
     init(
         stepCounts: [Date: StepCount],
-        myGoal: MyGoalStore,
         selectDateAction: @escaping (Date) -> Void
     ) {
         self.stepCounts = stepCounts
-        self.myGoal = myGoal
         self.selectDateAction = selectDateAction
     }
 
@@ -34,6 +37,7 @@ struct CalendarView: UIViewRepresentable {
 
     func updateUIView(_ uiView: UICalendarView, context: Context) {
         context.coordinator.stepCounts = stepCounts
+        context.coordinator.dailyTargetSteps = dailyTargetSteps
 //        uiView.reloadDecorations(forDateComponents: [DateComponents(calendar: Calendar.current, year: 2022, month: 9, day: 8)], animated: true)
     }
 
@@ -48,10 +52,10 @@ extension CalendarView {
     final class Coordinator: NSObject, UICalendarViewDelegate, UICalendarSelectionSingleDateDelegate {
 
         private let parent: CalendarView
+        private let calendar: Calendar = .current
 
         var stepCounts: [Date: StepCount] = [:]
-
-        private let calendar: Calendar = .current
+        var dailyTargetSteps: Int = 0
 
         init(parent: CalendarView) {
             self.parent = parent
@@ -61,7 +65,7 @@ extension CalendarView {
             let date = dateComponents.date!
             if stepCounts.keys.contains(date) {
                 let stepCount = stepCounts[date]!
-                if stepCount.number >= 3000 {
+                if stepCount.number >= dailyTargetSteps {
                     return .default(color: .red)
                 } else {
                     return nil

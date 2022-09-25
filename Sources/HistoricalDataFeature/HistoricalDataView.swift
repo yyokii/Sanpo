@@ -1,11 +1,11 @@
 import SwiftUI
 import HealthKit
 
+import Constant
 import Model
 
 public struct HistoricalDataView: View {
-    @EnvironmentObject var myGoalStore: MyGoalStore
-    @State var stepCounts: [Date: StepCount] = [:]
+    @State private var stepCounts: [Date: StepCount] = [:]
     private let calendar: Calendar = .current
 
     public init() {}
@@ -16,7 +16,6 @@ public struct HistoricalDataView: View {
 
             CalendarView(
                 stepCounts: stepCounts,
-                myGoal: myGoalStore,
                 selectDateAction: { date in
                     print(date)
                 }
