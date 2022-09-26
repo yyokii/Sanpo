@@ -11,7 +11,11 @@ let package = Package(
     products: [
         .library(
             name: "App",
-            targets: ["HomeFeature"]),
+            targets: [
+                "MainTab",
+                "Constant"
+            ]
+        ),
     ],
     dependencies: [],
     targets: [
@@ -20,15 +24,39 @@ let package = Package(
             dependencies: []
         ),
         .target(
+            name: "Extension",
+            dependencies: [
+                "Constant"
+            ]
+        ),
+        .target(
+            name: "HistoricalDataFeature",
+            dependencies: [
+                "Constant",
+                "Extension",
+                "Model"
+            ]
+        ),
+        .target(
             name: "HomeFeature",
             dependencies: [
-                "Model"
+                "Constant",
+                "Extension",
+                "Model",
+            ]
+        ),
+        .target(
+            name: "MainTab",
+            dependencies: [
+                "HomeFeature",
+                "HistoricalDataFeature"
             ]
         ),
         .target(
             name: "Model",
             dependencies: [
-                "Constant"
+                "Constant",
+                "Extension"
             ]
         ),
         .plugin(

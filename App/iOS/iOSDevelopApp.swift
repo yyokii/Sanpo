@@ -6,17 +6,25 @@
 //
 
 import SwiftUI
+
+import Constant
+import MainTab
 import Model
-import HomeFeature
 
 @main
 struct iOSDevelopApp: App {
-    @StateObject var myGoalStore = MyGoalStore()
+
+    init() {
+        let userDefaults = UserDefaults(suiteName: UserDefaultsSuitName.app.rawValue)!
+
+        userDefaults.register(
+            defaults: [UserDefaultsKey.dailyTargetSteps.rawValue: 8000]
+        )
+    }
 
     var body: some Scene {
         WindowGroup {
-            HomeView()
-                .environmentObject(myGoalStore)
+            MainTabView()
         }
     }
 }
