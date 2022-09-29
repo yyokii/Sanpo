@@ -11,7 +11,7 @@ public struct HomeView: View {
     )
     var dailyTargetSteps: Int = 0
 
-    @StateObject var todayStepCountStore = TodayStepCountStore()
+    @StateObject var stepCountData = StepCountData()
 
     @State private var inputGoal = 0
 
@@ -29,13 +29,13 @@ public struct HomeView: View {
                 Text("Save")
             }
 
-            switch todayStepCountStore.phase {
+            switch stepCountData.phase {
             case .waiting:
                 Text("waiting")
             case .success:
                 Text("success")
-                Text("\(todayStepCountStore.todayStepCount!.number)")
-                if todayStepCountStore.todayStepCount!.number >= dailyTargetSteps {
+                Text("\(stepCountData.todayStepCount!.number)")
+                if stepCountData.todayStepCount!.number >= dailyTargetSteps {
                     Text("Goal is achieved")
                 } else {
                     Text("Goal is not achieved")
