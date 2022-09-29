@@ -59,7 +59,7 @@ private extension HistoricalDataView {
                 let startDate = DateComponents(year: 2021, month: 8, day: 23, hour: 0, minute: 0, second: 0)
                 let endDate = DateComponents(year: 2022, month: 9, day: 10, hour: 23, minute: 59, second: 59)
 
-                let dic: [Date: StepCount] = await StepCount.range(
+                let dic: [Date: StepCount] = await StepCountData.range(
                     start: calendar.date(from: startDate)!,
                     end: calendar.date(from: endDate)!
                 )
