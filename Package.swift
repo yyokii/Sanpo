@@ -16,6 +16,12 @@ let package = Package(
                 "Constant"
             ]
         ),
+        .library(
+            name: "Widget",
+            targets: [
+                "Widget",
+            ]
+        ),
     ],
     dependencies: [],
     targets: [
@@ -57,6 +63,12 @@ let package = Package(
             dependencies: [
                 "Constant",
                 "Extension"
+            ]
+        ),
+        .target(
+            name: "Widget",
+            dependencies: [
+                "Constant",
             ]
         ),
         .plugin(
