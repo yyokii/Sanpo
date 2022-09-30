@@ -29,7 +29,7 @@ public struct Provider: TimelineProvider {
 
         let currentDate = Date()
 
-        let todayStepCount: StepCount = StepCount.todayCountOfCurrentDevice()
+        let todayStepCount: StepCount = StepCount.todayDataOfCurrentDevice()
 
         let entry = StepCountDataEntry(
             date: currentDate,
