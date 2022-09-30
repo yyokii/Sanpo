@@ -59,6 +59,7 @@ public class StepCountData: ObservableObject {
         }
     }
 
+    // やっぱり step countでいいや
     static public func range(start: Date, end: Date) async -> [Date: StepCount] {
         if HKHealthStore.isHealthDataAvailable() {
             let type = HKSampleType.quantityType(forIdentifier: .stepCount)!

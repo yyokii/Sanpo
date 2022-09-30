@@ -8,7 +8,7 @@
 import WidgetKit
 import SwiftUI
 
-import Widget
+import WidgetFeature
 
 @main
 struct SanpoWidget: Widget {
@@ -19,12 +19,6 @@ struct SanpoWidget: Widget {
             WidgetEntryView(entry: entry)
         }
         .configurationDisplayName("Sanpo")
-    }
-}
-
-struct Widget_Previews: PreviewProvider {
-    static var previews: some View {
-        WidgetEntryView(entry: SimpleEntry(date: Date()))
-            .previewContext(WidgetPreviewContext(family: .systemSmall))
+        .supportedFamilies([.systemSmall, .accessoryCircular])
     }
 }
