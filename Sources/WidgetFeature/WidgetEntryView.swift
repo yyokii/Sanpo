@@ -35,7 +35,13 @@ private struct WidgetSmallView: View {
     }
 
     public var body: some View {
-        Text("\(entry.todayStepCount)")
+        Gauge(value: Double(entry.todayStepCount), in: 0...Double(entry.dailyGoal)) {
+            Text("Step")
+        } currentValueLabel: {
+            Text("\(entry.todayStepCount)")
+        }
+        .gaugeStyle(.accessoryCircular)
+
     }
 }
 
@@ -48,6 +54,11 @@ private struct WidgetCircularView: View {
     }
 
     public var body: some View {
-        Text("\(entry.todayStepCount)")
+        Gauge(value: Double(entry.todayStepCount), in: 0...Double(entry.dailyGoal)) {
+            Text("Step")
+        } currentValueLabel: {
+            Text("\(entry.todayStepCount)")
+        }
+        .gaugeStyle(.accessoryCircular)
     }
 }

@@ -77,26 +77,90 @@ public struct StepCount {
         }
     }
 
-    public static func todayDataOfCurrentDevice() -> StepCount {
+    public static func today() async -> StepCount {
+        if HKHealthStore.isHealthDataAvailable() {
+            let stepsQuantityType = HKQuantityType.quantityType(forIdentifier: .stepCount)!
+
+            let now = Date()
+            let startOfDay = Calendar.current.startOfDay(for: now)
+            let predicate = HKQuery.predicateForSamples(
+                withStart: startOfDay,
+                end: now,
+                options: .strictStartDate
+            )
+
+            return await withCheckedContinuation { continuation in
+                let query = HKStatisticsQuery(
+                    quantityType: stepsQuantityType,
+                    quantitySamplePredicate: predicate,
+                    options: .cumulativeSum
+                ) { _, statistics, error in
+
+                    if let error = error {
+                        print(error)
+                        continuation.resume(returning: StepCount.noData)
+                        return
+                    }
+
+                    guard let statistics = statistics, let sum = statistics.sumQuantity() else {
+                        continuation.resume(returning: StepCount.noData)
+                        return
+                    }
+                    let number: Int = Int(
+                        truncating: (sum.doubleValue(for: .count())) as NSNumber
+                    )
+                    continuation.resume(returning:
+                            .init(
+                                date: now,
+                                number: number,
+                                distance: 0
+                            )
+                    )
+                }
+
+                HKHealthStore.shared.execute(query)
+            }
+        } else {
+            return .noData
+        }
+    }
+
+    // TODO: today()での取得の場合、"No data available for the specified predicate."となるケースがあるかも？ヘルスケアを一度開くとエラーは消えた。それが生じなさそうならCMPedometerから取得する本funcは削除したい
+    public static func todayDataOfCurrentDevice() async -> StepCount {
         let now = Date()
+
+        guard CMPedometer.isStepCountingAvailable() else {
+            return noData
+        }
+
         let todayStart: Date = Calendar.current.startOfDay(for: now)
         let pedometer = CMPedometer()
 
-        var result: StepCount = .init(date: now, number: 0, distance: nil)
-        pedometer.queryPedometerData(from: todayStart, to: now) { pedometerData, error in
-            if let error = error {
-                logger.debug("\(error.localizedDescription)")
-                return
-            }
+        return await withCheckedContinuation { continuation in
+            pedometer.queryPedometerData(from: todayStart, to: now) { pedometerData, error in
+                if let error = error {
+                    logger.debug("\(error.localizedDescription)")
+                    continuation.resume(returning: noData)
+                    return
+                }
 
-            if let pedometerData = pedometerData {
-                result = StepCount(
-                    date: now,
-                    number: Int(truncating: pedometerData.numberOfSteps),
-                    distance: Int(truncating: pedometerData.distance ?? 0)
-                )
+                if let pedometerData = pedometerData {
+                    let result = StepCount(
+                        date: now,
+                        number: Int(truncating: pedometerData.numberOfSteps),
+                        distance: Int(truncating: pedometerData.distance ?? 0)
+                    )
+                    continuation.resume(returning: result)
+                    return
+                } else {
+                    continuation.resume(returning: noData)
+                    return
+                }
             }
         }
-        return result
     }
+}
+
+extension StepCount {
+    static let noData: StepCount = .init(date: Date(), number: 0, distance: nil)
 }
