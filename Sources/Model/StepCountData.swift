@@ -1,4 +1,4 @@
-import CoreMotion
+import Combine
 import Foundation
 import HealthKit
 import os.log
@@ -19,43 +19,24 @@ public class StepCountData: ObservableObject {
     }
     @Published public var phase: Phase = .waiting
 
-    private let pedometer = CMPedometer()
+    private var updateStepCountTimer: Timer?
 
     public init() {
-        observeTodayStepCount()
+        updateStepCountTimer = Timer.scheduledTimer(
+            timeInterval: 60.0,
+            target: self,
+            selector: #selector(fireUpdateStepCountTimer),
+            userInfo: nil,
+            repeats: true
+        )
     }
 
-    func observeTodayStepCount() {
-        phase = .waiting
-        let now = Date()
-        let todayStart: Date = Calendar.current.startOfDay(for: now)
-
-        pedometer.startUpdates(from: todayStart) { [weak self] pedometerData, error in
-            guard let self = self else {
-                return
-            }
-
-            if let error = error {
-                DispatchQueue.main.async {
-                    self.phase = .failure(error)
-                }
-                return
-            }
-
-            if let pedometerData = pedometerData {
-                DispatchQueue.main.async {
-                    self.phase = .success
-                    self.todayStepCount = .init(
-                        date: now,
-                        number: Int(truncating: pedometerData.numberOfSteps),
-                        distance: Int(truncating: pedometerData.distance ?? 0)
-                    )
-                }
-            } else {
-                DispatchQueue.main.async {
-                    self.phase = .failure(nil)
-                }
-            }
+    @objc func fireUpdateStepCountTimer() {
+        Task.detached { @MainActor in
+            let todayData = await StepCount.today()
+            print("📝")
+            print(todayData)
+            self.todayStepCount = todayData
         }
     }
 }

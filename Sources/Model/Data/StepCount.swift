@@ -124,41 +124,6 @@ public struct StepCount {
             return .noData
         }
     }
-
-    // TODO: today()での取得の場合、"No data available for the specified predicate."となるケースがあるかも？ヘルスケアを一度開くとエラーは消えた。それが生じなさそうならCMPedometerから取得する本funcは削除したい
-    public static func todayDataOfCurrentDevice() async -> StepCount {
-        let now = Date()
-
-        guard CMPedometer.isStepCountingAvailable() else {
-            return noData
-        }
-
-        let todayStart: Date = Calendar.current.startOfDay(for: now)
-        let pedometer = CMPedometer()
-
-        return await withCheckedContinuation { continuation in
-            pedometer.queryPedometerData(from: todayStart, to: now) { pedometerData, error in
-                if let error = error {
-                    logger.debug("\(error.localizedDescription)")
-                    continuation.resume(returning: noData)
-                    return
-                }
-
-                if let pedometerData = pedometerData {
-                    let result = StepCount(
-                        date: now,
-                        number: Int(truncating: pedometerData.numberOfSteps),
-                        distance: Int(truncating: pedometerData.distance ?? 0)
-                    )
-                    continuation.resume(returning: result)
-                    return
-                } else {
-                    continuation.resume(returning: noData)
-                    return
-                }
-            }
-        }
-    }
 }
 
 extension StepCount {
