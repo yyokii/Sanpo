@@ -1,4 +1,5 @@
 import SwiftUI
+import WidgetKit
 
 import Constant
 import Extension
@@ -25,6 +26,7 @@ public struct HomeView: View {
             TextField("Set Goal", value: $inputGoal, formatter: NumberFormatter())
             Button {
                 dailyTargetSteps = inputGoal
+                WidgetCenter.shared.reloadAllTimelines()
             } label: {
                 Text("Save")
             }
