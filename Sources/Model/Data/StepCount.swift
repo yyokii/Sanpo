@@ -15,16 +15,13 @@ public struct StepCount {
 
     public let date: Date
     public let number: Int
-    public let distance: Int?
 
     public init (
         date: Date,
-        number: Int,
-        distance: Int?
+        number: Int
     ) {
         self.date = date
         self.number = number
-        self.distance = distance
     }
 
     static public func range(start: Date, end: Date) async -> [Date: StepCount] {
@@ -62,8 +59,7 @@ public struct StepCount {
                         )
                         let stepCount = StepCount(
                             date: data.startDate,
-                            number: number,
-                            distance: nil
+                            number: number
                         )
                         dic[data.startDate] = stepCount
                     })
@@ -97,7 +93,7 @@ public struct StepCount {
                 ) { _, statistics, error in
 
                     if let error = error {
-                        print(error)
+                        logger.debug("\(error.localizedDescription)")
                         continuation.resume(returning: StepCount.noData)
                         return
                     }
@@ -106,14 +102,15 @@ public struct StepCount {
                         continuation.resume(returning: StepCount.noData)
                         return
                     }
+
                     let number: Int = Int(
                         truncating: (sum.doubleValue(for: .count())) as NSNumber
                     )
+
                     continuation.resume(returning:
                             .init(
                                 date: now,
-                                number: number,
-                                distance: 0
+                                number: number
                             )
                     )
                 }
@@ -127,5 +124,5 @@ public struct StepCount {
 }
 
 extension StepCount {
-    static let noData: StepCount = .init(date: Date(), number: 0, distance: nil)
+    static let noData: StepCount = .init(date: Date(), number: 0)
 }

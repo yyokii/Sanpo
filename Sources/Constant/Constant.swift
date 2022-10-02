@@ -6,4 +6,5 @@ public enum UserDefaultsSuitName: String {
 
 public enum UserDefaultsKey: String {
     case dailyTargetSteps
+    case dispalyedStepCountDataInWidget
 }
