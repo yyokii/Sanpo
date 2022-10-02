@@ -25,10 +25,6 @@ public struct Provider: TimelineProvider {
         completion(entry)
     }
 
-    /*
-     userdefaultに表示データを保存して、それより増えてたら更新する、増えてなければ保存地を設定する、日付変わったタイミングで0にリセットする必要あり
-     */
-
     public func getTimeline(in context: Context, completion: @escaping (Timeline<StepCountDataEntry>) -> Void) {
 
         Task.detached {

@@ -53,7 +53,7 @@ extension StepCount {
             return await withCheckedContinuation { continuation in
                 query.initialResultsHandler = { _, collection, error in
                     if let error = error {
-                        print(error)
+                        logger.debug("\(error.localizedDescription)")
                         continuation.resume(returning: [:])
                         return
                     }
