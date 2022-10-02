@@ -1,7 +1,7 @@
 import Foundation
 
 public enum UserDefaultsSuitName: String {
-    case app = "com.yyokii.sanpo"
+    case app = "group.com.yyokii.sanpo"
 }
 
 public enum UserDefaultsKey: String {
