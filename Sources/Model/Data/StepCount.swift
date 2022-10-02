@@ -3,6 +3,7 @@ import Foundation
 import HealthKit
 import os.log
 
+import Constant
 import Extension
 
 /**
@@ -10,7 +11,7 @@ import Extension
 
  Steps data for a specific day
  */
-public struct StepCount {
+public struct StepCount: Codable {
     private static let logger = Logger(subsystem: "com.yyokii.sanpo.StepCount", category: "Model")
 
     public let date: Date
@@ -24,7 +25,17 @@ public struct StepCount {
         self.number = number
     }
 
-    static public func range(start: Date, end: Date) async -> [Date: StepCount] {
+    public func saveAsDisplayedInWidget() {
+        // swiftlint:disable force_try
+        let data = try! JSONEncoder().encode(self)
+        UserDefaults.standard.set(data, forKey: UserDefaultsKey.displayedStepCountDataInWidget.rawValue)
+    }
+}
+
+extension StepCount {
+    public static let noData: StepCount = .init(date: Date(), number: 0)
+
+    public static func range(start: Date, end: Date) async -> [Date: StepCount] {
         if HKHealthStore.isHealthDataAvailable() {
             let type = HKSampleType.quantityType(forIdentifier: .stepCount)!
             let predicate = HKQuery.predicateForSamples(withStart: start, end: end)
@@ -121,8 +132,18 @@ public struct StepCount {
             return .noData
         }
     }
-}
 
-extension StepCount {
-    static let noData: StepCount = .init(date: Date(), number: 0)
+    public static func displayedDataInWidget() -> StepCount {
+        var result: StepCount
+
+        if let savedData = UserDefaults.standard.data(forKey: UserDefaultsKey.displayedStepCountDataInWidget.rawValue) {
+            result = try! JSONDecoder().decode(StepCount.self, from: savedData)
+        } else {
+            let saveData = StepCount.noData
+            saveData.saveAsDisplayedInWidget()
+            result = saveData
+        }
+
+        return result
+    }
 }
