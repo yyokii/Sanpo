@@ -1,3 +1,4 @@
+import CoreLocation
 import SwiftUI
 import WidgetKit
 
@@ -13,6 +14,7 @@ public struct HomeView: View {
     var dailyTargetSteps: Int = 0
 
     @StateObject var stepCountData = StepCountData()
+    @StateObject var weatherData = WeatherData()
 
     @State private var inputGoal = 0
 
@@ -45,12 +47,36 @@ public struct HomeView: View {
             case .failure(let error):
                 Text("failure \(error.debugDescription)")
             }
+
+            if let hourlyForecasts = weatherData.hourlyForecasts {
+                ForEach(hourlyForecasts, id: \.self.date) { forecast in
+                    HStack {
+                        Text(forecast.date, format: Date.FormatStyle().hour(.defaultDigits(amPM: .abbreviated)))
+                        Image(systemName: forecast.symbolName)
+                        Text(forecast.temperature.formatted(.measurement(width: .abbreviated, usage: .weather)))
+                        Text(formattedPrecipitationChance(forecast.precipitationChance))
+                    }
+                }
+            }
         }
         .padding()
         .onAppear {
             inputGoal = dailyTargetSteps
         }
+        .task {
+            Task.detached { @MainActor in
+                let location: CLLocation = .init(latitude: 35.4660694, longitude: 139.6226196)
+                await weatherData.loadHourlyForecast(for: location)
+            }
+        }
     }
+}
+
+// TODO: デザイン当て込み時にリファクタ
+func formattedPrecipitationChance(_ chance: Double) -> String {
+    guard chance > 0 else { return "0%" }
+    let percentage = Int(chance * 100)
+    return "(\(percentage)%)"
 }
 
 #if DEBUG

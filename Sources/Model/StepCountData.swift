@@ -34,8 +34,6 @@ public class StepCountData: ObservableObject {
     @objc func fireUpdateStepCountTimer() {
         Task.detached { @MainActor in
             let todayData = await StepCount.today()
-            print("📝")
-            print(todayData)
             self.todayStepCount = todayData
         }
     }

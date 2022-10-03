@@ -20,8 +20,6 @@ public struct WidgetEntryView: View {
             default:
                 fatalError("Not implemented")
             }
-        }.onAppear {
-            print(family)
         }
     }
 }
