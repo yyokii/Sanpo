@@ -62,7 +62,14 @@ let package = Package(
             name: "Model",
             dependencies: [
                 "Constant",
-                "Extension"
+                "Extension",
+                "Service"
+            ]
+        ),
+        .target(
+            name: "Service",
+            dependencies: [
+                "Constant",
             ]
         ),
         .target(
