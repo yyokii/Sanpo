@@ -62,12 +62,7 @@ public struct HomeView: View {
         .padding()
         .onAppear {
             inputGoal = dailyTargetSteps
-        }
-        .task {
-            Task.detached { @MainActor in
-                let location: CLLocation = .init(latitude: 35.4660694, longitude: 139.6226196)
-                await weatherData.loadHourlyForecast(for: location)
-            }
+            weatherData.requestLocationAuth()
         }
     }
 }
