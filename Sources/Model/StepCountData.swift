@@ -22,6 +22,7 @@ public class StepCountData: ObservableObject {
     private var updateStepCountTimer: Timer?
 
     public init() {
+        loadTodayStepCount()
         updateStepCountTimer = Timer.scheduledTimer(
             timeInterval: 60.0,
             target: self,
@@ -32,9 +33,14 @@ public class StepCountData: ObservableObject {
     }
 
     @objc func fireUpdateStepCountTimer() {
+        loadTodayStepCount()
+    }
+
+    private func loadTodayStepCount() {
         Task.detached { @MainActor in
             let todayData = await StepCount.today()
             self.todayStepCount = todayData
+            self.phase = .success
         }
     }
 }

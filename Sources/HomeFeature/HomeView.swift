@@ -14,6 +14,7 @@ public struct HomeView: View {
     var dailyTargetSteps: Int = 0
 
     @StateObject var stepCountData = StepCountData()
+    @StateObject var distanceData = DistanceData()
     @StateObject var weatherData = WeatherData()
 
     @State private var inputGoal = 0
@@ -33,6 +34,7 @@ public struct HomeView: View {
                 Text("Save")
             }
 
+            Text("stepCountData")
             switch stepCountData.phase {
             case .waiting:
                 Text("waiting")
@@ -44,6 +46,17 @@ public struct HomeView: View {
                 } else {
                     Text("Goal is not achieved")
                 }
+            case .failure(let error):
+                Text("failure \(error.debugDescription)")
+            }
+
+            Text("distanceData")
+            switch distanceData.phase {
+            case .waiting:
+                Text("waiting")
+            case .success:
+                Text("success")
+                Text("\(distanceData.todayDistance!.distance)")
             case .failure(let error):
                 Text("failure \(error.debugDescription)")
             }

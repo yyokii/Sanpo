@@ -33,7 +33,8 @@ private extension HistoricalDataView {
     func load() {
         let readTypes = Set(
             [
-                HKQuantityType.quantityType(forIdentifier: .stepCount)!
+                HKQuantityType.quantityType(forIdentifier: .stepCount)!,
+                HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
             ]
         )
 
