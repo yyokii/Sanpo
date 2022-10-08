@@ -8,7 +8,7 @@ import os.log
  */
 @MainActor
 public class DistanceData: ObservableObject {
-    let logger = Logger(subsystem: "com.yyokii.sanpo.DistanceData", category: "Model")
+    let logger = Logger(category: .model)
 
     @Published public var todayDistance: DistanceWalkingRunning?
 

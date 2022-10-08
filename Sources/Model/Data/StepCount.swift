@@ -1,4 +1,3 @@
-import CoreMotion
 import Foundation
 import HealthKit
 import os.log
@@ -12,7 +11,7 @@ import Extension
  Steps data for a specific day
  */
 public struct StepCount: Codable {
-    private static let logger = Logger(subsystem: "com.yyokii.sanpo.StepCount", category: "Model")
+    private static let logger = Logger(category: .model)
 
     public let date: Date
     public let number: Int

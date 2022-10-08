@@ -8,7 +8,7 @@ import os.log
  */
 @MainActor
 public class StepCountData: ObservableObject {
-    let logger = Logger(subsystem: "com.yyokii.sanpo.StepCountData", category: "Model")
+    let logger = Logger(category: .model)
 
     @Published public var todayStepCount: StepCount?
 

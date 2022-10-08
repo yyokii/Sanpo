@@ -11,7 +11,7 @@ import Extension
  Steps data for a specific day
  */
 public struct DistanceWalkingRunning: Codable {
-    private static let logger = Logger(subsystem: "com.yyokii.sanpo", category: "Model: DistanceWalkingRunning")
+    private static let logger = Logger(category: .model)
 
     public let date: Date
     public let distance: Int
