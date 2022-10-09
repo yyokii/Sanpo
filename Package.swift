@@ -47,7 +47,8 @@ let package = Package(
             dependencies: [
                 "Constant",
                 "Extension",
-                "Model"
+                "Model",
+                "StyleGuide"
             ]
         ),
         .target(
@@ -56,6 +57,7 @@ let package = Package(
                 "Constant",
                 "Extension",
                 "Model",
+                "StyleGuide"
             ]
         ),
         .target(

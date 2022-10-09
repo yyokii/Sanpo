@@ -1,10 +1,9 @@
-import CoreLocation
 import SwiftUI
 import WidgetKit
 
 import Constant
-import Extension
 import Model
+import StyleGuide
 
 public struct HomeView: View {
     @AppStorage(
@@ -18,14 +17,108 @@ public struct HomeView: View {
     @StateObject var weatherData = WeatherData()
 
     @State private var inputGoal = 0
+    @State private var showGoalSetting = false
 
     public init() {}
 
     public var body: some View {
-        VStack(spacing: 8) {
-            Text("Home View")
+        VStack {
+            header
+                .padding(.horizontal, 20)
+            ScrollView {
+                VStack(spacing: 34) {
+                    VStack(alignment: .leading, spacing: 20) {
+                        Text("今日のデータ")
+                            .adaptiveFont(.bold, size: 30)
 
-            Text("my goal is \(dailyTargetSteps)")
+                        todayGoalView
+
+                        todayDataView
+                    }
+
+                    VStack(alignment: .leading, spacing: 20) {
+                        Text("天気")
+                            .adaptiveFont(.bold, size: 30)
+
+                        HourlyWeatherDataView()
+                    }
+                }
+                .padding(.horizontal, 20)
+            }
+            .padding(.top, 4)
+        }
+        .onAppear {
+            inputGoal = dailyTargetSteps
+            weatherData.requestLocationAuth()
+        }
+        .sheet(isPresented: $showGoalSetting) {
+            goalSettingView()
+                .presentationDetents([.height(150)])
+        }
+    }
+}
+
+extension HomeView {
+    var header: some View {
+        HStack {
+            Spacer()
+            Image("logo", bundle: .module)
+                .resizable()
+                .frame(width: 50)
+                .adaptiveShadow(radius: 10)
+            Spacer()
+            Image(systemName: "gearshape")
+                .resizable()
+                .frame(width: 24, height: 24)
+
+        }
+        .frame(height: 50)
+    }
+
+    var todayDataView: some View {
+        ZStack {
+            Rectangle()
+                .fill(Color.adaptiveWhite)
+                .cornerRadius(20)
+                .adaptiveShadow()
+
+            VStack(spacing: 8) {
+
+                switch stepCountData.phase {
+                case .waiting:
+                    EmptyView()
+                case .success:
+                    Text("\(stepCountData.todayStepCount!.number)歩")
+                        .adaptiveFont(.bold, size: 42)
+                case .failure:
+                    EmptyView()
+                }
+
+                Text("距離: \(dailyTargetSteps)歩")
+                    .adaptiveFont(.normal, size: 16)
+            }
+        }
+        .frame(height: 130)
+    }
+
+    var todayGoalView: some View {
+        Button {
+            showGoalSetting = true
+        } label: {
+            HStack(alignment: .center) {
+                Text("目標: \(dailyTargetSteps)歩")
+                    .adaptiveFont(.normal, size: 16)
+
+                Image(systemName: "square.and.pencil")
+                    .padding(.bottom, 2)
+            }
+        }
+        .foregroundColor(.adaptiveBlack)
+    }
+
+    func goalSettingView() -> some View {
+        // TODO:
+        VStack {
             TextField("Set Goal", value: $inputGoal, formatter: NumberFormatter())
             Button {
                 dailyTargetSteps = inputGoal
@@ -33,58 +126,8 @@ public struct HomeView: View {
             } label: {
                 Text("Save")
             }
-
-            Text("stepCountData")
-            switch stepCountData.phase {
-            case .waiting:
-                Text("waiting")
-            case .success:
-                Text("success")
-                Text("\(stepCountData.todayStepCount!.number)")
-                if stepCountData.todayStepCount!.number >= dailyTargetSteps {
-                    Text("Goal is achieved")
-                } else {
-                    Text("Goal is not achieved")
-                }
-            case .failure(let error):
-                Text("failure \(error.debugDescription)")
-            }
-
-            Text("distanceData")
-            switch distanceData.phase {
-            case .waiting:
-                Text("waiting")
-            case .success:
-                Text("success")
-                Text("\(distanceData.todayDistance!.distance)")
-            case .failure(let error):
-                Text("failure \(error.debugDescription)")
-            }
-
-            if let hourlyForecasts = weatherData.hourlyForecasts {
-                ForEach(hourlyForecasts, id: \.self.date) { forecast in
-                    HStack {
-                        Text(forecast.date, format: Date.FormatStyle().hour(.defaultDigits(amPM: .abbreviated)))
-                        Image(systemName: forecast.symbolName)
-                        Text(forecast.temperature.formatted(.measurement(width: .abbreviated, usage: .weather)))
-                        Text(formattedPrecipitationChance(forecast.precipitationChance))
-                    }
-                }
-            }
-        }
-        .padding()
-        .onAppear {
-            inputGoal = dailyTargetSteps
-            weatherData.requestLocationAuth()
         }
     }
-}
-
-// TODO: デザイン当て込み時にリファクタ
-func formattedPrecipitationChance(_ chance: Double) -> String {
-    guard chance > 0 else { return "0%" }
-    let percentage = Int(chance * 100)
-    return "(\(percentage)%)"
 }
 
 #if DEBUG

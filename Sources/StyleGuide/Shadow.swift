@@ -17,7 +17,7 @@ struct AdaptiveShadow: ViewModifier {
     func body(content: Content) -> some View {
         content
             .shadow(
-                color: colorScheme == .light ?  Color.gray : Color.adaptiveWhite,
+                color: colorScheme == .light ? Color.gray.opacity(0.4) : Color.adaptiveWhite,
                 radius: colorScheme == .light ? radius : 0,
                 x: colorScheme == .light ? positionX : 0,
                 y: colorScheme == .light ? positionY : 0
