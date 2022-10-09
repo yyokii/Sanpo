@@ -10,33 +10,27 @@ import Extension
 
  Steps data for a specific day
  */
-public struct StepCount: Codable {
+public struct DistanceWalkingRunning: Codable {
     private static let logger = Logger(category: .model)
 
     public let date: Date
-    public let number: Int
+    public let distance: Int
 
     public init (
         date: Date,
-        number: Int
+        distance: Int
     ) {
         self.date = date
-        self.number = number
-    }
-
-    public func saveAsDisplayedInWidget() {
-        // swiftlint:disable force_try
-        let data = try! JSONEncoder().encode(self)
-        UserDefaults.standard.set(data, forKey: UserDefaultsKey.displayedStepCountDataInWidget.rawValue)
+        self.distance = distance
     }
 }
 
-extension StepCount {
-    public static let noData: StepCount = .init(date: Date(), number: 0)
+extension DistanceWalkingRunning {
+    public static let noData: DistanceWalkingRunning = .init(date: Date(), distance: 0)
 
-    public static func range(start: Date, end: Date) async -> [Date: StepCount] {
+    public static func range(start: Date, end: Date) async -> [Date: DistanceWalkingRunning] {
         if HKHealthStore.isHealthDataAvailable() {
-            let type = HKSampleType.quantityType(forIdentifier: .stepCount)!
+            let type = HKSampleType.quantityType(forIdentifier: .distanceWalkingRunning)!
             let predicate = HKQuery.predicateForSamples(withStart: start, end: end)
             let now = Date()
             let todayStart: Date = Calendar.current.startOfDay(for: now)
@@ -62,16 +56,16 @@ extension StepCount {
                         return
                     }
 
-                    var dic: [Date: StepCount] = [:]
+                    var dic: [Date: DistanceWalkingRunning] = [:]
                     statistics.forEach({ data in
-                        let number: Int = Int(
-                            truncating: (data.sumQuantity()?.doubleValue(for: .count()) ?? 0) as NSNumber
+                        let distance: Int = Int(
+                            truncating: (data.sumQuantity()?.doubleValue(for: .meter()) ?? 0) as NSNumber
                         )
-                        let stepCount = StepCount(
+                        let distanceWalkingRunning = DistanceWalkingRunning(
                             date: data.startDate,
-                            number: number
+                            distance: distance
                         )
-                        dic[data.startDate] = stepCount
+                        dic[data.startDate] = distanceWalkingRunning
                     })
 
                     continuation.resume(returning: dic)
@@ -83,9 +77,9 @@ extension StepCount {
         }
     }
 
-    public static func today() async -> StepCount {
+    public static func today() async -> DistanceWalkingRunning {
         if HKHealthStore.isHealthDataAvailable() {
-            let stepsQuantityType = HKQuantityType.quantityType(forIdentifier: .stepCount)!
+            let stepsQuantityType = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
 
             let now = Date()
             let startOfDay = Calendar.current.startOfDay(for: now)
@@ -104,23 +98,23 @@ extension StepCount {
 
                     if let error = error {
                         logger.debug("\(error.localizedDescription)")
-                        continuation.resume(returning: StepCount.noData)
+                        continuation.resume(returning: DistanceWalkingRunning.noData)
                         return
                     }
 
                     guard let statistics = statistics, let sum = statistics.sumQuantity() else {
-                        continuation.resume(returning: StepCount.noData)
+                        continuation.resume(returning: DistanceWalkingRunning.noData)
                         return
                     }
 
-                    let number: Int = Int(
-                        truncating: (sum.doubleValue(for: .count())) as NSNumber
+                    let distance: Int = Int(
+                        truncating: (sum.doubleValue(for: .meter())) as NSNumber
                     )
 
                     continuation.resume(returning:
                             .init(
                                 date: now,
-                                number: number
+                                distance: distance
                             )
                     )
                 }
@@ -130,19 +124,5 @@ extension StepCount {
         } else {
             return .noData
         }
-    }
-
-    public static func displayedDataInWidget() -> StepCount {
-        var result: StepCount
-
-        if let savedData = UserDefaults.standard.data(forKey: UserDefaultsKey.displayedStepCountDataInWidget.rawValue) {
-            result = try! JSONDecoder().decode(StepCount.self, from: savedData)
-        } else {
-            let saveData = StepCount.noData
-            saveData.saveAsDisplayedInWidget()
-            result = saveData
-        }
-
-        return result
     }
 }

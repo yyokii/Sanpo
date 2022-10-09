@@ -7,10 +7,10 @@ import os.log
  The data provider that loads StepCount data
  */
 @MainActor
-public class StepCountData: ObservableObject {
+public class DistanceData: ObservableObject {
     let logger = Logger(category: .model)
 
-    @Published public var todayStepCount: StepCount?
+    @Published public var todayDistance: DistanceWalkingRunning?
 
     public enum Phase {
         case waiting
@@ -19,27 +19,28 @@ public class StepCountData: ObservableObject {
     }
     @Published public var phase: Phase = .waiting
 
-    private var updateStepCountTimer: Timer?
+    private var updateDistanceTimer: Timer?
 
     public init() {
-        loadTodayStepCount()
-        updateStepCountTimer = Timer.scheduledTimer(
+        loadTodayDistance()
+
+        updateDistanceTimer = Timer.scheduledTimer(
             timeInterval: 60.0,
             target: self,
-            selector: #selector(fireUpdateStepCountTimer),
+            selector: #selector(fireUpdateDistanceTimer),
             userInfo: nil,
             repeats: true
         )
     }
 
-    @objc func fireUpdateStepCountTimer() {
-        loadTodayStepCount()
+    @objc func fireUpdateDistanceTimer() {
+        loadTodayDistance()
     }
 
-    private func loadTodayStepCount() {
+    private func loadTodayDistance() {
         Task.detached { @MainActor in
-            let todayData = await StepCount.today()
-            self.todayStepCount = todayData
+            let todayData = await DistanceWalkingRunning.today()
+            self.todayDistance = todayData
             self.phase = .success
         }
     }

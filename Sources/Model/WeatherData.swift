@@ -11,7 +11,7 @@ import Service
  */
 @MainActor
 public class WeatherData: ObservableObject {
-    let logger = Logger(subsystem: "com.yyokii.sanpo.StepCountData.WeatherData", category: "Model")
+    let logger = Logger(category: .model)
 
     @Published public var hourlyForecasts: Forecast<HourWeather>?
     private var location: CLLocation?
