@@ -25,6 +25,7 @@ let package = Package(
         .library(
             name: "Preview",
             targets: [
+                "HistoricalDataFeature",
                 "HomeFeature",
                 "StyleGuide"
             ]

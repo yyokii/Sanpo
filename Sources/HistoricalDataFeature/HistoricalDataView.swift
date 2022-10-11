@@ -3,21 +3,26 @@ import HealthKit
 
 import Constant
 import Model
+import StyleGuide
 
 public struct HistoricalDataView: View {
     @State private var stepCounts: [Date: StepCount] = [:]
     private let calendar: Calendar = .current
 
+    @State private var walkingSpeed: WalkingSpeed = .noData
+    @State private var walkingStepLength: WalkingStepLength = .noData
+
     public init() {}
 
     public var body: some View {
         VStack(spacing: 8) {
-            Text("HistoricalData View")
+
+            specificDateDataView
 
             CalendarView(
                 stepCounts: stepCounts,
                 selectDateAction: { date in
-                    print(date)
+                    loadSpecificDateData(date)
                 }
             )
         }
@@ -30,11 +35,43 @@ public struct HistoricalDataView: View {
 
 private extension HistoricalDataView {
 
+    var specificDateDataView: some View {
+        ZStack {
+            Rectangle()
+                .fill(Color.adaptiveWhite)
+                .cornerRadius(20)
+                .adaptiveShadow()
+
+            VStack(spacing: 24) {
+
+                Text("aaaのデータ")
+
+                VStack {
+                    Text("\(walkingSpeed.speed)")
+                    Text("\(walkingStepLength.length)")
+                }
+            }
+        }
+        .frame(height: 180)
+    }
+
+    func loadSpecificDateData(_ date: Date) {
+        Task.detached { @MainActor in
+            let speed = await WalkingSpeed.load(for: date)
+            let stepLength = await WalkingStepLength.load(for: date)
+
+            walkingSpeed = speed
+            walkingStepLength = stepLength
+        }
+    }
+
     func load() {
         let readTypes = Set(
             [
                 HKQuantityType.quantityType(forIdentifier: .stepCount)!,
-                HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
+                HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!,
+                HKQuantityType.quantityType(forIdentifier: .walkingSpeed)!,
+                HKQuantityType.quantityType(forIdentifier: .walkingStepLength)!
             ]
         )
 
@@ -72,3 +109,15 @@ private extension HistoricalDataView {
         }
     }
 }
+
+// preview crash
+//
+//#if DEBUG
+//
+//struct HistoricalDataView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        HistoricalDataView()
+//    }
+//}
+//
+//#endif

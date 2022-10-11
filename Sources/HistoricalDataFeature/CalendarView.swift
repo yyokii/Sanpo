@@ -73,14 +73,18 @@ extension CalendarView {
             self.parent = parent
         }
 
-        func calendarView(_ calendarView: UICalendarView, decorationFor dateComponents: DateComponents) -> UICalendarView.Decoration? {
+        func calendarView(
+            _ calendarView: UICalendarView,
+            decorationFor dateComponents: DateComponents
+        ) -> UICalendarView.Decoration? {
             let date = dateComponents.date!
             if stepCounts.keys.contains(date) {
                 let stepCount = stepCounts[date]!
-                if stepCount.number >= dailyTargetSteps {
-                    return .default(color: .red)
-                } else {
-                    return nil
+                return .customView {
+                    let label = UILabel()
+                    label.text = "\(stepCount.number)"
+                    label.textColor = .gray
+                    return label
                 }
             } else {
                 return nil
