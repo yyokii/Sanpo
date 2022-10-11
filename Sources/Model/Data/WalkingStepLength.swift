@@ -61,7 +61,6 @@ extension WalkingStepLength {
                     let length: Float = Float(
                         truncating: (sum.doubleValue(for: .meter())) as NSNumber
                     )
-                    print(length)
                     continuation.resume(returning:
                             .init(
                                 date: startOfDay,

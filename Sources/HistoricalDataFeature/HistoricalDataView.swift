@@ -6,22 +6,33 @@ import Model
 import StyleGuide
 
 public struct HistoricalDataView: View {
-    @State private var stepCounts: [Date: StepCount] = [:]
-    private let calendar: Calendar = .current
 
+    // Specific date data
+    @State private var selectedDate: Date = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+    @State private var stepCount: StepCount = .noData
     @State private var walkingSpeed: WalkingSpeed = .noData
     @State private var walkingStepLength: WalkingStepLength = .noData
+
+    @State private var stepCounts: [Date: StepCount] = [:]
+    private let calendar: Calendar = .current
 
     public init() {}
 
     public var body: some View {
         VStack(spacing: 8) {
 
-            specificDateDataView
+            SpecificDateDataView(
+                selectedDate: selectedDate,
+                stepCount: stepCount,
+                walkingSpeed: walkingSpeed,
+                walkingStepLength: walkingStepLength
+            )
+                .padding(.horizontal, 20)
 
             CalendarView(
                 stepCounts: stepCounts,
                 selectDateAction: { date in
+                    selectedDate = date
                     loadSpecificDateData(date)
                 }
             )
@@ -35,33 +46,16 @@ public struct HistoricalDataView: View {
 
 private extension HistoricalDataView {
 
-    var specificDateDataView: some View {
-        ZStack {
-            Rectangle()
-                .fill(Color.adaptiveWhite)
-                .cornerRadius(20)
-                .adaptiveShadow()
-
-            VStack(spacing: 24) {
-
-                Text("aaaのデータ")
-
-                VStack {
-                    Text("\(walkingSpeed.speed)")
-                    Text("\(walkingStepLength.length)")
-                }
-            }
-        }
-        .frame(height: 180)
-    }
-
     func loadSpecificDateData(_ date: Date) {
         Task.detached { @MainActor in
-            let speed = await WalkingSpeed.load(for: date)
-            let stepLength = await WalkingStepLength.load(for: date)
+            async let stepCount = StepCount.load(for: date)
+            async let walkingSpeed = WalkingSpeed.load(for: date)
+            async let stepLength = WalkingStepLength.load(for: date)
 
-            walkingSpeed = speed
-            walkingStepLength = stepLength
+            let datas = await (count: stepCount, speed: walkingSpeed, length: stepLength)
+            self.stepCount = datas.count
+            self.walkingSpeed = datas.speed
+            self.walkingStepLength = datas.length
         }
     }
 
@@ -110,14 +104,15 @@ private extension HistoricalDataView {
     }
 }
 
-// preview crash
-//
-//#if DEBUG
-//
-//struct HistoricalDataView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        HistoricalDataView()
-//    }
-//}
-//
-//#endif
+/*
+ // preview crash
+ #if DEBUG
+
+ struct HistoricalDataView_Previews: PreviewProvider {
+     static var previews: some View {
+         HistoricalDataView()
+     }
+ }
+
+ #endif
+ */

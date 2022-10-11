@@ -34,6 +34,7 @@ public struct HomeView: View {
                         todayGoalView
 
                         todayDataView
+                            .padding(.horizontal, 10)
                     }
 
                     VStack(alignment: .leading, spacing: 20) {
@@ -41,6 +42,7 @@ public struct HomeView: View {
                             .adaptiveFont(.bold, size: 30)
 
                         HourlyWeatherDataView()
+                            .padding(.horizontal, 10)
                     }
                 }
                 .padding(.horizontal, 20)

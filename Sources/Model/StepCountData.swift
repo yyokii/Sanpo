@@ -38,7 +38,7 @@ public class StepCountData: ObservableObject {
 
     private func loadTodayStepCount() {
         Task.detached { @MainActor in
-            let todayData = await StepCount.today()
+            let todayData = await StepCount.load(for: Date())
             self.todayStepCount = todayData
             self.phase = .success
         }

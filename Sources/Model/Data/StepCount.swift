@@ -83,15 +83,15 @@ extension StepCount {
         }
     }
 
-    public static func today() async -> StepCount {
+    public static func load(for date: Date) async -> StepCount {
         if HKHealthStore.isHealthDataAvailable() {
             let stepsQuantityType = HKQuantityType.quantityType(forIdentifier: .stepCount)!
 
-            let now = Date()
-            let startOfDay = Calendar.current.startOfDay(for: now)
+            let startOfDay = Calendar.current.startOfDay(for: date)
+            let endOfDay = Calendar.current.endOfDay(for: date)
             let predicate = HKQuery.predicateForSamples(
                 withStart: startOfDay,
-                end: now,
+                end: endOfDay,
                 options: .strictStartDate
             )
 
@@ -119,7 +119,7 @@ extension StepCount {
 
                     continuation.resume(returning:
                             .init(
-                                date: now,
+                                date: startOfDay,
                                 number: number
                             )
                     )
