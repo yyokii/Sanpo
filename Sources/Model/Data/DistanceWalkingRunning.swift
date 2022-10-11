@@ -8,7 +8,7 @@ import Extension
 /**
  Data Objects
 
- Steps data for a specific day
+ Distance of walking and running data for a specific day
  */
 public struct DistanceWalkingRunning: Codable {
     private static let logger = Logger(category: .model)
@@ -27,55 +27,6 @@ public struct DistanceWalkingRunning: Codable {
 
 extension DistanceWalkingRunning {
     public static let noData: DistanceWalkingRunning = .init(date: Date(), distance: 0)
-
-    public static func range(start: Date, end: Date) async -> [Date: DistanceWalkingRunning] {
-        if HKHealthStore.isHealthDataAvailable() {
-            let type = HKSampleType.quantityType(forIdentifier: .distanceWalkingRunning)!
-            let predicate = HKQuery.predicateForSamples(withStart: start, end: end)
-            let now = Date()
-            let todayStart: Date = Calendar.current.startOfDay(for: now)
-
-            let query = HKStatisticsCollectionQuery(
-                quantityType: type,
-                quantitySamplePredicate: predicate,
-                options: .cumulativeSum,
-                anchorDate: todayStart,
-                intervalComponents: DateComponents(day: 1)
-            )
-
-            return await withCheckedContinuation { continuation in
-                query.initialResultsHandler = { _, collection, error in
-                    if let error = error {
-                        logger.debug("\(error.localizedDescription)")
-                        continuation.resume(returning: [:])
-                        return
-                    }
-
-                    guard let statistics = collection?.statistics() else {
-                        continuation.resume(returning: [:])
-                        return
-                    }
-
-                    var dic: [Date: DistanceWalkingRunning] = [:]
-                    statistics.forEach({ data in
-                        let distance: Int = Int(
-                            truncating: (data.sumQuantity()?.doubleValue(for: .meter()) ?? 0) as NSNumber
-                        )
-                        let distanceWalkingRunning = DistanceWalkingRunning(
-                            date: data.startDate,
-                            distance: distance
-                        )
-                        dic[data.startDate] = distanceWalkingRunning
-                    })
-
-                    continuation.resume(returning: dic)
-                }
-                HKHealthStore.shared.execute(query)
-            }
-        } else {
-            return [:]
-        }
-    }
 
     public static func today() async -> DistanceWalkingRunning {
         if HKHealthStore.isHealthDataAvailable() {
