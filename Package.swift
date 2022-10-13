@@ -27,6 +27,7 @@ let package = Package(
             targets: [
                 "HistoricalDataFeature",
                 "HomeFeature",
+                "SettingsFeature",
                 "StyleGuide"
             ]
         ),
@@ -83,15 +84,22 @@ let package = Package(
             ]
         ),
         .target(
-            name: "WidgetFeature",
+            name: "SettingsFeature",
             dependencies: [
-                "Constant",
-                "Model"
+                "Extension",
+                "StyleGuide"
             ]
         ),
         .target(
             name: "StyleGuide",
             dependencies: []
+        ),
+        .target(
+            name: "WidgetFeature",
+            dependencies: [
+                "Constant",
+                "Model"
+            ]
         ),
 
         // Plugin
