@@ -5,8 +5,7 @@ public enum FontName: String {
     case bold = "HiraginoSans-W6"
 }
 
-extension Text {
-
+extension View {
     /// Display Japanese font correctly
     /// http://akisute.com/2016/09/ios.html
     public func adaptiveFont(
@@ -14,31 +13,33 @@ extension Text {
         size: CGFloat,
         configure: @escaping (Font) -> Font = { $0 }
     ) -> some View {
-        return AdaptiveFontText(
-            textView: self,
-            name: name.rawValue,
-            size: size
+        self.modifier(
+            AdaptiveFont(
+                name: name.rawValue,
+                size: size,
+                configure: configure
+            )
         )
     }
+}
 
-    private struct AdaptiveFontText: View {
-        let textView: Text
-        let name: String
-        let size: CGFloat
+private struct AdaptiveFont: ViewModifier {
+    let name: String
+    let size: CGFloat
+    let configure: (Font) -> Font
 
+    func body(content: Content) -> some View {
         // ヒラギノフォントが切れる問題 SwiftUI編 - ObjecTips: https://koze.hatenablog.jp/entry/2020/05/11/093000
-        var body: some View {
-            let ctFont = CTFontCreateWithName(
-                name as CFString,
-                size,
-                nil
-            )
-            let descent = CTFontGetDescent(ctFont)
+        let ctFont = CTFontCreateWithName(
+            name as CFString,
+            size,
+            nil
+        )
+        let descent = CTFontGetDescent(ctFont)
 
-            return textView.font(.init(ctFont))
-                .baselineOffset(descent)
-                .offset(y: descent / 2)
-        }
+        return content.font(.init(ctFont))
+        .baselineOffset(descent)
+        .offset(y: descent / 2)
     }
 }
 
