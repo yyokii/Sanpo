@@ -58,11 +58,10 @@ extension SpecificDateDataView {
     func specificDateDataRowView(title: String, detail: String) -> some View {
         HStack(spacing: 16) {
             Text(title)
-                .adaptiveFont(.bold, size: 16)
                 .frame(width: 170, alignment: .leading)
             Text(detail)
-                .adaptiveFont(.bold, size: 16)
         }
+        .adaptiveFont(.bold, size: 16)
     }
 }
 
