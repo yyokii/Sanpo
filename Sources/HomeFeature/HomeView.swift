@@ -2,6 +2,7 @@ import SwiftUI
 import WidgetKit
 
 import Constant
+import Extension
 import Model
 import StyleGuide
 
@@ -42,6 +43,15 @@ public struct HomeView: View {
                             .adaptiveFont(.bold, size: 30)
 
                         HourlyWeatherDataView()
+                            .asyncState(
+                                weatherData.state,
+                                initialContent: ProgressView()
+                                    .progressViewStyle(.circular),
+                                loadingContent: ProgressView()
+                                    .progressViewStyle(.circular),
+                                emptyContent: Text("データが存在しません"),
+                                failureContent: Text("読み込みに失敗しました。")
+                            )
                             .padding(.horizontal, 10)
                     }
                 }

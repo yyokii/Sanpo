@@ -4,6 +4,7 @@ import Foundation
 import WeatherKit
 import os
 
+import Extension
 import Service
 
 /**
@@ -13,6 +14,7 @@ import Service
 public class WeatherData: ObservableObject {
     let logger = Logger(category: .model)
 
+    @Published public var state: AsyncStatePhase = .initial
     @Published public var hourlyForecasts: Forecast<HourWeather>?
     private var location: CLLocation?
 
@@ -33,6 +35,7 @@ public class WeatherData: ObservableObject {
     }
 
     public func loadHourlyForecast(for location: CLLocation) async {
+        state = .loading
         let hourWeather = await Task.detached(priority: .userInitiated) {
             let forcast = try? await self.service.weather(
                 for: location,
@@ -41,6 +44,7 @@ public class WeatherData: ObservableObject {
             return forcast
         }.value
         hourlyForecasts = hourWeather
+        state = .success(Date())
     }
 
     public func requestLocationAuth() {

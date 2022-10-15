@@ -33,18 +33,16 @@ public enum AsyncStatePhase {
 }
 
 public extension View {
-
     @ViewBuilder
-    func asyncState<T: Codable,
-                           InitialContent: View,
+    func asyncState<InitialContent: View,
                            LoadingContent: View,
                            EmptyContent: View,
-                           FailureContent: View>(_ state: AsyncState<T>,
+                           FailureContent: View>(_ phase: AsyncStatePhase,
                                                  initialContent: InitialContent,
                                                  loadingContent: LoadingContent,
                                                  emptyContent: EmptyContent,
                                                  failureContent: FailureContent) -> some View {
-        switch state.phase {
+        switch phase {
         case .initial:
             initialContent
         case .loading:
@@ -56,5 +54,22 @@ public extension View {
         case .failure:
             failureContent
         }
+    }
+
+    @ViewBuilder
+    func asyncState<T: Codable,
+                           InitialContent: View,
+                           LoadingContent: View,
+                           EmptyContent: View,
+                           FailureContent: View>(_ state: AsyncState<T>,
+                                                 initialContent: InitialContent,
+                                                 loadingContent: LoadingContent,
+                                                 emptyContent: EmptyContent,
+                                                 failureContent: FailureContent) -> some View {
+        asyncState(state.phase,
+                   initialContent: initialContent,
+                   loadingContent: loadingContent,
+                   emptyContent: emptyContent,
+                   failureContent: failureContent)
     }
 }
