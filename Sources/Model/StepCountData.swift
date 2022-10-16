@@ -2,6 +2,7 @@ import Combine
 import Foundation
 import HealthKit
 import os.log
+import WidgetKit
 
 import Extension
 
@@ -38,5 +39,6 @@ public class StepCountData: ObservableObject {
     public func loadTodayStepCount() async {
         let todayData = await StepCount.load(for: Date())
         todayStepCount = todayData
+        WidgetCenter.shared.reloadAllTimelines()
     }
 }

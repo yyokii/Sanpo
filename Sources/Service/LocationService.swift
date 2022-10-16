@@ -17,7 +17,7 @@ public class LocationService: NSObject, ObservableObject {
 
         $authStatus
             .sink { status in
-                guard let status = status,
+                guard let status,
                       status == .authorizedAlways || status == .authorizedWhenInUse
                 else {
                     return

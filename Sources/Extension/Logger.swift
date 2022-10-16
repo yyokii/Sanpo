@@ -4,6 +4,7 @@ import os.log
 public extension Logger {
     enum Category: String {
         case model = "Model"
+        case service = "Service"
         case view = "View"
     }
 

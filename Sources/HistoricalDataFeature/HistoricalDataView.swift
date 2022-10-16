@@ -1,5 +1,6 @@
 import SwiftUI
 import HealthKit
+import os.log
 
 import Constant
 import Extension
@@ -7,6 +8,7 @@ import Model
 import StyleGuide
 
 public struct HistoricalDataView: View {
+    private let logger = Logger(category: .view)
 
     // Specific date data
     @State private var selectedDate: Date = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
@@ -73,46 +75,21 @@ private extension HistoricalDataView {
     }
 
     func load() {
-        let readTypes = Set(
-            [
-                HKQuantityType.quantityType(forIdentifier: .stepCount)!,
-                HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!,
-                HKQuantityType.quantityType(forIdentifier: .walkingSpeed)!,
-                HKQuantityType.quantityType(forIdentifier: .walkingStepLength)!
-            ]
-        )
-
-        HKHealthStore.shared.getRequestStatusForAuthorization(toShare: [], read: readTypes) { status, error in
-
-            switch status {
-            case .shouldRequest:
-                print("shouldRequest")
-            case .unnecessary:
-                print("unnecessary")
-            case .unknown:
-                print("unknown")
-            default:
-                break
-            }
-        }
-
         Task {
             do {
-                try await HKHealthStore.shared.requestAuthorization(toShare: [], read: readTypes)
-
                 let calendar = Calendar.current
                 // HealthKit is available from iOS 8(2014/9/17)
                 let startDate = DateComponents(year: 2014, month: 9, day: 1, hour: 0, minute: 0, second: 0)
-                let endDate = DateComponents(year: 2022, month: 10, day: 10, hour: 23, minute: 59, second: 59)
+                let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
 
                 await _stepCounts.fetch {
                     await StepCount.range(
                         start: calendar.date(from: startDate)!,
-                        end: calendar.date(from: endDate)!
+                        end: yesterday
                     )
                 }
             } catch {
-                print(error)
+                logger.debug("\(error.localizedDescription)")
             }
         }
     }

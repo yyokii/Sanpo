@@ -1,9 +1,11 @@
 import SwiftUI
 import WidgetKit
 
+import Combine
 import Constant
 import Extension
 import Model
+import Service
 import StyleGuide
 
 public struct HomeView: View {
@@ -20,7 +22,20 @@ public struct HomeView: View {
     @State private var inputGoal = 0
     @State private var showGoalSetting = false
 
-    public init() {}
+    private var cancellables = Set<AnyCancellable>()
+
+    public init() {
+        HealthKitAuthService.shared.$authStatus
+            .sink { status in
+                if let status,
+                   status == .shouldRequest {
+                    Task.detached { @MainActor in
+                        HealthKitAuthService.shared.requestAuthorization
+                    }
+                }
+            }
+            .store(in: &cancellables)
+    }
 
     public var body: some View {
         VStack {

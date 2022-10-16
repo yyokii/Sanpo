@@ -59,6 +59,7 @@ let package = Package(
                 "Constant",
                 "Extension",
                 "Model",
+                "Service",
                 "StyleGuide"
             ]
         ),
