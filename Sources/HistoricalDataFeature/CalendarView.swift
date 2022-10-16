@@ -75,14 +75,15 @@ extension CalendarView {
                     let label = UILabel()
                     label.text = "\(stepCount.number)"
 
+                    let color = UIColor(Color.appMain)
                     if stepCount.number >= 10000 {
-                        label.textColor = .green
+                        label.textColor = color
                     } else if stepCount.number >= 5000 {
-                        label.textColor = .green.withAlphaComponent(0.8)
+                        label.textColor = color.withAlphaComponent(0.8)
                     } else if stepCount.number >= 2500 {
-                        label.textColor = .green.withAlphaComponent(0.6)
+                        label.textColor = color.withAlphaComponent(0.6)
                     } else {
-                        label.textColor = .green.withAlphaComponent(0.4)
+                        label.textColor = color.withAlphaComponent(0.4)
                     }
                     return label
                 }

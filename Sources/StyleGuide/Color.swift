@@ -13,6 +13,7 @@ extension Color {
     }
 
     public static let appBlack = hex(0x2C2C2E)
+    public static let appMain = hex(0x7ed957)
 
     public static func hex(_ hex: UInt) -> Self {
         Self(
