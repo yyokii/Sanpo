@@ -77,7 +77,7 @@ public struct HomeView: View {
         }
         .sheet(isPresented: $showGoalSetting) {
             goalSettingView()
-                .presentationDetents([.height(150)])
+                .presentationDetents([.height(170)])
         }
     }
 }
@@ -131,16 +131,18 @@ extension HomeView {
     }
 
     func goalSettingView() -> some View {
-        // TODO:
-        VStack {
-            TextField("Set Goal", value: $inputGoal, formatter: NumberFormatter())
-            Button {
+        VStack(spacing: 16) {
+            TextField("目標歩数", value: $inputGoal, formatter: NumberFormatter())
+                .adaptiveFont(.bold, size: 40)
+                .lineLimit(1)
+                .multilineTextAlignment(.trailing)
+            Button("設定する") {
                 dailyTargetSteps = inputGoal
                 WidgetCenter.shared.reloadAllTimelines()
-            } label: {
-                Text("Save")
             }
+            .buttonStyle(ActionButtonStyle(size: .small))
         }
+        .padding(20)
     }
 }
 
