@@ -49,7 +49,10 @@ public struct HistoricalDataView: View {
         }
         .padding()
         .onAppear {
-            load()
+            if stepCounts.isEmpty {
+                load()
+                loadSpecificDateData(selectedDate)
+            }
         }
     }
 }

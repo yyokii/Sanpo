@@ -29,8 +29,12 @@ struct CalendarView: UIViewRepresentable {
         let calendarViewDateRange = DateInterval(start: calendarStartDate, end: Date())
         view.availableDateRange = calendarViewDateRange
 
-        view.selectionBehavior = UICalendarSelectionSingleDate(delegate: context.coordinator)
+        let dateSelection = UICalendarSelectionSingleDate(delegate: context.coordinator)
+        view.selectionBehavior = dateSelection
         view.delegate = context.coordinator
+
+        let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+        dateSelection.setSelected(Calendar.current.dateComponents(in: .current, from: yesterday), animated: false)
 
         return view
     }
@@ -88,6 +92,7 @@ extension CalendarView {
         }
 
         func dateSelection(_ selection: UICalendarSelectionSingleDate, didSelectDate dateComponents: DateComponents?) {
+            print("📝 didSelectDate")
             if let date = dateComponents?.date {
                 parent.selectDateAction(date)
             }
