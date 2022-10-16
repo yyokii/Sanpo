@@ -35,7 +35,7 @@ public class StepCountData: ObservableObject {
         }
     }
 
-    private func loadTodayStepCount() async {
+    public func loadTodayStepCount() async {
         let todayData = await StepCount.load(for: Date())
         todayStepCount = todayData
     }

@@ -47,6 +47,14 @@ public class WeatherData: ObservableObject {
         phase = .success(Date())
     }
 
+    public func load() async {
+        if let location {
+            Task.detached(priority: .userInitiated) {
+                await self.loadHourlyForecast(for: location)
+            }
+        }
+    }
+
     public func requestLocationAuth() {
         locationService.requestWhenInUseAuthorization()
     }

@@ -49,6 +49,10 @@ public struct HomeView: View {
                 }
                 .padding(.horizontal, 20)
             }
+            .refreshable {
+                await weatherData.load()
+                await stepCountData.loadTodayStepCount()
+            }
             .padding(.top, 4)
         }
         .onAppear {
