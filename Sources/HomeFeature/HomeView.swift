@@ -69,18 +69,16 @@ public struct HomeView: View {
 extension HomeView {
     var header: some View {
         HStack {
-            Spacer()
             Image("logo", bundle: .module)
                 .resizable()
                 .frame(width: 50)
                 .adaptiveShadow(radius: 10)
-            Spacer()
-            Image(systemName: "gearshape")
-                .resizable()
-                .frame(width: 24, height: 24)
-
+//            Spacer()
+//            Image(systemName: "gearshape")
+//                .resizable()
+//                .frame(width: 24, height: 24)
         }
-        .frame(height: 50)
+        .frame(maxWidth: .infinity, maxHeight: 50)
     }
 
     var todayDataView: some View {
