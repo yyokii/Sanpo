@@ -43,15 +43,7 @@ public struct HomeView: View {
                             .adaptiveFont(.bold, size: 30)
 
                         HourlyWeatherDataView()
-                            .asyncState(
-                                weatherData.state,
-                                initialContent: ProgressView()
-                                    .progressViewStyle(.circular),
-                                loadingContent: ProgressView()
-                                    .progressViewStyle(.circular),
-                                emptyContent: Text("データが存在しません"),
-                                failureContent: Text("読み込みに失敗しました。")
-                            )
+                            .asyncState(weatherData.phase)
                             .padding(.horizontal, 10)
                     }
                 }
@@ -95,18 +87,10 @@ extension HomeView {
                 .adaptiveShadow()
 
             VStack(spacing: 8) {
+                Text("\(stepCountData.todayStepCount?.number ?? 0)歩")
+                    .adaptiveFont(.bold, size: 42)
 
-                switch stepCountData.phase {
-                case .waiting:
-                    EmptyView()
-                case .success:
-                    Text("\(stepCountData.todayStepCount!.number)歩")
-                        .adaptiveFont(.bold, size: 42)
-                case .failure:
-                    EmptyView()
-                }
-
-                Text("距離: \(dailyTargetSteps)歩")
+                Text("距離: \(distanceData.todayDistance?.distance ?? 0)m")
                     .adaptiveFont(.normal, size: 16)
             }
         }

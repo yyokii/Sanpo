@@ -38,10 +38,11 @@ public extension View {
                            LoadingContent: View,
                            EmptyContent: View,
                            FailureContent: View>(_ phase: AsyncStatePhase,
-                                                 initialContent: InitialContent,
-                                                 loadingContent: LoadingContent,
-                                                 emptyContent: EmptyContent,
-                                                 failureContent: FailureContent) -> some View {
+                                                 initialContent: InitialContent = ProgressView(),
+                                                 loadingContent: LoadingContent = ProgressView(),
+                                                 emptyContent: EmptyContent = Text("データが存在しません"),
+                                                 failureContent: FailureContent = Text("読み込みに失敗しました。")
+                           ) -> some View {
         switch phase {
         case .initial:
             initialContent
@@ -62,10 +63,11 @@ public extension View {
                            LoadingContent: View,
                            EmptyContent: View,
                            FailureContent: View>(_ state: AsyncState<T>,
-                                                 initialContent: InitialContent,
-                                                 loadingContent: LoadingContent,
-                                                 emptyContent: EmptyContent,
-                                                 failureContent: FailureContent) -> some View {
+                                                 initialContent: InitialContent = ProgressView(),
+                                                 loadingContent: LoadingContent = ProgressView(),
+                                                 emptyContent: EmptyContent = Text("データが存在しません"),
+                                                 failureContent: FailureContent = Text("読み込みに失敗しました。")
+                           ) -> some View {
         asyncState(state.phase,
                    initialContent: initialContent,
                    loadingContent: loadingContent,
