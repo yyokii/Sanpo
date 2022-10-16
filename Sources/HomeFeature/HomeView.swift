@@ -53,8 +53,9 @@ public struct HomeView: View {
                             .padding(.horizontal, 10)
                     }
 
-                    VStack(alignment: .leading, spacing: 20) {
+                    VStack(alignment: .center, spacing: 20) {
                         Text("天気")
+                            .frame(maxWidth: .infinity, alignment: .leading)
                             .adaptiveFont(.bold, size: 30)
 
                         HourlyWeatherDataView()
