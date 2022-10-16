@@ -37,11 +37,11 @@ public class WeatherData: ObservableObject {
     public func loadHourlyForecast(for location: CLLocation) async {
         state = .loading
         let hourWeather = await Task.detached(priority: .userInitiated) {
-            let forcast = try? await self.service.weather(
+            let forecast = try? await self.service.weather(
                 for: location,
                 including: .hourly
             )
-            return forcast
+            return forecast
         }.value
         hourlyForecasts = hourWeather
         state = .success(Date())
