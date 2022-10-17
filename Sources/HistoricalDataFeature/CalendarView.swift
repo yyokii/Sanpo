@@ -2,6 +2,7 @@ import SwiftUI
 
 import Constant
 import Model
+import StyleGuide
 
 struct CalendarView: UIViewRepresentable {
     private let stepCounts: [Date: StepCount]
@@ -74,6 +75,7 @@ extension CalendarView {
                 return .customView {
                     let label = UILabel()
                     label.text = "\(stepCount.number)"
+                    label.font = UIFont(name: FontName.bold.rawValue, size: 14)
 
                     let color = UIColor(Color.appMain)
                     if stepCount.number >= 10000 {
