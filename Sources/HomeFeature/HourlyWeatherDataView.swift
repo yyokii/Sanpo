@@ -1,10 +1,18 @@
 import SwiftUI
+import WeatherKit
 
 import Model
 import StyleGuide
 
 public struct HourlyWeatherDataView: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     @StateObject var weatherData = WeatherData()
+
+    @State var weatherAttribution: WeatherAttribution?
+    private let weatherService = WeatherService()
+
+    @State var showWeatherKitLegalLink = false
 
     public init() {}
 
@@ -34,13 +42,40 @@ public struct HourlyWeatherDataView: View {
                         .padding(.bottom, 8)
                     }
 
-                    Spacer()
+                    if let weatherAttribution {
+                        HStack {
+                            Spacer()
+                            AsyncImage(
+                                url: colorScheme == .light ?
+                                weatherAttribution.combinedMarkLightURL
+                                : weatherAttribution.combinedMarkDarkURL
+                            ) { image in
+                                image
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(height: 12)
+                            } placeholder: {
+                                ProgressView()
+                            }
+                            Button("Link") {
+                                showWeatherKitLegalLink.toggle()
+                            }
+                        }
+                    }
                 }
             }
             .padding(.vertical, 28)
             .padding(.horizontal, 18)
         }
         .frame(height: 400)
+        .task {
+            weatherAttribution = try? await weatherService.attribution
+        }
+        .sheet(isPresented: $showWeatherKitLegalLink) {
+            if let weatherAttribution {
+                SafariView(url: weatherAttribution.legalPageURL)
+            }
+        }
     }
 }
 

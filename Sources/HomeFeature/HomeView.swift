@@ -53,6 +53,7 @@ public struct HomeView: View {
                     }
                 }
                 .padding(.horizontal, 20)
+                .padding(.bottom, 16)
             }
             .refreshable {
                 await weatherData.load()
