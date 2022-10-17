@@ -19,6 +19,6 @@ struct SanpoWidget: Widget {
             WidgetEntryView(entry: entry)
         }
         .configurationDisplayName("Sanpo")
-        .supportedFamilies([.systemSmall, .accessoryCircular])
+        .supportedFamilies([.accessoryCircular])
     }
 }

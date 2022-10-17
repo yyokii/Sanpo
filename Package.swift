@@ -12,14 +12,22 @@ let package = Package(
         .library(
             name: "App",
             targets: [
+                "Constant",
                 "MainTab",
-                "Constant"
             ]
         ),
         .library(
             name: "Widget",
             targets: [
                 "WidgetFeature",
+            ]
+        ),
+        .library(
+            name: "Preview",
+            targets: [
+                "HomeFeature",
+                "SettingsFeature",
+                "StyleGuide"
             ]
         ),
     ],
@@ -40,7 +48,8 @@ let package = Package(
             dependencies: [
                 "Constant",
                 "Extension",
-                "Model"
+                "Model",
+                "StyleGuide"
             ]
         ),
         .target(
@@ -49,6 +58,8 @@ let package = Package(
                 "Constant",
                 "Extension",
                 "Model",
+                "Service",
+                "StyleGuide"
             ]
         ),
         .target(
@@ -70,7 +81,19 @@ let package = Package(
             name: "Service",
             dependencies: [
                 "Constant",
+                "Extension"
             ]
+        ),
+        .target(
+            name: "SettingsFeature",
+            dependencies: [
+                "Extension",
+                "StyleGuide"
+            ]
+        ),
+        .target(
+            name: "StyleGuide",
+            dependencies: []
         ),
         .target(
             name: "WidgetFeature",
@@ -79,6 +102,8 @@ let package = Package(
                 "Model"
             ]
         ),
+
+        // Plugin
         .plugin(
             name: "SwiftLintPlugin",
             capability: .buildTool(),

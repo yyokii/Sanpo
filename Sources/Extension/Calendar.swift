@@ -13,4 +13,8 @@ public extension Calendar {
 
         return result
     }
+
+    func endOfDay(for date: Date) -> Date {
+        return self.date(bySettingHour: 23, minute: 59, second: 59, of: date)!
+    }
 }

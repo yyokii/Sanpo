@@ -1,10 +1,12 @@
-import CoreLocation
 import SwiftUI
 import WidgetKit
 
+import Combine
 import Constant
 import Extension
 import Model
+import Service
+import StyleGuide
 
 public struct HomeView: View {
     @AppStorage(
@@ -18,73 +20,133 @@ public struct HomeView: View {
     @StateObject var weatherData = WeatherData()
 
     @State private var inputGoal = 0
+    @State private var showGoalSetting = false
+
+    private var cancellables = Set<AnyCancellable>()
 
     public init() {}
 
     public var body: some View {
-        VStack(spacing: 8) {
-            Text("Home View")
+        VStack {
+            header
+                .padding(.horizontal, 20)
+            ScrollView {
+                VStack(spacing: 34) {
+                    VStack(alignment: .leading, spacing: 20) {
+                        Text("今日のデータ")
+                            .adaptiveFont(.bold, size: 30)
 
-            Text("my goal is \(dailyTargetSteps)")
-            TextField("Set Goal", value: $inputGoal, formatter: NumberFormatter())
-            Button {
-                dailyTargetSteps = inputGoal
-                WidgetCenter.shared.reloadAllTimelines()
-            } label: {
-                Text("Save")
-            }
+                        todayGoalView
 
-            Text("stepCountData")
-            switch stepCountData.phase {
-            case .waiting:
-                Text("waiting")
-            case .success:
-                Text("success")
-                Text("\(stepCountData.todayStepCount!.number)")
-                if stepCountData.todayStepCount!.number >= dailyTargetSteps {
-                    Text("Goal is achieved")
-                } else {
-                    Text("Goal is not achieved")
-                }
-            case .failure(let error):
-                Text("failure \(error.debugDescription)")
-            }
+                        todayDataView
+                            .padding(.horizontal, 10)
+                    }
 
-            Text("distanceData")
-            switch distanceData.phase {
-            case .waiting:
-                Text("waiting")
-            case .success:
-                Text("success")
-                Text("\(distanceData.todayDistance!.distance)")
-            case .failure(let error):
-                Text("failure \(error.debugDescription)")
-            }
+                    VStack(alignment: .center, spacing: 20) {
+                        Text("天気")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .adaptiveFont(.bold, size: 30)
 
-            if let hourlyForecasts = weatherData.hourlyForecasts {
-                ForEach(hourlyForecasts, id: \.self.date) { forecast in
-                    HStack {
-                        Text(forecast.date, format: Date.FormatStyle().hour(.defaultDigits(amPM: .abbreviated)))
-                        Image(systemName: forecast.symbolName)
-                        Text(forecast.temperature.formatted(.measurement(width: .abbreviated, usage: .weather)))
-                        Text(formattedPrecipitationChance(forecast.precipitationChance))
+                        HourlyWeatherDataView()
+                            .asyncState(weatherData.phase)
+                            .padding(.horizontal, 10)
                     }
                 }
+                .padding(.horizontal, 20)
             }
+            .refreshable {
+                await weatherData.load()
+                await stepCountData.loadTodayStepCount()
+            }
+            .padding(.top, 4)
         }
-        .padding()
         .onAppear {
             inputGoal = dailyTargetSteps
             weatherData.requestLocationAuth()
         }
+        .onReceive(HealthKitAuthService.shared.$authStatus) { status in
+            if let status,
+               status == .unknown ||
+               status == .shouldRequest {
+                HealthKitAuthService.shared.requestAuthorization()
+            }
+        }
+        .onReceive(HealthKitAuthService.shared.$isAuthRequestSuccess) { success in
+            if success {
+                Task.detached {
+                    await stepCountData.loadTodayStepCount()
+                }
+            }
+        }
+        .sheet(isPresented: $showGoalSetting) {
+            goalSettingView()
+                .presentationDetents([.height(170)])
+        }
     }
 }
 
-// TODO: デザイン当て込み時にリファクタ
-func formattedPrecipitationChance(_ chance: Double) -> String {
-    guard chance > 0 else { return "0%" }
-    let percentage = Int(chance * 100)
-    return "(\(percentage)%)"
+extension HomeView {
+    var header: some View {
+        HStack {
+            Image("logo", bundle: .module)
+                .resizable()
+                .frame(width: 50)
+                .adaptiveShadow(radius: 10)
+//            Spacer()
+//            Image(systemName: "gearshape")
+//                .resizable()
+//                .frame(width: 24, height: 24)
+        }
+        .frame(maxWidth: .infinity, maxHeight: 50)
+    }
+
+    var todayDataView: some View {
+        ZStack {
+            Rectangle()
+                .fill(Color.adaptiveWhite)
+                .cornerRadius(20)
+                .adaptiveShadow()
+
+            VStack(spacing: 8) {
+                Text("\(stepCountData.todayStepCount?.number ?? 0)歩")
+                    .adaptiveFont(.bold, size: 42)
+
+                Text("距離: \(distanceData.todayDistance?.distance ?? 0)m")
+                    .adaptiveFont(.normal, size: 16)
+            }
+        }
+        .frame(height: 130)
+    }
+
+    var todayGoalView: some View {
+        Button {
+            showGoalSetting = true
+        } label: {
+            HStack(alignment: .center) {
+                Text("目標: \(dailyTargetSteps)歩")
+                    .adaptiveFont(.normal, size: 16)
+
+                Image(systemName: "square.and.pencil")
+                    .padding(.bottom, 2)
+            }
+        }
+        .foregroundColor(.adaptiveBlack)
+    }
+
+    func goalSettingView() -> some View {
+        VStack(spacing: 16) {
+            TextField("目標歩数", value: $inputGoal, formatter: NumberFormatter())
+                .adaptiveFont(.bold, size: 40)
+                .lineLimit(1)
+                .multilineTextAlignment(.trailing)
+            Button("設定する") {
+                dailyTargetSteps = inputGoal
+                WidgetCenter.shared.reloadAllTimelines()
+            }
+            .buttonStyle(ActionButtonStyle(size: .small))
+        }
+        .padding(20)
+    }
 }
 
 #if DEBUG

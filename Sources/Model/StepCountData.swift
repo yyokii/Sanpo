@@ -2,9 +2,12 @@ import Combine
 import Foundation
 import HealthKit
 import os.log
+import WidgetKit
+
+import Extension
 
 /**
- The data provider that loads StepCount data
+ The data provider that continuously loads StepCount data
  */
 @MainActor
 public class StepCountData: ObservableObject {
@@ -12,17 +15,12 @@ public class StepCountData: ObservableObject {
 
     @Published public var todayStepCount: StepCount?
 
-    public enum Phase {
-        case waiting
-        case success
-        case failure(Error?)
-    }
-    @Published public var phase: Phase = .waiting
-
     private var updateStepCountTimer: Timer?
 
     public init() {
-        loadTodayStepCount()
+        Task.detached {
+            await self.loadTodayStepCount()
+        }
         updateStepCountTimer = Timer.scheduledTimer(
             timeInterval: 60.0,
             target: self,
@@ -33,14 +31,14 @@ public class StepCountData: ObservableObject {
     }
 
     @objc func fireUpdateStepCountTimer() {
-        loadTodayStepCount()
+        Task.detached {
+            await self.loadTodayStepCount()
+        }
     }
 
-    private func loadTodayStepCount() {
-        Task.detached { @MainActor in
-            let todayData = await StepCount.today()
-            self.todayStepCount = todayData
-            self.phase = .success
-        }
+    public func loadTodayStepCount() async {
+        let todayData = await StepCount.load(for: Date())
+        todayStepCount = todayData
+        WidgetCenter.shared.reloadAllTimelines()
     }
 }

@@ -8,64 +8,64 @@ import Extension
 /**
  Data Objects
 
- Distance of walking and running data for a specific day
+ Walking speed data for a specific day
  */
-public struct DistanceWalkingRunning: Codable {
+public struct WalkingSpeed: Codable {
     private static let logger = Logger(category: .model)
 
     public let date: Date
-    public let distance: Int
+    public let speed: Float
 
     public init (
         date: Date,
-        distance: Int
+        speed: Float
     ) {
         self.date = date
-        self.distance = distance
+        self.speed = speed
     }
 }
 
-extension DistanceWalkingRunning {
-    public static let noData: DistanceWalkingRunning = .init(date: Date(), distance: 0)
+extension WalkingSpeed {
+    public static let noData: WalkingSpeed = .init(date: Date(), speed: 0)
 
-    public static func today() async -> DistanceWalkingRunning {
+    public static func load(for date: Date) async -> WalkingSpeed {
         if HKHealthStore.isHealthDataAvailable() {
-            let stepsQuantityType = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
+            let walkingSpeedQuantityType = HKQuantityType.quantityType(forIdentifier: .walkingSpeed)!
 
-            let now = Date()
-            let startOfDay = Calendar.current.startOfDay(for: now)
+            let startOfDay = Calendar.current.startOfDay(for: date)
+            let endOfDay = Calendar.current.endOfDay(for: date)
             let predicate = HKQuery.predicateForSamples(
                 withStart: startOfDay,
-                end: now,
+                end: endOfDay,
                 options: .strictStartDate
             )
 
             return await withCheckedContinuation { continuation in
                 let query = HKStatisticsQuery(
-                    quantityType: stepsQuantityType,
+                    quantityType: walkingSpeedQuantityType,
                     quantitySamplePredicate: predicate,
-                    options: .cumulativeSum
+                    options: .discreteAverage
                 ) { _, statistics, error in
 
                     if let error = error {
                         logger.debug("\(error.localizedDescription)")
-                        continuation.resume(returning: DistanceWalkingRunning.noData)
+                        continuation.resume(returning: WalkingSpeed.noData)
                         return
                     }
 
-                    guard let statistics = statistics, let sum = statistics.sumQuantity() else {
-                        continuation.resume(returning: DistanceWalkingRunning.noData)
+                    guard let statistics = statistics, let sum = statistics.averageQuantity() else {
+                        continuation.resume(returning: WalkingSpeed.noData)
                         return
                     }
 
-                    let distance: Int = Int(
-                        truncating: (sum.doubleValue(for: .meter())) as NSNumber
+                    let speed: Float = Float(
+                        truncating: (sum.doubleValue(for: .meter().unitDivided(by: HKUnit.second()))) as NSNumber
                     )
 
                     continuation.resume(returning:
                             .init(
-                                date: now,
-                                distance: distance
+                                date: startOfDay,
+                                speed: speed
                             )
                     )
                 }
