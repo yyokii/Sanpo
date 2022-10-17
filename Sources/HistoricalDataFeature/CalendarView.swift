@@ -95,7 +95,6 @@ extension CalendarView {
         }
 
         func dateSelection(_ selection: UICalendarSelectionSingleDate, didSelectDate dateComponents: DateComponents?) {
-            print("📝 didSelectDate")
             if let date = dateComponents?.date {
                 parent.selectDateAction(date)
             }
