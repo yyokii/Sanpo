@@ -4,11 +4,13 @@ import os.log
 
 import Extension
 
+@MainActor
 public class HealthKitAuthService: NSObject, ObservableObject {
     private let logger = Logger(category: .service)
 
     static public let shared = HealthKitAuthService()
 
+    @Published public var isAuthRequestSuccess: Bool = false
     @Published public var authStatus: HKAuthorizationRequestStatus?
 
     let readTypes = Set(
@@ -22,6 +24,7 @@ public class HealthKitAuthService: NSObject, ObservableObject {
 
     override private init() {
         super.init()
+        loadAuthorization()
     }
 
     public func loadAuthorization() {
@@ -31,11 +34,21 @@ public class HealthKitAuthService: NSObject, ObservableObject {
                 self.logger.debug("\(error.localizedDescription)")
             }
 
-            self.authStatus = status
+            Task.detached { @MainActor in
+                self.authStatus = status
+            }
         }
     }
 
-    public func requestAuthorization() async {
-        try? await HKHealthStore.shared.requestAuthorization(toShare: [], read: self.readTypes)
+    public func requestAuthorization() {
+        HKHealthStore.shared.requestAuthorization(toShare: [], read: readTypes) { success, error in
+            if let error {
+                self.logger.debug("\(error.localizedDescription)")
+            }
+
+            Task.detached { @MainActor in
+                self.isAuthRequestSuccess = success
+            }
+        }
     }
 }

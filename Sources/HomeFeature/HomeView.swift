@@ -24,18 +24,7 @@ public struct HomeView: View {
 
     private var cancellables = Set<AnyCancellable>()
 
-    public init() {
-        HealthKitAuthService.shared.$authStatus
-            .sink { status in
-                if let status,
-                   status == .shouldRequest {
-                    Task.detached { @MainActor in
-                        HealthKitAuthService.shared.requestAuthorization
-                    }
-                }
-            }
-            .store(in: &cancellables)
-    }
+    public init() {}
 
     public var body: some View {
         VStack {
@@ -74,6 +63,20 @@ public struct HomeView: View {
         .onAppear {
             inputGoal = dailyTargetSteps
             weatherData.requestLocationAuth()
+        }
+        .onReceive(HealthKitAuthService.shared.$authStatus) { status in
+            if let status,
+               status == .unknown ||
+               status == .shouldRequest {
+                HealthKitAuthService.shared.requestAuthorization()
+            }
+        }
+        .onReceive(HealthKitAuthService.shared.$isAuthRequestSuccess) { success in
+            if success {
+                Task.detached {
+                    await stepCountData.loadTodayStepCount()
+                }
+            }
         }
         .sheet(isPresented: $showGoalSetting) {
             goalSettingView()
