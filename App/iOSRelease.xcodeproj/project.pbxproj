@@ -401,9 +401,9 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iOS/iOS-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Sanpo;
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "ウォーキングに関する情報を取得するために利用致します";
-				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "このアプリはデータの書き込みは行いません";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "天気予報の取得のために利用致します";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "ウォーキングに関する情報を取得するために利用致します。";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "このアプリはデータの書き込みは行いません。";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "現在の位置情報を取得し、その場所の正確な天気予報を表示するために利用致します。";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -439,9 +439,9 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iOS/iOS-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Sanpo;
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "ウォーキングに関する情報を取得するために利用致します";
-				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "このアプリはデータの書き込みは行いません";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "天気予報の取得のために利用致します";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "ウォーキングに関する情報を取得するために利用致します。";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "このアプリはデータの書き込みは行いません。";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "現在の位置情報を取得し、その場所の正確な天気予報を表示するために利用致します。";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
