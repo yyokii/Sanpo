@@ -26,6 +26,7 @@ public class WeatherData: ObservableObject {
         locationService.$location
             .sink { location in
                 if let location = location {
+                    self.location = location
                     Task.detached(priority: .userInitiated) {
                         await self.loadHourlyForecast(for: location)
                     }
