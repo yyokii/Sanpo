@@ -1,11 +1,9 @@
 import XCTest
-@testable import Sanpo
+@testable import Model
 
 final class SanpoTests: XCTestCase {
     func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
-        XCTAssertEqual(Sanpo().text, "Hello, World!")
+        let stepCount = StepCount.noData
+        XCTAssertEqual(stepCount.number, 0)
     }
 }
