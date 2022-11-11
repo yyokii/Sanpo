@@ -22,4 +22,4 @@ jobs:
     - name: Show Xcode version
       run: xcodebuild -version
     - name: Build for simulator
-      run: xcodebuild -sdk iphonesimulator -configuration Debug build 
+      run: xcodebuild -sdk iphonesimulator -configuration Debug -workspace Sanpo.xcworkspace -scheme iOSDevelop build 
