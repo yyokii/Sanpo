@@ -23,3 +23,5 @@ jobs:
       run: xcodebuild -version
     - name: Build for simulator
       run: xcodebuild -sdk iphonesimulator -configuration Debug -workspace Sanpo.xcworkspace -scheme iOSDevelop build 
+    - name: Test
+      run: xcodebuild test -scheme SanpoTests -destination 'platform=iOS Simulator,OS=16.1,name=iPhone 14'
