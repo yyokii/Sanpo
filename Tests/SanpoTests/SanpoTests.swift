@@ -6,8 +6,4 @@ final class SanpoTests: XCTestCase {
         let stepCount = StepCount.noData
         XCTAssertEqual(stepCount.number, 0)
     }
-
-    func sample() {
-        
-    }
 }
