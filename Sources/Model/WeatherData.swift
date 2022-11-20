@@ -35,19 +35,6 @@ public class WeatherData: ObservableObject {
             .store(in: &cancellables)
     }
 
-    public func loadHourlyForecast(for location: CLLocation) async {
-        phase = .loading
-        let hourWeather = await Task.detached(priority: .userInitiated) {
-            let forecast = try? await self.service.weather(
-                for: location,
-                including: .hourly
-            )
-            return forecast
-        }.value
-        hourlyForecasts = hourWeather
-        phase = .success(Date())
-    }
-
     public func load() async {
         if let location {
             Task.detached(priority: .userInitiated) {
@@ -58,5 +45,18 @@ public class WeatherData: ObservableObject {
 
     public func requestLocationAuth() {
         locationService.requestWhenInUseAuthorization()
+    }
+
+    private func loadHourlyForecast(for location: CLLocation) async {
+        phase = .loading
+        let hourWeather = await Task.detached(priority: .userInitiated) {
+            let forecast = try? await self.service.weather(
+                for: location,
+                including: .hourly
+            )
+            return forecast
+        }.value
+        hourlyForecasts = hourWeather
+        phase = .success(Date())
     }
 }
