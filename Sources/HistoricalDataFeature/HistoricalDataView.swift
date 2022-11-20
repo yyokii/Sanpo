@@ -76,20 +76,16 @@ private extension HistoricalDataView {
 
     func load() {
         Task {
-            do {
-                let calendar = Calendar.current
-                // HealthKit is available from iOS 8(2014/9/17)
-                let startDate = DateComponents(year: 2014, month: 9, day: 1, hour: 0, minute: 0, second: 0)
-                let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+            let calendar = Calendar.current
+            // HealthKit is available from iOS 8(2014/9/17)
+            let startDate = DateComponents(year: 2014, month: 9, day: 1, hour: 0, minute: 0, second: 0)
+            let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
 
-                await _stepCounts.fetch {
-                    await StepCount.range(
-                        start: calendar.date(from: startDate)!,
-                        end: yesterday
-                    )
-                }
-            } catch {
-                logger.debug("\(error.localizedDescription)")
+            await _stepCounts.fetch {
+                await StepCount.range(
+                    start: calendar.date(from: startDate)!,
+                    end: yesterday
+                )
             }
         }
     }
