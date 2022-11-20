@@ -1,0 +1,10 @@
+@startuml
+skinparam componentStyle rectangle
+
+package "Sanpo"{
+    [View]  as v
+    [Model(Data Object, State Object, Service Object)]  as m
+
+    v -right-> m
+}
+@enduml
