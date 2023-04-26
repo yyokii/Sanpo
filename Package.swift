@@ -23,7 +23,7 @@ let package = Package(
             ]
         ),
         .library(
-            name: "Preview",
+            name: "Preview", // Package内の特定のtargetのプレビューを見る用に作成
             targets: [
                 "HomeFeature",
                 "SettingsFeature",

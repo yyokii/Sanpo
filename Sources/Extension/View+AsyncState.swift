@@ -33,6 +33,9 @@ public enum AsyncStatePhase {
 }
 
 public extension View {
+    /**
+     データの状態を`AsyncStatePhase`を用いて独自に管理している場合に利用できる、データ状態に対応して適当なViewを返すViewBuilder
+     */
     @ViewBuilder
     func asyncState<InitialContent: View,
                            LoadingContent: View,
@@ -57,6 +60,9 @@ public extension View {
         }
     }
 
+    /**
+     データの状態を`AsyncState` Property Wrapper を用いて管理している場合に利用できる、データ状態に対応して適当なViewを返すViewBuilder
+     */
     @ViewBuilder
     func asyncState<T: Codable,
                            InitialContent: View,
