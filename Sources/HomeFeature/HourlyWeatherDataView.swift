@@ -7,14 +7,11 @@ import StyleGuide
 public struct HourlyWeatherDataView: View {
     @Environment(\.colorScheme) private var colorScheme
 
-    @StateObject var weatherData = WeatherData()
-
     @State var weatherAttribution: WeatherAttribution?
-    private let weatherService = WeatherService()
-
     @State var showWeatherKitLegalLink = false
 
-    public init() {}
+    private let weatherService = WeatherService()
+    let hourlyForecasts: Forecast<HourWeather>?
 
     public var body: some View {
         ZStack(alignment: .leading) {
@@ -30,7 +27,7 @@ public struct HourlyWeatherDataView: View {
                 VStack(spacing: 16) {
                     weatherColumnTitle
 
-                    if let hourlyForecasts = weatherData.hourlyForecasts {
+                    if let hourlyForecasts {
                         ForEach(hourlyForecasts[0..<6], id: \.self.date) { forecast in
                             weatherDataRow(
                                 date: forecast.date,
@@ -67,7 +64,6 @@ public struct HourlyWeatherDataView: View {
             .padding(.vertical, 28)
             .padding(.horizontal, 18)
         }
-        .frame(height: 400)
         .task {
             weatherAttribution = try? await weatherService.attribution
         }

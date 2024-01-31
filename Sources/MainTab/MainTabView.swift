@@ -14,13 +14,15 @@ public struct MainTabView: View {
 
     public var body: some View {
         TabView(selection: $selectedItem) {
-            HomeView()
-                .tabItem {
-                    Image(systemName: "person.crop.circle")
-                    Text("Home")
+            NavigationView {
+                HomeView()
+            }
+            .tabItem {
+                Image(systemName: "person.crop.circle")
+                Text("Home")
 
-                }
-                .tag(TabItem.home)
+            }
+            .tag(TabItem.home)
 
             HistoricalDataView()
                 .tabItem {
