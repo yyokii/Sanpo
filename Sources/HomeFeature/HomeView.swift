@@ -22,8 +22,6 @@ public struct HomeView: View {
     @State private var inputGoal = 0
     @State private var showGoalSetting = false
 
-    private var cancellables = Set<AnyCancellable>()
-
     public init() {}
 
     public var body: some View {

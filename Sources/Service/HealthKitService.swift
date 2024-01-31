@@ -24,7 +24,11 @@ public class HealthKitAuthService: NSObject, ObservableObject {
 
     override private init() {
         super.init()
-        loadAuthorization()
+
+        // preview だとクラッシュするので設定
+        if !isPreview {
+            loadAuthorization()
+        }
     }
 
     public func loadAuthorization() {
