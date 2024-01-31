@@ -47,7 +47,7 @@ public struct HomeView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .adaptiveFont(.bold, size: 30)
 
-                        HourlyWeatherDataView()
+                        HourlyWeatherDataView(hourlyForecasts: weatherData.hourlyForecasts)
                             .asyncState(weatherData.phase)
                             .padding(.horizontal, 10)
                     }
