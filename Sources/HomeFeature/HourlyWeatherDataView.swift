@@ -64,7 +64,6 @@ public struct HourlyWeatherDataView: View {
             .padding(.vertical, 28)
             .padding(.horizontal, 18)
         }
-        .frame(height: 400)
         .task {
             weatherAttribution = try? await weatherService.attribution
         }

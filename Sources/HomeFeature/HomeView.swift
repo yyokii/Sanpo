@@ -26,24 +26,23 @@ public struct HomeView: View {
 
     public var body: some View {
         VStack {
-            header
-                .padding(.horizontal, 20)
             ScrollView {
-                VStack(spacing: 34) {
+                VStack(spacing: 32) {
                     VStack(alignment: .leading, spacing: 20) {
                         Text("今日のデータ")
-                            .adaptiveFont(.bold, size: 30)
+                            .adaptiveFont(.bold, size: 24)
 
                         todayGoalView
 
                         todayDataView
                             .padding(.horizontal, 10)
                     }
+                    .padding(.top, 32)
 
                     VStack(alignment: .center, spacing: 20) {
                         Text("天気")
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .adaptiveFont(.bold, size: 30)
+                            .adaptiveFont(.bold, size: 24)
 
                         HourlyWeatherDataView(hourlyForecasts: weatherData.hourlyForecasts)
                             .asyncState(weatherData.phase)
@@ -59,6 +58,7 @@ public struct HomeView: View {
             }
             .padding(.top, 4)
         }
+        .navigationTitle("Sanpo")
         .onAppear {
             inputGoal = dailyTargetSteps
             weatherData.requestLocationAuth()
@@ -85,20 +85,6 @@ public struct HomeView: View {
 }
 
 extension HomeView {
-    var header: some View {
-        HStack {
-            Image("logo", bundle: .module)
-                .resizable()
-                .frame(width: 50)
-                .adaptiveShadow(radius: 10)
-//            Spacer()
-//            Image(systemName: "gearshape")
-//                .resizable()
-//                .frame(width: 24, height: 24)
-        }
-        .frame(maxWidth: .infinity, maxHeight: 50)
-    }
-
     var todayDataView: some View {
         ZStack {
             Rectangle()
@@ -152,7 +138,9 @@ extension HomeView {
 
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
-        HomeView()
+        NavigationView {
+            HomeView()
+        }
     }
 }
 
