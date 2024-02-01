@@ -41,6 +41,10 @@ extension StepCount {
             let now = Date()
             let todayStart: Date = Calendar.current.startOfDay(for: now)
 
+            // HKSampleQuery を使用してその合計値を歩数のデータにすると、HealthStoreにはiPhoneとApple Watchが自動記録した歩数データが入っているため
+            // それら二つの歩数計データを足し合わせてしますことになる
+            // 従って、HKStatisticsCollectionQuery を使用する
+            // https://qiita.com/sato-shin/items/a1b6026359d340afe91b#o-hkstatisticsquery--hkstatisticscollectionquery-%E3%81%A7%E5%8F%96%E5%BE%97%E3%81%99%E3%82%8B
             let query = HKStatisticsCollectionQuery(
                 quantityType: type,
                 quantitySamplePredicate: predicate,

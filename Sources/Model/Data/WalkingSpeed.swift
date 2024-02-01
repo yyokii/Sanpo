@@ -53,13 +53,14 @@ extension WalkingSpeed {
                         return
                     }
 
-                    guard let statistics = statistics, let sum = statistics.averageQuantity() else {
+                    guard let statistics,
+                          let average = statistics.averageQuantity() else {
                         continuation.resume(returning: WalkingSpeed.noData)
                         return
                     }
 
                     let speed: Float = Float(
-                        truncating: (sum.doubleValue(for: .meter().unitDivided(by: HKUnit.second()))) as NSNumber
+                        truncating: (average.doubleValue(for: .meter().unitDivided(by: HKUnit.second()))) as NSNumber
                     )
 
                     continuation.resume(returning:
