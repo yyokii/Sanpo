@@ -2,12 +2,15 @@ import SwiftUI
 
 import HistoricalDataFeature
 import HomeFeature
+import Model
 
 public struct MainTabView: View {
     enum TabItem {
         case home
         case historicalData
     }
+
+    @StateObject var weatherData = WeatherData()
     @State var selectedItem: TabItem = .home
 
     public init() {}
@@ -32,6 +35,7 @@ public struct MainTabView: View {
                 }
                 .tag(TabItem.historicalData)
         }
+        .environmentObject(weatherData)
     }
 }
 

@@ -16,6 +16,7 @@ public class WeatherData: ObservableObject {
 
     @Published public var phase: AsyncStatePhase = .initial
     @Published public var hourlyForecasts: Forecast<HourWeather>?
+    @Published public var todayForecast: DayWeather?
     private var location: CLLocation?
 
     private let service = WeatherService.shared
@@ -28,7 +29,7 @@ public class WeatherData: ObservableObject {
                 if let location = location {
                     self.location = location
                     Task.detached(priority: .userInitiated) {
-                        await self.loadHourlyForecast(for: location)
+                        await self.load()
                     }
                 }
             }
@@ -37,8 +38,15 @@ public class WeatherData: ObservableObject {
 
     public func load() async {
         if let location {
-            Task.detached(priority: .userInitiated) {
-                await self.loadHourlyForecast(for: location)
+            await withTaskGroup(of: Void.self) { group in
+                group.addTask(priority: .userInitiated) {
+                    await self.loadHourlyForecast(for: location)
+                }
+                group.addTask(priority: .userInitiated) {
+                    await self.loadTodayForecast(for: location)
+                }
+                for await _ in group {}
+                phase = .success(Date())
             }
         }
     }
@@ -49,14 +57,24 @@ public class WeatherData: ObservableObject {
 
     private func loadHourlyForecast(for location: CLLocation) async {
         phase = .loading
-        let hourWeather = await Task.detached(priority: .userInitiated) {
+        hourlyForecasts = await Task.detached(priority: .userInitiated) {
             let forecast = try? await self.service.weather(
                 for: location,
                 including: .hourly
             )
             return forecast
         }.value
-        hourlyForecasts = hourWeather
-        phase = .success(Date())
+    }
+
+    private func loadTodayForecast(for location: CLLocation) async {
+        phase = .loading
+        let dayForecasts = await Task.detached(priority: .userInitiated) {
+            let forecast = try? await self.service.weather(
+                for: location,
+                including: .daily
+            )
+            return forecast
+        }.value
+        todayForecast = dayForecasts?.forecast[0]
     }
 }

@@ -15,9 +15,10 @@ public struct HomeView: View {
     )
     var dailyTargetSteps: Int = 0
 
+    @EnvironmentObject private var weatherData: WeatherData
+
     @StateObject var stepCountData = StepCountData()
     @StateObject var distanceData = DistanceData()
-    @StateObject var weatherData = WeatherData()
 
     @State private var inputGoal = 0
     @State private var showGoalSetting = false
@@ -29,7 +30,7 @@ public struct HomeView: View {
             ScrollView {
                 VStack(spacing: 32) {
                     VStack(alignment: .leading, spacing: 20) {
-                        Text("今日のデータ")
+                        Text("データ")
                             .adaptiveFont(.bold, size: 24)
 
                         todayGoalView
@@ -44,9 +45,19 @@ public struct HomeView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .adaptiveFont(.bold, size: 24)
 
-                        HourlyWeatherDataView(hourlyForecasts: weatherData.hourlyForecasts)
-                            .asyncState(weatherData.phase)
-                            .padding(.horizontal, 10)
+                        VStack(alignment: .center, spacing: 16) {
+                            if let todayForecast = weatherData.todayForecast,
+                               let mainSunEvents: SunEventsView.MainSunEvents = .init(from: todayForecast.sun) {
+                                SunEventsView(
+                                    now: Date(),
+                                    sunEvents: mainSunEvents
+                                )
+                            }
+
+                            HourlyWeatherDataView(hourlyForecasts: weatherData.hourlyForecasts)
+                        }
+                        .asyncState(weatherData.phase)
+                        .padding(.horizontal, 10)
                     }
                 }
                 .padding(.horizontal, 20)
@@ -141,6 +152,7 @@ struct HomeView_Previews: PreviewProvider {
         NavigationView {
             HomeView()
         }
+        .environmentObject(WeatherData())
     }
 }
 
