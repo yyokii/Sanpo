@@ -37,7 +37,7 @@ struct SunEventsView: View {
             HStack(alignment: .center, spacing: 0) {
                 bottomText("日の出")
                 Spacer(minLength: 8)
-                bottomText("日の入り")
+                bottomText("深夜")
             }
             .frame(maxWidth: .infinity)
         }
@@ -51,17 +51,21 @@ extension SunEventsView {
         var solarNoon: Date
         var sunset: Date
         var astronomicalDusk: Date
+        var solarMidnight: Date
 
         private var totalDuration: TimeInterval {
-            astronomicalDusk.timeIntervalSince(astronomicalDawn)
+            solarMidnight.timeIntervalSince(astronomicalDawn)
         }
 
         init?(from sunEvents: SunEvents) {
+            print(sunEvents)
+            // できれば nil を許容した表示にもしたい
             guard let astronomicalDawn = sunEvents.astronomicalDawn,
                   let sunrise = sunEvents.sunrise,
                   let solarNoon = sunEvents.solarNoon,
                   let sunset = sunEvents.sunset,
-                  let astronomicalDusk = sunEvents.astronomicalDusk else {
+                  let astronomicalDusk = sunEvents.astronomicalDusk,
+                  let solarMidnight = sunEvents.solarMidnight else {
                 return nil
             }
 
@@ -70,6 +74,7 @@ extension SunEventsView {
             self.solarNoon = solarNoon
             self.sunset = sunset
             self.astronomicalDusk = astronomicalDusk
+            self.solarMidnight = solarMidnight
         }
 
         func location(of keyPath: KeyPath<MainSunEvents, Date>) -> Double {
@@ -85,17 +90,19 @@ extension SunEventsView {
 
 private extension SunEventsView {
     func createGradient() -> Gradient {
-        let totalDuration = sunEvents.astronomicalDusk.timeIntervalSince(sunEvents.astronomicalDawn)
-        let sunriseLocation = sunEvents.sunrise.timeIntervalSince(sunEvents.astronomicalDawn) / totalDuration
-        let solarNoonLocation = sunEvents.solarNoon.timeIntervalSince(sunEvents.astronomicalDawn) / totalDuration
-        let sunsetLocation = sunEvents.sunset.timeIntervalSince(sunEvents.astronomicalDawn) / totalDuration
+
+        print(CGFloat(sunEvents.location(of: \.sunrise)))
+        print(CGFloat(sunEvents.location(of: \.solarNoon)))
+        print(CGFloat(sunEvents.location(of: \.sunset)))
+        print(CGFloat(sunEvents.location(of: \.astronomicalDusk)))
 
         return Gradient(stops: [
-            .init(color: Color.hex(0xBDD5EA), location: 0),
-            .init(color: Color.hex(0xFFA07A), location: CGFloat(sunriseLocation)),
-            .init(color: Color.hex(0xFF8C00), location: CGFloat(solarNoonLocation)),
-            .init(color: Color.hex(0x6A5ACD), location: CGFloat(sunsetLocation)),
-            .init(color: Color.hex(0x191970), location: 1)
+            .init(color: Color.hex(0xE0F7FA), location: 0),
+            .init(color: Color.hex(0xFFECB3), location: CGFloat(sunEvents.location(of: \.sunrise))),
+            .init(color: Color.hex(0xFFF9C4), location: CGFloat(sunEvents.location(of: \.solarNoon))),
+            .init(color: Color.hex(0xFFAB91), location: CGFloat(sunEvents.location(of: \.sunset))),
+            .init(color: Color.hex(0xB39DDB), location: CGFloat(sunEvents.location(of: \.astronomicalDusk))),
+            .init(color: Color.hex(0x9FA8DA), location: 1)
         ])
     }
 
@@ -160,13 +167,15 @@ extension SunEventsView.MainSunEvents {
         sunrise: Date,
         solarNoon: Date,
         sunset: Date,
-        astronomicalDusk: Date
+        astronomicalDusk: Date,
+        solarMidnight: Date
     ) {
         self.astronomicalDawn = astronomicalDawn
         self.sunrise = sunrise
         self.solarNoon = solarNoon
         self.sunset = sunset
         self.astronomicalDusk = astronomicalDusk
+        self.solarMidnight = solarMidnight
     }
 
     static var previewValue: Self {
@@ -180,7 +189,7 @@ extension SunEventsView.MainSunEvents {
         calendar.timeZone = timeZone
 
         // 時刻を設定（5:00, 6:30, 12:00, 17:00, 19:00）
-        let times = [(5, 0), (6, 30), (12, 0), (17, 0), (19, 0)]
+        let times = [(5, 0), (6, 30), (12, 0), (17, 0), (19, 0), (24, 0)]
 
         let dates = times.map { (hour, minute) -> Date in
             var dateComponents = DateComponents()
@@ -197,7 +206,8 @@ extension SunEventsView.MainSunEvents {
             sunrise: dates[1],
             solarNoon: dates[2],
             sunset: dates[3],
-            astronomicalDusk: dates[4]
+            astronomicalDusk: dates[4],
+            solarMidnight: dates[5]
         )
     }
 }
