@@ -2,9 +2,11 @@ import SwiftUI
 import WeatherKit
 
 import Model
+import Service
 
 struct SunEventsView: View {
     @State private var width: CGFloat = 0
+    @StateObject private var locationService = LocationService.shared
 
     let now: Date
     let sunEvents: MainSunEvents
@@ -12,6 +14,12 @@ struct SunEventsView: View {
 
     var body: some View {
         VStack(alignment: .center, spacing: 8) {
+            HStack(alignment: .center, spacing: 0) {
+                badgeText("日の出")
+                Spacer(minLength: 8)
+                badgeText("日の入り")
+            }
+            .frame(maxWidth: .infinity)
             ZStack(alignment: .leading) {
                 RoundedRectangle(cornerRadius: 24)
                     .fill(
@@ -31,15 +39,13 @@ struct SunEventsView: View {
                     .onPreferenceChange(ContentWidthPreferenceKey.self) {
                         width = $0
                     }
-
                 currentMark
             }
-            HStack(alignment: .center, spacing: 0) {
-                bottomText("日の出")
-                Spacer(minLength: 8)
-                bottomText("深夜")
+
+            if let bottomText {
+                Text(bottomText)
+                    .adaptiveFont(.normal, size: 24)
             }
-            .frame(maxWidth: .infinity)
         }
     }
 }
@@ -51,21 +57,22 @@ extension SunEventsView {
         var solarNoon: Date
         var sunset: Date
         var astronomicalDusk: Date
-        var solarMidnight: Date
 
         private var totalDuration: TimeInterval {
-            solarMidnight.timeIntervalSince(astronomicalDawn)
+            astronomicalDusk.timeIntervalSince(astronomicalDawn)
         }
 
+        // SunEventsのそれぞれのDateは必ずしも順番にはなっていない
+        // 例えばastronomicalDuskが2024-02-17 10:15:43 +0000だったとしても
+        // solarMidnightが2024-02-16 14:09:39 +0000となることもある
+        // 現状の実装は順番になる前提であるので、ちゃんとやるならその辺りも考慮したほうが良い
         init?(from sunEvents: SunEvents) {
-            print(sunEvents)
             // できれば nil を許容した表示にもしたい
             guard let astronomicalDawn = sunEvents.astronomicalDawn,
                   let sunrise = sunEvents.sunrise,
                   let solarNoon = sunEvents.solarNoon,
                   let sunset = sunEvents.sunset,
-                  let astronomicalDusk = sunEvents.astronomicalDusk,
-                  let solarMidnight = sunEvents.solarMidnight else {
+                  let astronomicalDusk = sunEvents.astronomicalDusk else {
                 return nil
             }
 
@@ -74,7 +81,6 @@ extension SunEventsView {
             self.solarNoon = solarNoon
             self.sunset = sunset
             self.astronomicalDusk = astronomicalDusk
-            self.solarMidnight = solarMidnight
         }
 
         func location(of keyPath: KeyPath<MainSunEvents, Date>) -> Double {
@@ -90,12 +96,6 @@ extension SunEventsView {
 
 private extension SunEventsView {
     func createGradient() -> Gradient {
-
-        print(CGFloat(sunEvents.location(of: \.sunrise)))
-        print(CGFloat(sunEvents.location(of: \.solarNoon)))
-        print(CGFloat(sunEvents.location(of: \.sunset)))
-        print(CGFloat(sunEvents.location(of: \.astronomicalDusk)))
-
         return Gradient(stops: [
             .init(color: Color.hex(0xE0F7FA), location: 0),
             .init(color: Color.hex(0xFFECB3), location: CGFloat(sunEvents.location(of: \.sunrise))),
@@ -140,16 +140,35 @@ private extension SunEventsView {
         }
     }
 
-    func bottomText(_ text: String) -> some View {
+    func badgeText(_ text: String) -> some View {
         Text(text)
-            .adaptiveFont(.normal, size: 12)
+            .adaptiveFont(.normal, size: 8)
             .foregroundStyle(Color.adaptiveWhite)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 6)
             .background {
                 Capsule()
                     .fill(Color.adaptiveBlack)
             }
+    }
+
+    var bottomText: String? {
+        let remainingTimeForDawn = Int(sunEvents.astronomicalDawn.timeIntervalSince(now))
+        let remainingTimeForDusk = Int(sunEvents.astronomicalDusk.timeIntervalSince(now))
+
+        if now < sunEvents.astronomicalDawn && remainingTimeForDawn <= 3600 * 3 {
+            // 日の出まで3時間以内
+            let hours = remainingTimeForDawn / 3600
+            let minutes = (remainingTimeForDawn % 3600) / 60
+            return "日の出まであと\(hours):\(minutes)"
+        } else if now < sunEvents.astronomicalDusk && remainingTimeForDawn <= 3600 * 3 {
+            // 日の入りまで3時間以内
+            let hours = remainingTimeForDusk / 3600
+            let minutes = (remainingTimeForDusk % 3600) / 60
+            return "日の入りまであと\(hours):\(minutes)"
+        } else {
+            return nil
+        }
     }
 }
 
@@ -167,15 +186,13 @@ extension SunEventsView.MainSunEvents {
         sunrise: Date,
         solarNoon: Date,
         sunset: Date,
-        astronomicalDusk: Date,
-        solarMidnight: Date
+        astronomicalDusk: Date
     ) {
         self.astronomicalDawn = astronomicalDawn
         self.sunrise = sunrise
         self.solarNoon = solarNoon
         self.sunset = sunset
         self.astronomicalDusk = astronomicalDusk
-        self.solarMidnight = solarMidnight
     }
 
     static var previewValue: Self {
@@ -206,8 +223,7 @@ extension SunEventsView.MainSunEvents {
             sunrise: dates[1],
             solarNoon: dates[2],
             sunset: dates[3],
-            astronomicalDusk: dates[4],
-            solarMidnight: dates[5]
+            astronomicalDusk: dates[4]
         )
     }
 }
