@@ -8,64 +8,65 @@ import Extension
 /**
  Data Objects
 
- Distance of walking and running data（歩いた/走った距離） for a specific day
+ Active energy burned data（活動エネルギー消費量） for a specific day
  */
-public struct DistanceWalkingRunning: Codable {
+public struct ActiveEnergyBurned: Codable {
     private static let logger = Logger(category: .model)
 
     public let date: Date
-    public let distance: Int
+    public let energy: Float
 
     public init (
         date: Date,
-        distance: Int
+        energy: Float
     ) {
         self.date = date
-        self.distance = distance
+        self.energy = energy
     }
 }
 
-extension DistanceWalkingRunning {
-    public static let noData: DistanceWalkingRunning = .init(date: Date(), distance: 0)
+extension ActiveEnergyBurned {
+    public static let noData: ActiveEnergyBurned = .init(date: Date(), energy: 0)
 
-    public static func today() async -> DistanceWalkingRunning {
+    public static func load(for date: Date) async -> ActiveEnergyBurned {
         if HKHealthStore.isHealthDataAvailable() {
-            let stepsQuantityType = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
+            let walkingSpeedQuantityType = HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned)!
 
-            let now = Date()
-            let startOfDay = Calendar.current.startOfDay(for: now)
+            let startOfDay = Calendar.current.startOfDay(for: date)
+            let endOfDay = Calendar.current.endOfDay(for: date)
             let predicate = HKQuery.predicateForSamples(
                 withStart: startOfDay,
-                end: now,
+                end: endOfDay,
                 options: .strictStartDate
             )
 
             return await withCheckedContinuation { continuation in
                 let query = HKStatisticsQuery(
-                    quantityType: stepsQuantityType,
+                    quantityType: walkingSpeedQuantityType,
                     quantitySamplePredicate: predicate,
                     options: .cumulativeSum
                 ) { _, statistics, error in
 
                     if let error = error {
                         logger.debug("\(error.localizedDescription)")
-                        continuation.resume(returning: DistanceWalkingRunning.noData)
+                        continuation.resume(returning: ActiveEnergyBurned.noData)
                         return
                     }
 
-                    guard let statistics = statistics, let sum = statistics.sumQuantity() else {
-                        continuation.resume(returning: DistanceWalkingRunning.noData)
+                    guard let statistics,
+                          let sum = statistics.sumQuantity() else {
+                        continuation.resume(returning: ActiveEnergyBurned.noData)
                         return
                     }
 
-                    let distance: Int = Int(
-                        truncating: (sum.doubleValue(for: .meter())) as NSNumber
+                    let energy: Float = Float(
+                        truncating: (sum.doubleValue(for: .kilocalorie())) as NSNumber
                     )
 
                     continuation.resume(returning:
                             .init(
-                                date: now,
-                                distance: distance
+                                date: startOfDay,
+                                energy: energy
                             )
                     )
                 }

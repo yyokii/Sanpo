@@ -8,7 +8,7 @@ import Extension
 /**
  Data Objects
 
- Walking speed data for a specific day
+ Walking speed data（歩くスピード） for a specific day
  */
 public struct WalkingSpeed: Codable {
     private static let logger = Logger(category: .model)

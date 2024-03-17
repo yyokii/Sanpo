@@ -15,6 +15,7 @@ public class HealthKitAuthService: NSObject, ObservableObject {
 
     let readTypes = Set(
         [
+            HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned)!,
             HKQuantityType.quantityType(forIdentifier: .stepCount)!,
             HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!,
             HKQuantityType.quantityType(forIdentifier: .walkingSpeed)!,

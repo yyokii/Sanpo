@@ -13,7 +13,13 @@ public struct HomeView: View {
         UserDefaultsKey.dailyTargetSteps.rawValue,
         store: UserDefaults.app
     )
-    var dailyTargetSteps: Int = 0
+    var dailyTargetSteps: Int = 3000
+
+    @AppStorage(
+        UserDefaultsKey.dailyTargetActiveEnergyBurned.rawValue,
+        store: UserDefaults.app
+    )
+    var dailyTargetActiveEnergyBurned: Int = 2000
 
     @EnvironmentObject private var weatherData: WeatherData
 
@@ -33,12 +39,21 @@ public struct HomeView: View {
                         Text("データ")
                             .adaptiveFont(.bold, size: 24)
 
-                        todayGoalView
-
                         todayDataView
                             .padding(.horizontal, 10)
                     }
-                    .padding(.top, 32)
+                    .padding(.top, 20)
+
+                    VStack(alignment: .leading, spacing: 20) {
+                        Text("目標")
+                            .adaptiveFont(.bold, size: 24)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+
+                        HStack(alignment: .center, spacing: 16) {
+                            GoalView(title: "歩数", value: dailyTargetSteps, unitText: "歩", goal: dailyTargetSteps)
+                            GoalView(title: "活動エネルギー量", value: dailyTargetActiveEnergyBurned, unitText: "kcal", goal: dailyTargetActiveEnergyBurned)
+                        }
+                    }
 
                     VStack(alignment: .center, spacing: 20) {
                         Text("天気")
@@ -67,7 +82,6 @@ public struct HomeView: View {
                 await weatherData.load()
                 await stepCountData.loadTodayStepCount()
             }
-            .padding(.top, 4)
         }
         .navigationTitle("Sanpo")
         .onAppear {
@@ -97,36 +111,29 @@ public struct HomeView: View {
 
 extension HomeView {
     var todayDataView: some View {
-        ZStack {
-            Rectangle()
-                .fill(Color.adaptiveWhite)
-                .cornerRadius(20)
-                .adaptiveShadow()
-
-            VStack(spacing: 8) {
-                Text("\(stepCountData.todayStepCount?.number ?? 0)歩")
-                    .adaptiveFont(.bold, size: 42)
-
-                Text("距離: \(distanceData.todayDistance?.distance ?? 0)m")
-                    .adaptiveFont(.normal, size: 16)
+        ZStack(alignment: .topLeading) {
+            HStack(alignment: .center, spacing: 0) {
+                VStack(spacing: 8) {
+                    Text("\(stepCountData.todayStepCount?.number ?? 0)歩")
+                        .adaptiveFont(.bold, size: 42)
+                    Text("距離: \(distanceData.todayDistance?.distance ?? 0)m")
+                        .adaptiveFont(.normal, size: 16)
+                }
             }
-        }
-        .frame(height: 130)
-    }
-
-    var todayGoalView: some View {
-        Button {
-            showGoalSetting = true
-        } label: {
-            HStack(alignment: .center) {
-                Text("目標: \(dailyTargetSteps)歩")
-                    .adaptiveFont(.normal, size: 16)
-
-                Image(systemName: "square.and.pencil")
-                    .padding(.bottom, 2)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 20)
+            .padding(.horizontal, 24)
+            .background {
+                Rectangle()
+                    .fill(Color.adaptiveWhite)
+                    .cornerRadius(20)
+                    .adaptiveShadow()
             }
+
+            RoundedIcon(symbolName: "figure.walk", iconColor: .hex(0xd65336))
+                .padding(.top, 12)
+                .padding(.leading, 12)
         }
-        .foregroundColor(.adaptiveBlack)
     }
 
     func goalSettingView() -> some View {

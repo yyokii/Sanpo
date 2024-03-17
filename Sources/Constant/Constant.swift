@@ -5,6 +5,9 @@ public enum UserDefaultsSuitName: String {
 }
 
 public enum UserDefaultsKey: String {
+    // 一日の目標値
+    case dailyTargetActiveEnergyBurned
     case dailyTargetSteps
+    
     case displayedStepCountDataInWidget
 }

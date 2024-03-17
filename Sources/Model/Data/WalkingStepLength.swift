@@ -8,7 +8,7 @@ import Extension
 /**
  Data Objects
 
- Walking speed length  data for a specific day
+ Walking speed length data（歩幅） for a specific day
  */
 public struct WalkingStepLength: Codable {
     private static let logger = Logger(category: .model)
