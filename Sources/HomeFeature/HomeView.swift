@@ -35,14 +35,9 @@ public struct HomeView: View {
         VStack {
             ScrollView {
                 VStack(spacing: 32) {
-                    VStack(alignment: .leading, spacing: 20) {
-                        Text("データ")
-                            .adaptiveFont(.bold, size: 24)
-
-                        todayDataView
-                            .padding(.horizontal, 10)
-                    }
-                    .padding(.top, 20)
+                    todayDataView
+                        .padding(.top, 20)
+                        .padding(.horizontal, 10)
 
                     VStack(alignment: .leading, spacing: 20) {
                         Text("目標")
