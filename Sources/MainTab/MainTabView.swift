@@ -5,37 +5,54 @@ import HomeFeature
 import Model
 
 public struct MainTabView: View {
-    enum TabItem {
-        case home
-        case historicalData
-    }
-
     @StateObject var weatherData = WeatherData()
-    @State var selectedItem: TabItem = .home
+    @State var selectedTab: TabItem = .home
 
     public init() {}
 
     public var body: some View {
-        TabView(selection: $selectedItem) {
-            NavigationView {
-                HomeView()
-            }
-            .tabItem {
-                Image(systemName: "person.crop.circle")
-                Text("Home")
-
-            }
-            .tag(TabItem.home)
-
-            HistoricalDataView()
-                .tabItem {
-                    Image(systemName: "clock")
-                    Text("Data")
-
+        ZStack(alignment: .bottom) {
+            switch selectedTab {
+            case .home:
+                NavigationStack {
+                    HomeView()
                 }
-                .tag(TabItem.historicalData)
+                .transition(.move(edge: .leading))
+            case .myPage:
+                NavigationStack {
+                    HistoricalDataView()
+                }
+                .transition(.move(edge: .trailing))
+            }
+
+            SegmentedTabItemView(selectedItem: $selectedTab)
+                .padding(.bottom, 12)
         }
         .environmentObject(weatherData)
+    }
+}
+
+extension MainTabView {
+    func tabItem(of item: TabItem) -> some View {
+        let isSelected = selectedTab == item
+        return Button {
+            withAnimation {
+                selectedTab = item
+            }
+        } label: {
+            HStack(alignment: .center, spacing: 4) {
+                Image(systemName: item.iconName)
+                    .font(.system(size: 16))
+                    .foregroundStyle( isSelected ? .black : .gray)
+                Text(item.title)
+                    .font(.system(size: 18))
+                    .foregroundStyle( isSelected ? .black : .gray)
+            }
+            .bold()
+            .padding(.horizontal, 12)
+            .padding(.vertical, 12)
+            .background(Capsule().fill(isSelected ? .white : .clear))
+        }
     }
 }
 
