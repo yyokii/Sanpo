@@ -26,6 +26,7 @@ public struct HomeView: View {
     @StateObject var stepCountData = StepCountData()
     @StateObject var distanceData = DistanceData()
 
+//    @State private var activeEnergyBurned: ActiveEnergyBurned = .noData // 定期的にloadする感じがいいかも
     @State private var inputGoal = 0
     @State private var showGoalSetting = false
 
@@ -45,8 +46,8 @@ public struct HomeView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
 
                         HStack(alignment: .center, spacing: 16) {
-                            GoalView(title: "歩数", value: dailyTargetSteps, unitText: "歩", goal: dailyTargetSteps)
-                            GoalView(title: "活動エネルギー量", value: dailyTargetActiveEnergyBurned, unitText: "kcal", goal: dailyTargetActiveEnergyBurned)
+                            GoalView(title: "歩数", value: stepCountData.todayStepCount?.number ?? 0, unitText: "歩", goal: dailyTargetSteps)
+//                            GoalView(title: "活動エネルギー量", value: activeEnergyBurned.energy, unitText: "kcal", goal: dailyTargetActiveEnergyBurned)
                         }
                     }
 
