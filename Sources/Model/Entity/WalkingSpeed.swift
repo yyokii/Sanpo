@@ -6,8 +6,6 @@ import Constant
 import Extension
 
 /**
- Data Objects
-
  Walking speed data（歩くスピード） for a specific day
  */
 public struct WalkingSpeed: Codable {

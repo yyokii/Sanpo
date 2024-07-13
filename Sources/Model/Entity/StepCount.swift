@@ -6,8 +6,6 @@ import Constant
 import Extension
 
 /**
- Data Objects
-
  Steps data for a specific day
  */
 public struct StepCount: Codable {

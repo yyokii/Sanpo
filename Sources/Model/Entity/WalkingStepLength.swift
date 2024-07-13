@@ -6,66 +6,63 @@ import Constant
 import Extension
 
 /**
- Data Objects
-
- Distance of walking and running data（歩いた/走った距離） for a specific day
+ Walking speed length data（歩幅） for a specific day
  */
-public struct DistanceWalkingRunning: Codable {
+public struct WalkingStepLength: Codable {
     private static let logger = Logger(category: .model)
 
     public let date: Date
-    public let distance: Int
+    public let length: Float
 
     public init (
         date: Date,
-        distance: Int
+        length: Float
     ) {
         self.date = date
-        self.distance = distance
+        self.length = length
     }
 }
 
-extension DistanceWalkingRunning {
-    public static let noData: DistanceWalkingRunning = .init(date: Date(), distance: 0)
+extension WalkingStepLength {
+    public static let noData: WalkingStepLength = .init(date: Date(), length: 0)
 
-    public static func today() async -> DistanceWalkingRunning {
+    public static func load(for date: Date) async -> WalkingStepLength {
         if HKHealthStore.isHealthDataAvailable() {
-            let stepsQuantityType = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
+            let walkingStepLengthQuantityType = HKQuantityType.quantityType(forIdentifier: .walkingStepLength)!
 
-            let now = Date()
-            let startOfDay = Calendar.current.startOfDay(for: now)
+            let startOfDay = Calendar.current.startOfDay(for: date)
+            let endOfDay = Calendar.current.endOfDay(for: date)
             let predicate = HKQuery.predicateForSamples(
                 withStart: startOfDay,
-                end: now,
+                end: endOfDay,
                 options: .strictStartDate
             )
 
             return await withCheckedContinuation { continuation in
                 let query = HKStatisticsQuery(
-                    quantityType: stepsQuantityType,
+                    quantityType: walkingStepLengthQuantityType,
                     quantitySamplePredicate: predicate,
-                    options: .cumulativeSum
+                    options: .discreteAverage
                 ) { _, statistics, error in
 
                     if let error = error {
                         logger.debug("\(error.localizedDescription)")
-                        continuation.resume(returning: DistanceWalkingRunning.noData)
+                        continuation.resume(returning: WalkingStepLength.noData)
                         return
                     }
 
-                    guard let statistics = statistics, let sum = statistics.sumQuantity() else {
-                        continuation.resume(returning: DistanceWalkingRunning.noData)
+                    guard let statistics = statistics, let sum = statistics.averageQuantity() else {
+                        continuation.resume(returning: WalkingStepLength.noData)
                         return
                     }
 
-                    let distance: Int = Int(
+                    let length: Float = Float(
                         truncating: (sum.doubleValue(for: .meter())) as NSNumber
                     )
-
                     continuation.resume(returning:
                             .init(
-                                date: now,
-                                distance: distance
+                                date: startOfDay,
+                                length: length
                             )
                     )
                 }

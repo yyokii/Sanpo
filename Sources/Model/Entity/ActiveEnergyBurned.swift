@@ -6,31 +6,29 @@ import Constant
 import Extension
 
 /**
- Data Objects
-
- Walking speed length data（歩幅） for a specific day
+ Active energy burned data（活動エネルギー消費量） for a specific day
  */
-public struct WalkingStepLength: Codable {
+public struct ActiveEnergyBurned: Codable {
     private static let logger = Logger(category: .model)
 
     public let date: Date
-    public let length: Float
+    public let energy: Float
 
     public init (
         date: Date,
-        length: Float
+        energy: Float
     ) {
         self.date = date
-        self.length = length
+        self.energy = energy
     }
 }
 
-extension WalkingStepLength {
-    public static let noData: WalkingStepLength = .init(date: Date(), length: 0)
+extension ActiveEnergyBurned {
+    public static let noData: ActiveEnergyBurned = .init(date: Date(), energy: 0)
 
-    public static func load(for date: Date) async -> WalkingStepLength {
+    public static func load(for date: Date) async -> ActiveEnergyBurned {
         if HKHealthStore.isHealthDataAvailable() {
-            let walkingStepLengthQuantityType = HKQuantityType.quantityType(forIdentifier: .walkingStepLength)!
+            let walkingSpeedQuantityType = HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned)!
 
             let startOfDay = Calendar.current.startOfDay(for: date)
             let endOfDay = Calendar.current.endOfDay(for: date)
@@ -42,29 +40,31 @@ extension WalkingStepLength {
 
             return await withCheckedContinuation { continuation in
                 let query = HKStatisticsQuery(
-                    quantityType: walkingStepLengthQuantityType,
+                    quantityType: walkingSpeedQuantityType,
                     quantitySamplePredicate: predicate,
-                    options: .discreteAverage
+                    options: .cumulativeSum
                 ) { _, statistics, error in
 
                     if let error = error {
                         logger.debug("\(error.localizedDescription)")
-                        continuation.resume(returning: WalkingStepLength.noData)
+                        continuation.resume(returning: ActiveEnergyBurned.noData)
                         return
                     }
 
-                    guard let statistics = statistics, let sum = statistics.averageQuantity() else {
-                        continuation.resume(returning: WalkingStepLength.noData)
+                    guard let statistics,
+                          let sum = statistics.sumQuantity() else {
+                        continuation.resume(returning: ActiveEnergyBurned.noData)
                         return
                     }
 
-                    let length: Float = Float(
-                        truncating: (sum.doubleValue(for: .meter())) as NSNumber
+                    let energy: Float = Float(
+                        truncating: (sum.doubleValue(for: .kilocalorie())) as NSNumber
                     )
+
                     continuation.resume(returning:
                             .init(
                                 date: startOfDay,
-                                length: length
+                                energy: energy
                             )
                     )
                 }
