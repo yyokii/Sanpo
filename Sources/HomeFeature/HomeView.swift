@@ -107,28 +107,64 @@ public struct HomeView: View {
 
 extension HomeView {
     var todayDataView: some View {
-        ZStack(alignment: .topLeading) {
-            HStack(alignment: .center, spacing: 0) {
-                VStack(spacing: 8) {
-                    Text("\(stepCountData.todayStepCount?.number ?? 0)歩")
+        VStack(alignment: .center, spacing: 16) {
+            HStack(alignment: .center, spacing: 8) {
+                Image(systemName: "figure.walk")
+                    .adaptiveFont(.bold, size: 16)
+                Text("Today")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .adaptiveFont(.bold, size: 16)
+            }
+            .padding(.horizontal, 16)
+
+            VStack(alignment: .center, spacing: 16) {
+                VStack(alignment: .center, spacing: 0) {
+                    Text("\(stepCountData.todayStepCount?.number ?? 0)")
                         .adaptiveFont(.bold, size: 42)
-                    Text("距離: \(distanceData.todayDistance?.distance ?? 0)m")
-                        .adaptiveFont(.normal, size: 16)
+                    Text("steps")
+                        .adaptiveFont(.normal, size: 12)
+                        .foregroundStyle(.gray)
+                }
+                Divider()
+                LazyVGrid(
+                    columns: Array(repeating: .init(.flexible(), spacing: 0, alignment: .top), count: 2),
+                    spacing: 24
+                ) {
+                    detailDataItem(
+                        title: "距離",
+                        value: distanceData.todayDistance?.distance ?? 0,
+                        unit: "m"
+                    )
+                    detailDataItem(
+                        title: "昨日",
+                        value: stepCountData.yesterdayStepCount?.number ?? 0,
+                        unit: "steps"
+                    )
                 }
             }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 20)
             .padding(.horizontal, 24)
-            .background {
-                Rectangle()
-                    .fill(Color.adaptiveWhite)
-                    .cornerRadius(20)
-                    .adaptiveShadow()
-            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.top, 12)
+        .padding(.bottom, 20)
+        .background {
+            Rectangle()
+                .fill(Color.adaptiveWhite)
+                .cornerRadius(20)
+                .adaptiveShadow()
+        }
+    }
 
-            RoundedIcon(symbolName: "figure.walk", iconColor: .hex(0xd65336))
-                .padding(.top, 12)
-                .padding(.leading, 12)
+    func detailDataItem(title: String, value: Int, unit: String) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title)
+                .adaptiveFont(.bold, size: 12)
+            HStack(alignment: .lastTextBaseline, spacing: 2) {
+                Text("\(value)")
+                    .adaptiveFont(.normal, size: 16)
+                Text(unit)
+                    .adaptiveFont(.normal, size: 12)
+            }
         }
     }
 
