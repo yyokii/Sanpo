@@ -4,7 +4,7 @@ import WeatherKit
 import Model
 import StyleGuide
 
-public struct HourlyWeatherDataView: View {
+public struct WeatherDataView: View {
     @State var weatherAttribution: WeatherAttribution?
     @State var showWeatherKitLegalLink = false
 
@@ -80,7 +80,7 @@ public struct HourlyWeatherDataView: View {
     }
 }
 
-extension HourlyWeatherDataView {
+private extension WeatherDataView {
     func currentWeatherItem(_ weather: CurrentWeather) -> some View {
         HStack(alignment: .center, spacing: 16) {
             VStack(alignment: .center, spacing: 4) {
@@ -194,7 +194,7 @@ extension HourlyWeatherDataView {
 #Preview {
     let now: Date = .now
 
-    return HourlyWeatherDataView(
+    return WeatherDataView(
         currentWeather: .init(
             date: now,
             symbolName: "sun.max",

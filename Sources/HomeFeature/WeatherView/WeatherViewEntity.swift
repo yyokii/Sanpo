@@ -1,7 +1,7 @@
 import Foundation
 import WeatherKit
 
-extension HourlyWeatherDataView {
+extension WeatherDataView {
     struct CurrentWeather {
         let date: Date
         let symbolName: String

@@ -42,7 +42,7 @@ public struct HomeView: View {
 //                            .adaptiveFont(.bold, size: 24)
                         todayDataView
                             .padding(.top, 20)
-                        HourlyWeatherDataView(
+                        WeatherDataView(
                             currentWeather: .init(from: weatherData.currentWeather),
                             hourlyForecasts: weatherData.hourlyForecasts?
                                 .forecast
