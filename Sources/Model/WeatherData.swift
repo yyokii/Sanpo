@@ -16,7 +16,7 @@ public class WeatherData: ObservableObject {
 
     @Published public var phase: AsyncStatePhase = .initial
     @Published public var hourlyForecasts: Forecast<HourWeather>?
-    @Published public var todayForecast: DayWeather?
+    @Published public var currentWeather: CurrentWeather?
     private var location: CLLocation?
 
     private let service = WeatherService.shared
@@ -28,7 +28,7 @@ public class WeatherData: ObservableObject {
             .sink { location in
                 if let location = location {
                     self.location = location
-                    Task.detached(priority: .userInitiated) {
+                    Task {
                         await self.load()
                     }
                 }
@@ -43,7 +43,7 @@ public class WeatherData: ObservableObject {
                     await self.loadHourlyForecast(for: location)
                 }
                 group.addTask(priority: .userInitiated) {
-                    await self.loadTodayForecast(for: location)
+                    await self.loadCurrentWeather(for: location)
                 }
                 for await _ in group {}
                 phase = .success(Date())
@@ -57,7 +57,7 @@ public class WeatherData: ObservableObject {
 
     private func loadHourlyForecast(for location: CLLocation) async {
         phase = .loading
-        hourlyForecasts = await Task.detached(priority: .userInitiated) {
+        hourlyForecasts = await Task {
             let forecast = try? await self.service.weather(
                 for: location,
                 including: .hourly
@@ -66,15 +66,15 @@ public class WeatherData: ObservableObject {
         }.value
     }
 
-    private func loadTodayForecast(for location: CLLocation) async {
+    private func loadCurrentWeather(for location: CLLocation) async {
         phase = .loading
-        let dayForecasts = await Task.detached(priority: .userInitiated) {
+        let currentWeather = await Task {
             let forecast = try? await self.service.weather(
                 for: location,
-                including: .daily
+                including: .current
             )
             return forecast
         }.value
-        todayForecast = dayForecasts?.forecast[0]
+        self.currentWeather = currentWeather
     }
 }

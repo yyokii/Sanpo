@@ -36,9 +36,21 @@ public struct HomeView: View {
         VStack {
             ScrollView {
                 VStack(spacing: 32) {
-                    todayDataView
-                        .padding(.top, 20)
-                        .padding(.horizontal, 10)
+                    VStack(alignment: .center, spacing: 20) {
+//                        Text("Today")
+//                            .frame(maxWidth: .infinity, alignment: .leading)
+//                            .adaptiveFont(.bold, size: 24)
+                        todayDataView
+                            .padding(.top, 20)
+                        HourlyWeatherDataView(
+                            currentWeather: .init(from: weatherData.currentWeather),
+                            hourlyForecasts: weatherData.hourlyForecasts?
+                                .forecast
+                                .compactMap { .init(from: $0)
+                            }
+                        )
+                        .asyncState(weatherData.phase)
+                    }
 
                     VStack(alignment: .leading, spacing: 20) {
                         Text("目標")
@@ -50,28 +62,8 @@ public struct HomeView: View {
 //                            GoalView(title: "活動エネルギー量", value: activeEnergyBurned.energy, unitText: "kcal", goal: dailyTargetActiveEnergyBurned)
                         }
                     }
-
-                    VStack(alignment: .center, spacing: 20) {
-                        Text("天気")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .adaptiveFont(.bold, size: 24)
-
-                        VStack(alignment: .center, spacing: 16) {
-                            if let todayForecast = weatherData.todayForecast,
-                               let mainSunEvents: SunEventsView.MainSunEvents = .init(from: todayForecast.sun) {
-                                SunEventsView(
-                                    now: Date(),
-                                    sunEvents: mainSunEvents
-                                )
-                            }
-
-                            HourlyWeatherDataView(hourlyForecasts: weatherData.hourlyForecasts)
-                        }
-                        .asyncState(weatherData.phase)
-                        .padding(.horizontal, 10)
-                    }
                 }
-                .padding(.horizontal, 20)
+                .padding(.horizontal, 24)
                 .padding(.bottom, 16)
             }
             .refreshable {

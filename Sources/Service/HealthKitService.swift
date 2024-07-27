@@ -8,7 +8,7 @@ import Extension
 public class HealthKitAuthService: NSObject, ObservableObject {
     private let logger = Logger(category: .service)
 
-    static public let shared = HealthKitAuthService()
+    static public let shared = HealthKitAuthService() // TODO: environmentでrootから流す方がpreviewもしやすくて良さそう。vmで使う想定もないし。
 
     @Published public var isAuthRequestSuccess: Bool = false
     @Published public var authStatus: HKAuthorizationRequestStatus?
