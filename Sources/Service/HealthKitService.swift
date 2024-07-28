@@ -6,12 +6,18 @@ import Extension
 
 @MainActor
 public class HealthKitAuthService: NSObject, ObservableObject {
-    private let logger = Logger(category: .service)
-
     static public let shared = HealthKitAuthService() // TODO: environmentでrootから流す方がpreviewもしやすくて良さそう。vmで使う想定もないし。
 
     @Published public var isAuthRequestSuccess: Bool = false
     @Published public var authStatus: HKAuthorizationRequestStatus?
+
+    private let logger = Logger(category: .service)
+
+    // The quantity type to write to the health store.
+    let typesToShare: Set = [
+        HKQuantityType.workoutType(),
+        HKSeriesType.workoutRoute()
+    ]
 
     let readTypes = Set(
         [
@@ -19,7 +25,9 @@ public class HealthKitAuthService: NSObject, ObservableObject {
             HKQuantityType.quantityType(forIdentifier: .stepCount)!,
             HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!,
             HKQuantityType.quantityType(forIdentifier: .walkingSpeed)!,
-            HKQuantityType.quantityType(forIdentifier: .walkingStepLength)!
+            HKQuantityType.quantityType(forIdentifier: .walkingStepLength)!,
+            HKQuantityType.workoutType(),
+            HKSeriesType.workoutRoute()
         ]
     )
 
@@ -34,7 +42,6 @@ public class HealthKitAuthService: NSObject, ObservableObject {
 
     public func loadAuthorization() {
         HKHealthStore.shared.getRequestStatusForAuthorization(toShare: [], read: readTypes) { status, error in
-
             if let error {
                 self.logger.debug("\(error.localizedDescription)")
             }
