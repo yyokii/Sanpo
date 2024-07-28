@@ -42,27 +42,11 @@ public struct HomeView: View {
                         todayDataView
                             .padding(.top, 20)
                         WeatherDataView(
-                            currentWeather: .init(from: weatherData.currentWeather),
-                            hourlyForecasts: weatherData.hourlyForecasts?
-                                .forecast
-                                .compactMap { .init(from: $0)
-                                }
+                            currentWeather: weatherData.currentWeather,
+                            hourlyForecasts: weatherData.hourlyForecasts
                         )
                         .asyncState(weatherData.phase)
                     }
-
-                    /*
-                     VStack(alignment: .leading, spacing: 20) {
-                     Text("目標")
-                     .adaptiveFont(.bold, size: 24)
-                     .frame(maxWidth: .infinity, alignment: .leading)
-
-                     HStack(alignment: .center, spacing: 16) {
-                     GoalView(title: "歩数", value: stepCountData.todayStepCount?.number ?? 0, unitText: "歩", goal: dailyTargetSteps)
-                     //                            GoalView(title: "活動エネルギー量", value: activeEnergyBurned.energy, unitText: "kcal", goal: dailyTargetActiveEnergyBurned)
-                     }
-                     }
-                     */
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 16)
@@ -191,7 +175,7 @@ struct HomeView_Previews: PreviewProvider {
         NavigationView {
             HomeView()
         }
-        .environmentObject(WeatherData())
+        .environmentObject(WeatherData.preview)
     }
 }
 

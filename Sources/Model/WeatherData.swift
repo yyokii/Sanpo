@@ -15,7 +15,7 @@ public class WeatherData: ObservableObject {
     let logger = Logger(category: .model)
 
     @Published public var phase: AsyncStatePhase = .initial
-    @Published public var hourlyForecasts: Forecast<HourWeather>?
+    @Published public var hourlyForecasts: [HourWeather]?
     @Published public var currentWeather: CurrentWeather?
     private var location: CLLocation?
 
@@ -35,6 +35,15 @@ public class WeatherData: ObservableObject {
             }
             .store(in: &cancellables)
     }
+
+//    public init(
+//        hourlyForecasts: [HourWeather],
+//        currentWeather: CurrentWeather
+//    ) {
+//        self.hourlyForecasts = hourlyForecasts
+//        self.currentWeather = currentWeather
+//        self.phase = .success(.now)
+//    }
 
     public func load() async {
         if let location {
@@ -61,8 +70,8 @@ public class WeatherData: ObservableObject {
             let forecast = try? await self.service.weather(
                 for: location,
                 including: .hourly
-            )
-            return forecast
+            ).forecast
+            return forecast?.compactMap { HourWeather.init(from: $0) }
         }.value
     }
 
@@ -75,6 +84,22 @@ public class WeatherData: ObservableObject {
             )
             return forecast
         }.value
-        self.currentWeather = currentWeather
+        self.currentWeather = .init(from: currentWeather)
     }
 }
+
+#if DEBUG
+extension WeatherData {
+    convenience init(
+        hourlyForecasts: [HourWeather],
+        currentWeather: CurrentWeather
+    ) {
+        self.init()
+        self.hourlyForecasts = hourlyForecasts
+        self.currentWeather = currentWeather
+        self.phase = .success(.now)
+    }
+
+    public static let preview: WeatherData = .init(hourlyForecasts: HourWeather.mock, currentWeather: .mock)
+}
+#endif

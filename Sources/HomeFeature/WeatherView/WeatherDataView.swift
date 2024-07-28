@@ -9,8 +9,8 @@ public struct WeatherDataView: View {
     @State var showWeatherKitLegalLink = false
 
     private let weatherService = WeatherService()
-    let currentWeather: CurrentWeather?
-    let hourlyForecasts: [HourWeather]?
+    let currentWeather: Model.CurrentWeather?
+    let hourlyForecasts: [Model.HourWeather]?
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -101,7 +101,7 @@ public struct WeatherDataView: View {
 }
 
 private extension WeatherDataView {
-    func currentWeatherItem(_ weather: CurrentWeather) -> some View {
+    func currentWeatherItem(_ weather: Model.CurrentWeather) -> some View {
         VStack(alignment: .center, spacing: 0) {
             VStack(alignment: .center, spacing: 4) {
                 Image(systemName: weather.symbolName)
@@ -174,7 +174,7 @@ private extension WeatherDataView {
         }
     }
 
-    func hourlyWeatherDataItem(_ item: HourWeather) -> some View {
+    func hourlyWeatherDataItem(_ item: Model.HourWeather) -> some View {
         VStack(alignment: .center, spacing: 16) {
             Text(item.date, format: Date.FormatStyle().hour(.defaultDigits(amPM: .abbreviated)))
                 .adaptiveFont(.normal, size: 12)
@@ -197,57 +197,27 @@ private extension WeatherDataView {
     }
 }
 
-#Preview {
-    let now: Date = .now
+extension UVIndex.ExposureCategory {
+    var label: String {
+        switch self {
+        case .low:
+            return String(localized: "uv-low", bundle: .module)
+        case .moderate:
+            return String(localized: "uv-moderate", bundle: .module)
+        case .high:
+            return String(localized: "uv-high", bundle: .module)
+        case .veryHigh:
+            return String(localized: "uv-veryHigh", bundle: .module)
+        case .extreme:
+            return String(localized: "uv-extreme", bundle: .module)
+        }
+    }
+}
 
+#Preview {
     return WeatherDataView(
-        currentWeather: .init(
-            date: now,
-            symbolName: "sun.max",
-            humidity: 0.34,
-            temperature: .ValueType(value: 35.4, unit: .celsius),
-            uvIndexCategory: .moderate,
-            windSpeed: .ValueType(value: 12, unit: .kilometersPerHour),
-            windDirection: .north
-        ),
-        hourlyForecasts: [
-            .init(
-                date: Calendar.current.date(byAdding: .hour, value: 0, to: now)!,
-                symbolName: "sun.max",
-                precipitationChance: 0,
-                temperature: .ValueType(value: 24, unit: .celsius)
-            ),
-            .init(
-                date: Calendar.current.date(byAdding: .hour, value: 1, to: now)!,
-                symbolName: "sun.max",
-                precipitationChance: 0,
-                temperature: .ValueType(value: 24, unit: .celsius)
-            ),
-            .init(
-                date: Calendar.current.date(byAdding: .hour, value: 2, to: now)!,
-                symbolName: "sun.max",
-                precipitationChance: 0,
-                temperature: .ValueType(value: 24, unit: .celsius)
-            ),
-            .init(
-                date: Calendar.current.date(byAdding: .hour, value: 3, to: now)!,
-                symbolName: "sun.max",
-                precipitationChance: 0,
-                temperature: .ValueType(value: 24, unit: .celsius)
-            ),
-            .init(
-                date: Calendar.current.date(byAdding: .hour, value: 4, to: now)!,
-                symbolName: "sun.max",
-                precipitationChance: 0,
-                temperature: .ValueType(value: 24, unit: .celsius)
-            ),
-            .init(
-                date: Calendar.current.date(byAdding: .hour, value: 5, to: now)!,
-                symbolName: "sun.max",
-                precipitationChance: 0,
-                temperature: .ValueType(value: 24, unit: .celsius)
-            )
-        ]
+        currentWeather: .mock,
+        hourlyForecasts: HourWeather.mock
     )
     .padding(.horizontal, 30)
 }
