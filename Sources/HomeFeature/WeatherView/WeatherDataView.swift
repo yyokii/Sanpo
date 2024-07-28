@@ -48,7 +48,7 @@ public struct WeatherDataView: View {
                     ScrollView(.horizontal) {
                         HStack(alignment: .center, spacing: 10) {
                             ForEach(hourlyForecasts.prefix(12), id: \.date) { forecast in
-                                weatherDataItem(forecast)
+                                hourlyWeatherDataItem(forecast)
                             }
                         }
                         .padding(.horizontal, 16)
@@ -174,7 +174,7 @@ private extension WeatherDataView {
         }
     }
 
-    func weatherDataItem(_ item: HourWeather) -> some View {
+    func hourlyWeatherDataItem(_ item: HourWeather) -> some View {
         VStack(alignment: .center, spacing: 16) {
             Text(item.date, format: Date.FormatStyle().hour(.defaultDigits(amPM: .abbreviated)))
                 .adaptiveFont(.normal, size: 12)
@@ -194,35 +194,6 @@ private extension WeatherDataView {
         .padding(.vertical, 24)
         .padding(.horizontal, 16)
         .background(.ultraThinMaterial, in: Capsule())
-    }
-
-    func weatherDataRow(
-        date: Date,
-        weatherIconName: String,
-        temperature: Measurement<UnitTemperature>,
-        precipitationChance: Double
-    ) -> some View {
-        HStack {
-            Text(date, format: Date.FormatStyle().hour(.defaultDigits(amPM: .abbreviated)).minute())
-                .adaptiveFont(.normal, size: 18)
-            Spacer()
-            HStack {
-                Image(systemName: weatherIconName)
-                Text(temperature.formatted(.measurement(width: .abbreviated, usage: .weather)))
-                    .adaptiveFont(.normal, size: 18)
-                    .frame(width: 90, alignment: .leading)
-            }
-            Spacer()
-            Text(formattedPrecipitationChance(precipitationChance))
-                .adaptiveFont(.normal, size: 18)
-
-        }
-    }
-
-    func formattedPrecipitationChance(_ chance: Double) -> String {
-        guard chance > 0 else { return "0%" }
-        let percentage = Int(chance * 100)
-        return "\(percentage)%"
     }
 }
 
