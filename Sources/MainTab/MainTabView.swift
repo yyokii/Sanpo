@@ -5,8 +5,6 @@ import HomeFeature
 import Model
 
 public struct MainTabView: View {
-    @StateObject var weatherData = WeatherData()
-
     public init() {}
 
     public var body: some View {
@@ -27,24 +25,18 @@ public struct MainTabView: View {
                 Text("Data")
             }
         }
-        .environmentObject(weatherData)
         .tint(.black)
     }
 }
 
-#if DEBUG
-
-struct MainTabView_Previews: PreviewProvider {
-    static var previews: some View {
-
-        Group {
-            MainTabView()
-                .environment(\.colorScheme, .light)
-
-            MainTabView()
-                .environment(\.colorScheme, .dark)
-        }
-    }
-}
-
-#endif
+// クラッシュするのでコメントアウト
+//#if DEBUG
+//
+//struct MainTabView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        MainTabView()
+//            .environmentObject(WeatherData())
+//    }
+//}
+//
+//#endif

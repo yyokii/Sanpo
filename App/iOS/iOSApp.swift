@@ -6,6 +6,7 @@ import Model
 
 @main
 struct iOSApp: App {
+    @StateObject var weatherData = WeatherData()
 
     init() {
         let userDefaults = UserDefaults(suiteName: UserDefaultsSuitName.app.rawValue)!
@@ -18,6 +19,7 @@ struct iOSApp: App {
     var body: some Scene {
         WindowGroup {
             MainTabView()
+                .environmentObject(weatherData)
         }
     }
 }
