@@ -26,9 +26,11 @@ public struct HomeView: View {
     @StateObject var stepCountData = StepCountData()
     @StateObject var distanceData = DistanceData()
 
-//    @State private var activeEnergyBurned: ActiveEnergyBurned = .noData // 定期的にloadする感じがいいかも
+    //    @State private var activeEnergyBurned: ActiveEnergyBurned = .noData // 定期的にloadする感じがいいかも
     @State private var inputGoal = 0
     @State private var showGoalSetting = false
+
+    @State private var imageName = "demo"
 
     public init() {}
 
@@ -44,22 +46,22 @@ public struct HomeView: View {
                             hourlyForecasts: weatherData.hourlyForecasts?
                                 .forecast
                                 .compactMap { .init(from: $0)
-                            }
+                                }
                         )
                         .asyncState(weatherData.phase)
                     }
 
                     /*
-                    VStack(alignment: .leading, spacing: 20) {
-                        Text("目標")
-                            .adaptiveFont(.bold, size: 24)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                     VStack(alignment: .leading, spacing: 20) {
+                     Text("目標")
+                     .adaptiveFont(.bold, size: 24)
+                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                        HStack(alignment: .center, spacing: 16) {
-                            GoalView(title: "歩数", value: stepCountData.todayStepCount?.number ?? 0, unitText: "歩", goal: dailyTargetSteps)
-//                            GoalView(title: "活動エネルギー量", value: activeEnergyBurned.energy, unitText: "kcal", goal: dailyTargetActiveEnergyBurned)
-                        }
-                    }
+                     HStack(alignment: .center, spacing: 16) {
+                     GoalView(title: "歩数", value: stepCountData.todayStepCount?.number ?? 0, unitText: "歩", goal: dailyTargetSteps)
+                     //                            GoalView(title: "活動エネルギー量", value: activeEnergyBurned.energy, unitText: "kcal", goal: dailyTargetActiveEnergyBurned)
+                     }
+                     }
                      */
                 }
                 .padding(.horizontal, 24)
@@ -78,7 +80,7 @@ public struct HomeView: View {
         .onReceive(HealthKitAuthService.shared.$authStatus) { status in
             if let status,
                status == .unknown ||
-               status == .shouldRequest {
+                status == .shouldRequest {
                 HealthKitAuthService.shared.requestAuthorization()
             }
         }
@@ -135,15 +137,15 @@ extension HomeView {
             }
             .padding(.horizontal, 24)
         }
+        .foregroundStyle(checkIsLight(of: imageName) ? .black : .white)
         .frame(maxWidth: .infinity)
         .padding(.top, 12)
         .padding(.bottom, 20)
         .background {
-            Rectangle()
-                .fill(Color.adaptiveWhite)
-                .cornerRadius(20)
-                .adaptiveShadow()
+            Image(imageName, bundle: .module)
         }
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .adaptiveShadow()
     }
 
     func detailDataItem(title: String, value: Int, unit: String) -> some View {
@@ -172,6 +174,13 @@ extension HomeView {
             .buttonStyle(ActionButtonStyle(size: .small))
         }
         .padding(20)
+    }
+
+    func checkIsLight(of imageName: String) -> Bool {
+        let image = UIImage(named: imageName, in: .module, with: nil)
+        let averageColor = image?.averageColor
+        let relativeLuminance = averageColor?.relativeLuminance ?? 1
+        return relativeLuminance > 0.7
     }
 }
 
