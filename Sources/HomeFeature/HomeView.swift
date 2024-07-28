@@ -86,7 +86,7 @@ public struct HomeView: View {
         }
         .onReceive(HealthKitAuthService.shared.$isAuthRequestSuccess) { success in
             if success {
-                Task.detached {
+                Task {
                     await stepCountData.loadTodayStepCount()
                 }
             }
