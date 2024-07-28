@@ -153,10 +153,10 @@ private extension WeatherDataView {
         unit: String?
     ) -> some View {
         HStack(alignment: .center, spacing: 16) {
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .center, spacing: 12) {
                 Text(titleKey, bundle: .module)
                     .adaptiveFont(.bold, size: 12)
-                VStack(alignment: .leading, spacing: 0) {
+                VStack(alignment: .center, spacing: 0) {
                     if let description {
                         Text(description)
                             .adaptiveFont(.normal, size: 12)
@@ -193,7 +193,7 @@ private extension WeatherDataView {
         }
         .padding(.vertical, 24)
         .padding(.horizontal, 16)
-        .background(.ultraThinMaterial, in: Capsule())
+        .background(Color.cyan.opacity(0.1), in: Capsule())
     }
 }
 
