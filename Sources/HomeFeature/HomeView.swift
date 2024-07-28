@@ -37,9 +37,6 @@ public struct HomeView: View {
             ScrollView {
                 VStack(spacing: 32) {
                     VStack(alignment: .center, spacing: 20) {
-//                        Text("Today")
-//                            .frame(maxWidth: .infinity, alignment: .leading)
-//                            .adaptiveFont(.bold, size: 24)
                         todayDataView
                             .padding(.top, 20)
                         WeatherDataView(
@@ -52,6 +49,7 @@ public struct HomeView: View {
                         .asyncState(weatherData.phase)
                     }
 
+                    /*
                     VStack(alignment: .leading, spacing: 20) {
                         Text("目標")
                             .adaptiveFont(.bold, size: 24)
@@ -62,6 +60,7 @@ public struct HomeView: View {
 //                            GoalView(title: "活動エネルギー量", value: activeEnergyBurned.energy, unitText: "kcal", goal: dailyTargetActiveEnergyBurned)
                         }
                     }
+                     */
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 16)

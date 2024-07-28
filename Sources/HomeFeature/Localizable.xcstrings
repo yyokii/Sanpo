@@ -20,6 +20,40 @@
         }
       }
     },
+    "current-weather-title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Now"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "現在の天気"
+          }
+        }
+      }
+    },
+    "hourly-weather-title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hourly weather"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1時間ごと"
+          }
+        }
+      }
+    },
     "humidity-title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -36,9 +70,6 @@
           }
         }
       }
-    },
-    "Key" : {
-      "extractionState" : "manual"
     },
     "Link" : {
 
@@ -176,9 +207,6 @@
           }
         }
       }
-    },
-    "目標" : {
-
     },
     "目標を設定" : {
 
