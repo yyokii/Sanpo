@@ -13,27 +13,40 @@ public class WorkoutService: NSObject, ObservableObject {
     private let routeBuilder = HKWorkoutRouteBuilder(healthStore: .shared, device: .local())
     private var workoutStartDate: Date?
 
+    @Published public var isWalking: Bool = false
+    @Published public var errorMessage: String?
+
     override private init() {
         super.init()
     }
 
     // https://developer.apple.com/documentation/healthkit/workouts_and_activity_rings/creating_a_workout_route
-    func startWorkout() {
+    public func startWorkout() {
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.startUpdatingLocation()
         workoutStartDate = .now
+        isWalking = true
     }
 
-    func finishWorkout() {
+    public func finishWorkout() {
         // Create, save, and associate the route with the provided workout.
-        routeBuilder.finishRoute(with: .init(activityType: .walking, start: workoutStartDate!, end: .now), metadata: .none) { (newRoute, error) in
-
-            guard newRoute != nil else {
+        routeBuilder.finishRoute(
+            with: .init(
+                activityType: .walking,
+                start: workoutStartDate!,
+                end: .now
+            ),
+            metadata: .none
+        ) { (newRoute, error) in
+            guard newRoute != nil, error != nil else {
                 // TODO: Handle any errors here.
+                print(error?.localizedDescription ?? "")
+                self.isWalking = false
+                self.errorMessage = error?.localizedDescription
                 return
             }
 
-            // Optional: Do something with the route here.
+            self.workoutStartDate = nil
         }
     }
 }
@@ -51,6 +64,7 @@ extension WorkoutService: CLLocationManagerDelegate {
         routeBuilder.insertRouteData(filteredLocations) { (success, error) in
             if !success {
                 // TODO: Handle any errors here.
+                print(error?.localizedDescription ?? "")
             }
         }
     }

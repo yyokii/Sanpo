@@ -32,6 +32,8 @@ public struct HomeView: View {
 
     @State private var imageName = "demo"
 
+    let workoutService = WorkoutService.shared
+
     public init() {}
 
     public var body: some View {
@@ -41,6 +43,7 @@ public struct HomeView: View {
                     VStack(alignment: .center, spacing: 20) {
                         todayDataView
                             .padding(.top, 20)
+                        workoutButton
                         WeatherDataView(
                             currentWeather: weatherData.currentWeather,
                             hourlyForecasts: weatherData.hourlyForecasts
@@ -83,6 +86,22 @@ public struct HomeView: View {
 }
 
 extension HomeView {
+    var workoutButton: some View {
+        VStack(alignment: .center, spacing: 16) {
+            Button {
+                workoutService.startWorkout()
+            } label: {
+                Text("start Sanpo")
+            }
+
+            Button {
+                workoutService.finishWorkout()
+            } label: {
+                Text("finish Sanpo")
+            }
+        }
+    }
+
     var todayDataView: some View {
         VStack(alignment: .center, spacing: 16) {
             HStack(alignment: .center, spacing: 8) {

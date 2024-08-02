@@ -37,6 +37,9 @@
         }
       }
     },
+    "finish Sanpo" : {
+
+    },
     "hourly-weather-title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -75,6 +78,9 @@
 
     },
     "Sanpo" : {
+
+    },
+    "start Sanpo" : {
 
     },
     "steps" : {
