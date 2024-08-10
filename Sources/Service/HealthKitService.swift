@@ -41,7 +41,7 @@ public class HealthKitAuthService: NSObject, ObservableObject {
     }
 
     public func loadAuthorization() {
-        HKHealthStore.shared.getRequestStatusForAuthorization(toShare: [], read: readTypes) { status, error in
+        HKHealthStore.shared.getRequestStatusForAuthorization(toShare: typesToShare, read: readTypes) { status, error in
             if let error {
                 self.logger.debug("\(error.localizedDescription)")
             }
@@ -53,7 +53,7 @@ public class HealthKitAuthService: NSObject, ObservableObject {
     }
 
     public func requestAuthorization() {
-        HKHealthStore.shared.requestAuthorization(toShare: [], read: readTypes) { success, error in
+        HKHealthStore.shared.requestAuthorization(toShare: typesToShare, read: readTypes) { success, error in
             if let error {
                 self.logger.debug("\(error.localizedDescription)")
             }
