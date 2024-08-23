@@ -11,14 +11,17 @@ import Extension
 public struct StepCount: Codable {
     private static let logger = Logger(category: .model)
 
-    public let date: Date
+    public let start: Date
+    public let end: Date
     public let number: Int
 
     public init (
-        date: Date,
+        start: Date,
+        end: Date,
         number: Int
     ) {
-        self.date = date
+        self.start = start
+        self.end = end
         self.number = number
     }
 
@@ -30,7 +33,7 @@ public struct StepCount: Codable {
 }
 
 extension StepCount {
-    public static let noData: StepCount = .init(date: Date(), number: 0)
+    public static let noData: StepCount = .init(start: Date(), end: Date(), number: 0)
 
     /// 特定期間について、歩数データを日別で取得する
     public static func range(start: Date, end: Date) async throws -> [Date: StepCount] {
@@ -73,7 +76,8 @@ extension StepCount {
                         truncating: (data.sumQuantity()?.doubleValue(for: .count()) ?? 0) as NSNumber
                     )
                     let stepCount = StepCount(
-                        date: data.startDate,
+                        start: start,
+                        end: end,
                         number: number
                     )
                     dic[data.startDate] = stepCount
@@ -89,13 +93,16 @@ extension StepCount {
         guard HKHealthStore.isHealthDataAvailable() else {
             throw HealthDataError.notAvailable
         }
-        let stepsQuantityType = HKQuantityType.quantityType(forIdentifier: .stepCount)!
-
         let startOfDay = Calendar.current.startOfDay(for: date)
         let endOfDay = Calendar.current.endOfDay(for: date)
+        return try await load(start: startOfDay, end: endOfDay)
+    }
+
+    public static func load(start: Date, end: Date) async throws -> StepCount {
+        let stepsQuantityType = HKQuantityType.quantityType(forIdentifier: .stepCount)!
         let predicate = HKQuery.predicateForSamples(
-            withStart: startOfDay,
-            end: endOfDay,
+            withStart: start,
+            end: end,
             options: .strictStartDate
         )
 
@@ -123,7 +130,8 @@ extension StepCount {
 
                 continuation.resume(returning:
                         .init(
-                            date: startOfDay,
+                            start: start,
+                            end: end,
                             number: number
                         )
                 )
@@ -133,7 +141,7 @@ extension StepCount {
         }
     }
 
-    public static func displayedDataInWidget() -> StepCount {
+    public static func fetchDisplayedDataInWidget() -> StepCount {
         var result: StepCount
 
         if let savedData = UserDefaults.standard.data(forKey: UserDefaultsKey.displayedStepCountDataInWidget.rawValue) {

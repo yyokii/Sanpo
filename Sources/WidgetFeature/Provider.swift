@@ -47,10 +47,10 @@ public struct Provider: TimelineProvider {
             guard let todayStepCount: StepCount = try? await StepCount.load(for: now) else {
                 return
             }
-            let displayedDataInWidget: StepCount = StepCount.displayedDataInWidget()
+            let displayedDataInWidget: StepCount = StepCount.fetchDisplayedDataInWidget()
 
             var entry: StepCountDataEntry
-            if Calendar.current.isDate(now, inSameDayAs: displayedDataInWidget.date) {
+            if Calendar.current.isDate(now, inSameDayAs: displayedDataInWidget.start) {
                 let isNewDataIncreasing: Bool = todayStepCount.number > displayedDataInWidget.number
                 let data: StepCount = isNewDataIncreasing ? todayStepCount : displayedDataInWidget
                 data.saveAsDisplayedInWidget()

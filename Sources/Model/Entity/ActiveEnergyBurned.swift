@@ -11,24 +11,23 @@ import Extension
 public struct ActiveEnergyBurned: Codable {
     private static let logger = Logger(category: .model)
 
-    public let startDate: Date
-    public let endDate: Date
+    public let start: Date
+    public let end: Date
     public let energy: Float
 
     public init (
-        startDate: Date,
-        endDate: Date,
+        start: Date,
+        end: Date,
         energy: Float
     ) {
-        self.startDate = startDate
-        self.endDate = endDate
+        self.start = start
+        self.end = end
         self.energy = energy
     }
 }
 
 extension ActiveEnergyBurned {
-    public static let noData: ActiveEnergyBurned = .init(startDate: Date(), endDate: Date(), energy: 0)
-    static let activeEnergyBurned = HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned)!
+    public static let noData: ActiveEnergyBurned = .init(start: Date(), end: Date(), energy: 0)
 
     public static func load(for date: Date) async throws -> ActiveEnergyBurned {
         guard HKHealthStore.isHealthDataAvailable() else {
@@ -42,6 +41,7 @@ extension ActiveEnergyBurned {
     }
 
     public static func load(start: Date, end: Date) async throws -> ActiveEnergyBurned {
+        let activeEnergyBurned = HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned)!
         let predicate = HKQuery.predicateForSamples(
             withStart: start,
             end: end,
@@ -72,8 +72,8 @@ extension ActiveEnergyBurned {
 
                 continuation.resume(returning:
                         .init(
-                            startDate: start,
-                            endDate: end,
+                            start: start,
+                            end: end,
                             energy: energy
                         )
                 )
