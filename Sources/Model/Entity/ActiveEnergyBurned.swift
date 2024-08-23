@@ -11,68 +11,75 @@ import Extension
 public struct ActiveEnergyBurned: Codable {
     private static let logger = Logger(category: .model)
 
-    public let date: Date
+    public let startDate: Date
+    public let endDate: Date
     public let energy: Float
 
     public init (
-        date: Date,
+        startDate: Date,
+        endDate: Date,
         energy: Float
     ) {
-        self.date = date
+        self.startDate = startDate
+        self.endDate = endDate
         self.energy = energy
     }
 }
 
 extension ActiveEnergyBurned {
-    public static let noData: ActiveEnergyBurned = .init(date: Date(), energy: 0)
+    public static let noData: ActiveEnergyBurned = .init(startDate: Date(), endDate: Date(), energy: 0)
+    static let activeEnergyBurned = HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned)!
 
-    public static func load(for date: Date) async -> ActiveEnergyBurned {
-        if HKHealthStore.isHealthDataAvailable() {
-            let walkingSpeedQuantityType = HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned)!
+    public static func load(for date: Date) async throws -> ActiveEnergyBurned {
+        guard HKHealthStore.isHealthDataAvailable() else {
+            throw HealthDataError.notAvailable
+        }
 
-            let startOfDay = Calendar.current.startOfDay(for: date)
-            let endOfDay = Calendar.current.endOfDay(for: date)
-            let predicate = HKQuery.predicateForSamples(
-                withStart: startOfDay,
-                end: endOfDay,
-                options: .strictStartDate
-            )
+        let startOfDay = Calendar.current.startOfDay(for: date)
+        let endOfDay = Calendar.current.endOfDay(for: date)
 
-            return await withCheckedContinuation { continuation in
-                let query = HKStatisticsQuery(
-                    quantityType: walkingSpeedQuantityType,
-                    quantitySamplePredicate: predicate,
-                    options: .cumulativeSum
-                ) { _, statistics, error in
+        return try await load(start: startOfDay, end: endOfDay)
+    }
 
-                    if let error = error {
-                        logger.debug("\(error.localizedDescription)")
-                        continuation.resume(returning: ActiveEnergyBurned.noData)
-                        return
-                    }
+    public static func load(start: Date, end: Date) async throws -> ActiveEnergyBurned {
+        let predicate = HKQuery.predicateForSamples(
+            withStart: start,
+            end: end,
+            options: .strictStartDate
+        )
 
-                    guard let statistics,
-                          let sum = statistics.sumQuantity() else {
-                        continuation.resume(returning: ActiveEnergyBurned.noData)
-                        return
-                    }
+        return try await withCheckedThrowingContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: activeEnergyBurned,
+                quantitySamplePredicate: predicate,
+                options: .cumulativeSum
+            ) { _, statistics, error in
 
-                    let energy: Float = Float(
-                        truncating: (sum.doubleValue(for: .kilocalorie())) as NSNumber
-                    )
-
-                    continuation.resume(returning:
-                            .init(
-                                date: startOfDay,
-                                energy: energy
-                            )
-                    )
+                if let error = error {
+                    logger.debug("\(error.localizedDescription)")
+                    continuation.resume(throwing: HealthDataError.loadFailed(error))
                 }
 
-                HKHealthStore.shared.execute(query)
+                guard let statistics,
+                      let sum = statistics.sumQuantity() else {
+                    continuation.resume(throwing: HealthDataError.loadFailed(error))
+                    return
+                }
+
+                let energy: Float = Float(
+                    truncating: (sum.doubleValue(for: .kilocalorie())) as NSNumber
+                )
+
+                continuation.resume(returning:
+                        .init(
+                            startDate: start,
+                            endDate: end,
+                            energy: energy
+                        )
+                )
             }
-        } else {
-            return .noData
+
+            HKHealthStore.shared.execute(query)
         }
     }
 }
