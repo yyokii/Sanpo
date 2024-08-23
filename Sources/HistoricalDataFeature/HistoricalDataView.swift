@@ -67,7 +67,9 @@ private extension HistoricalDataView {
             async let walkingSpeed = WalkingSpeed.load(for: date)
             async let stepLength = WalkingStepLength.load(for: date)
 
-            let datas = await (count: stepCount, speed: walkingSpeed, length: stepLength)
+            guard let datas = try? await (count: stepCount, speed: walkingSpeed, length: stepLength) else {
+                return
+            }
             self.stepCount = datas.count
             self.walkingSpeed = datas.speed
             self.walkingStepLength = datas.length
@@ -81,7 +83,7 @@ private extension HistoricalDataView {
             let startDate = DateComponents(year: 2014, month: 9, day: 1, hour: 0, minute: 0, second: 0)
 
             await _stepCounts.fetch {
-                await StepCount.range(
+                try await StepCount.range(
                     start: calendar.date(from: startDate)!,
                     end: Date()
                 )

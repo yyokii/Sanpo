@@ -39,7 +39,7 @@ public class StepCountData: ObservableObject {
     }
 
     public func loadTodayStepCount() async {
-        let todayData = await StepCount.load(for: Date())
+        let todayData = try? await StepCount.load(for: Date())
         todayStepCount = todayData
         WidgetCenter.shared.reloadAllTimelines()
     }
@@ -48,7 +48,7 @@ public class StepCountData: ObservableObject {
         guard let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date()) else {
             return
         }
-        let yesterdayData = await StepCount.load(for: yesterday)
+        let yesterdayData = try? await StepCount.load(for: yesterday)
         yesterdayStepCount = yesterdayData
     }
 }

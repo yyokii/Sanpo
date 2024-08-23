@@ -44,7 +44,9 @@ public struct Provider: TimelineProvider {
 
             let now = Date()
             let dailyTargetSteps: Int = UserDefaults.app.integer(forKey: UserDefaultsKey.dailyTargetSteps.rawValue)
-            let todayStepCount: StepCount = await StepCount.load(for: now)
+            guard let todayStepCount: StepCount = try? await StepCount.load(for: now) else {
+                return
+            }
             let displayedDataInWidget: StepCount = StepCount.displayedDataInWidget()
 
             var entry: StepCountDataEntry
