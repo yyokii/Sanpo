@@ -6,71 +6,77 @@ import Constant
 import Extension
 
 /**
- Walking speed length data（歩幅） for a specific day
+ Walking speed length data（歩幅）
  */
 public struct WalkingStepLength: Codable {
     private static let logger = Logger(category: .model)
 
-    public let date: Date
+    public let start: Date
+    public let end: Date
     public let length: Float
 
     public init (
-        date: Date,
+        start: Date,
+        end: Date,
         length: Float
     ) {
-        self.date = date
+        self.start = start
+        self.end = end
         self.length = length
     }
 }
 
 extension WalkingStepLength {
-    public static let noData: WalkingStepLength = .init(date: Date(), length: 0)
+    public static let noData: WalkingStepLength = .init(start: Date(), end: Date(), length: 0)
 
-    public static func load(for date: Date) async -> WalkingStepLength {
-        if HKHealthStore.isHealthDataAvailable() {
-            let walkingStepLengthQuantityType = HKQuantityType.quantityType(forIdentifier: .walkingStepLength)!
+    public static func load(for date: Date) async throws -> WalkingStepLength {
+        let walkingStepLengthQuantityType = HKQuantityType.quantityType(forIdentifier: .walkingStepLength)!
 
-            let startOfDay = Calendar.current.startOfDay(for: date)
-            let endOfDay = Calendar.current.endOfDay(for: date)
-            let predicate = HKQuery.predicateForSamples(
-                withStart: startOfDay,
-                end: endOfDay,
-                options: .strictStartDate
-            )
+        let startOfDay = Calendar.current.startOfDay(for: date)
+        let endOfDay = Calendar.current.endOfDay(for: date)
+        return try await load(start: startOfDay, end: endOfDay)
+    }
 
-            return await withCheckedContinuation { continuation in
-                let query = HKStatisticsQuery(
-                    quantityType: walkingStepLengthQuantityType,
-                    quantitySamplePredicate: predicate,
-                    options: .discreteAverage
-                ) { _, statistics, error in
+    public static func load(start: Date, end: Date) async throws -> WalkingStepLength {
+        guard HKHealthStore.isHealthDataAvailable() else {
+            throw HealthDataError.notAvailable
+        }
+        let walkingStepLengthQuantityType = HKQuantityType.quantityType(forIdentifier: .walkingStepLength)!
+        let predicate = HKQuery.predicateForSamples(
+            withStart: start,
+            end: end,
+            options: .strictStartDate
+        )
+        return try await withCheckedThrowingContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: walkingStepLengthQuantityType,
+                quantitySamplePredicate: predicate,
+                options: .discreteAverage
+            ) { _, statistics, error in
 
-                    if let error = error {
-                        logger.debug("\(error.localizedDescription)")
-                        continuation.resume(returning: WalkingStepLength.noData)
-                        return
-                    }
-
-                    guard let statistics = statistics, let sum = statistics.averageQuantity() else {
-                        continuation.resume(returning: WalkingStepLength.noData)
-                        return
-                    }
-
-                    let length: Float = Float(
-                        truncating: (sum.doubleValue(for: .meter())) as NSNumber
-                    )
-                    continuation.resume(returning:
-                            .init(
-                                date: startOfDay,
-                                length: length
-                            )
-                    )
+                if let error = error {
+                    logger.debug("\(error.localizedDescription)")
+                    continuation.resume(throwing: HealthDataError.loadFailed(error))
+                    return
                 }
 
-                HKHealthStore.shared.execute(query)
+                guard let statistics = statistics, let sum = statistics.averageQuantity() else {
+                    continuation.resume(throwing: HealthDataError.loadFailed(error))
+                    return
+                }
+
+                let length: Float = Float(
+                    truncating: (sum.doubleValue(for: .meter())) as NSNumber
+                )
+                continuation.resume(returning:
+                        .init(
+                            start: start,
+                            end: end,
+                            length: length
+                        )
+                )
             }
-        } else {
-            return .noData
+            HKHealthStore.shared.execute(query)
         }
     }
 }
