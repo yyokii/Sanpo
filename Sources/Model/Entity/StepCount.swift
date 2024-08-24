@@ -90,15 +90,15 @@ extension StepCount {
     }
 
     public static func load(for date: Date) async throws -> StepCount {
-        guard HKHealthStore.isHealthDataAvailable() else {
-            throw HealthDataError.notAvailable
-        }
         let startOfDay = Calendar.current.startOfDay(for: date)
         let endOfDay = Calendar.current.endOfDay(for: date)
         return try await load(start: startOfDay, end: endOfDay)
     }
 
     public static func load(start: Date, end: Date) async throws -> StepCount {
+        guard HKHealthStore.isHealthDataAvailable() else {
+            throw HealthDataError.notAvailable
+        }
         let stepsQuantityType = HKQuantityType.quantityType(forIdentifier: .stepCount)!
         let predicate = HKQuery.predicateForSamples(
             withStart: start,

@@ -30,9 +30,6 @@ extension DistanceWalkingRunning {
     public static let noData: DistanceWalkingRunning = .init(start: Date(), end: Date(), distance: 0)
 
     public static func today() async throws -> DistanceWalkingRunning {
-        guard HKHealthStore.isHealthDataAvailable() else {
-            throw HealthDataError.notAvailable
-        }
         let now = Date()
         let startOfDay = Calendar.current.startOfDay(for: now)
         return try await load(start: startOfDay, end: now)
