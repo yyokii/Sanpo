@@ -6,7 +6,7 @@ import Constant
 import Extension
 
 /**
- Active energy burned data（活動エネルギー消費量） for a specific day
+ Active energy burned data（活動エネルギー消費量）
  */
 public struct ActiveEnergyBurned: Codable {
     private static let logger = Logger(category: .model)
@@ -30,10 +30,6 @@ extension ActiveEnergyBurned {
     public static let noData: ActiveEnergyBurned = .init(start: Date(), end: Date(), energy: 0)
 
     public static func load(for date: Date) async throws -> ActiveEnergyBurned {
-        guard HKHealthStore.isHealthDataAvailable() else {
-            throw HealthDataError.notAvailable
-        }
-
         let startOfDay = Calendar.current.startOfDay(for: date)
         let endOfDay = Calendar.current.endOfDay(for: date)
 
@@ -41,6 +37,9 @@ extension ActiveEnergyBurned {
     }
 
     public static func load(start: Date, end: Date) async throws -> ActiveEnergyBurned {
+        guard HKHealthStore.isHealthDataAvailable() else {
+            throw HealthDataError.notAvailable
+        }
         let activeEnergyBurned = HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned)!
         let predicate = HKQuery.predicateForSamples(
             withStart: start,
