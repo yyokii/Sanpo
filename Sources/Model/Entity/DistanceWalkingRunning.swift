@@ -6,72 +6,81 @@ import Constant
 import Extension
 
 /**
- Distance of walking and running data（歩いた/走った距離） for a specific day
+ Distance of walking and running data（歩いた/走った距離）
  */
 public struct DistanceWalkingRunning: Codable {
     private static let logger = Logger(category: .model)
 
-    public let date: Date
+    public let start: Date
+    public let end: Date
     public let distance: Int
 
     public init (
-        date: Date,
+        start: Date,
+        end: Date,
         distance: Int
     ) {
-        self.date = date
+        self.start = start
+        self.end = end
         self.distance = distance
     }
 }
 
 extension DistanceWalkingRunning {
-    public static let noData: DistanceWalkingRunning = .init(date: Date(), distance: 0)
+    public static let noData: DistanceWalkingRunning = .init(start: Date(), end: Date(), distance: 0)
 
-    public static func today() async -> DistanceWalkingRunning {
-        if HKHealthStore.isHealthDataAvailable() {
-            let stepsQuantityType = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
+    public static func today() async throws -> DistanceWalkingRunning {
+        guard HKHealthStore.isHealthDataAvailable() else {
+            throw HealthDataError.notAvailable
+        }
+        let now = Date()
+        let startOfDay = Calendar.current.startOfDay(for: now)
+        return try await load(start: startOfDay, end: now)
+    }
 
-            let now = Date()
-            let startOfDay = Calendar.current.startOfDay(for: now)
-            let predicate = HKQuery.predicateForSamples(
-                withStart: startOfDay,
-                end: now,
-                options: .strictStartDate
-            )
+    public static func load(start: Date, end: Date) async throws -> DistanceWalkingRunning {
+        guard HKHealthStore.isHealthDataAvailable() else {
+            throw HealthDataError.notAvailable
+        }
+        let stepsQuantityType = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
+        let predicate = HKQuery.predicateForSamples(
+            withStart: start,
+            end: end,
+            options: .strictStartDate
+        )
 
-            return await withCheckedContinuation { continuation in
-                let query = HKStatisticsQuery(
-                    quantityType: stepsQuantityType,
-                    quantitySamplePredicate: predicate,
-                    options: .cumulativeSum
-                ) { _, statistics, error in
+        return try await withCheckedThrowingContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: stepsQuantityType,
+                quantitySamplePredicate: predicate,
+                options: .cumulativeSum
+            ) { _, statistics, error in
 
-                    if let error = error {
-                        logger.debug("\(error.localizedDescription)")
-                        continuation.resume(returning: DistanceWalkingRunning.noData)
-                        return
-                    }
-
-                    guard let statistics = statistics, let sum = statistics.sumQuantity() else {
-                        continuation.resume(returning: DistanceWalkingRunning.noData)
-                        return
-                    }
-
-                    let distance: Int = Int(
-                        truncating: (sum.doubleValue(for: .meter())) as NSNumber
-                    )
-
-                    continuation.resume(returning:
-                            .init(
-                                date: now,
-                                distance: distance
-                            )
-                    )
+                if let error = error {
+                    logger.debug("\(error.localizedDescription)")
+                    continuation.resume(throwing: HealthDataError.loadFailed(error))
+                    return
                 }
 
-                HKHealthStore.shared.execute(query)
+                guard let statistics = statistics, let sum = statistics.sumQuantity() else {
+                    continuation.resume(throwing: HealthDataError.loadFailed(error))
+                    return
+                }
+
+                let distance: Int = Int(
+                    truncating: (sum.doubleValue(for: .meter())) as NSNumber
+                )
+
+                continuation.resume(returning:
+                        .init(
+                            start: start,
+                            end: end,
+                            distance: distance
+                        )
+                )
             }
-        } else {
-            return .noData
+
+            HKHealthStore.shared.execute(query)
         }
     }
 }

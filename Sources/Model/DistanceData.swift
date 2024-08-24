@@ -15,12 +15,12 @@ public class DistanceData: ObservableObject {
     private var updateDistanceTimer: Timer?
 
     public init() {
-        Task.detached {
+        Task {
             await self.loadTodayDistance()
         }
 
         updateDistanceTimer = Timer.scheduledTimer(
-            timeInterval: 60.0,
+            timeInterval: 10.0,
             target: self,
             selector: #selector(fireUpdateDistanceTimer),
             userInfo: nil,
@@ -29,13 +29,13 @@ public class DistanceData: ObservableObject {
     }
 
     @objc func fireUpdateDistanceTimer() {
-        Task.detached {
+        Task {
             await self.loadTodayDistance()
         }
     }
 
     private func loadTodayDistance() async {
-        let todayData = await DistanceWalkingRunning.today()
+        let todayData = try? await DistanceWalkingRunning.today()
         self.todayDistance = todayData
     }
 }
