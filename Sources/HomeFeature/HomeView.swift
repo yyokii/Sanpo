@@ -22,6 +22,7 @@ public struct HomeView: View {
     var dailyTargetActiveEnergyBurned: Int = 2000
 
     @EnvironmentObject private var weatherData: WeatherData
+    @EnvironmentObject private var workoutData: WorkoutData
 
     @StateObject var stepCountData = StepCountData()
     @StateObject var distanceData = DistanceData()
@@ -31,8 +32,6 @@ public struct HomeView: View {
     @State private var showGoalSetting = false
 
     @State private var imageName = "demo"
-
-    let workoutService = WorkoutService.shared
 
     public init() {}
 
@@ -89,15 +88,21 @@ extension HomeView {
     var workoutButton: some View {
         VStack(alignment: .center, spacing: 16) {
             Button {
-                workoutService.startWorkout()
+                workoutData.startWorkout()
             } label: {
                 Text("start Sanpo")
             }
 
             Button {
-                workoutService.finishWorkout()
+                Task {
+                  try await workoutData.finishWorkout()
+                }
             } label: {
                 Text("finish Sanpo")
+            }
+
+            if let errorMessage = workoutData.errorMessage {
+                Text(errorMessage)
             }
         }
     }
@@ -195,6 +200,7 @@ struct HomeView_Previews: PreviewProvider {
             HomeView()
         }
         .environmentObject(WeatherData.preview)
+        .environmentObject(WorkoutData())
     }
 }
 
