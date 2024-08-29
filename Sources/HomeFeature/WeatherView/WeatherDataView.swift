@@ -45,18 +45,18 @@ public struct WeatherDataView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .adaptiveFont(.bold, size: 12)
                         .foregroundStyle(.gray)
+                        .padding(.horizontal, 16)
+
                     ScrollView(.horizontal) {
                         HStack(alignment: .center, spacing: 10) {
                             ForEach(hourlyForecasts.prefix(12), id: \.date) { forecast in
                                 hourlyWeatherDataItem(forecast)
                             }
                         }
-                        .padding(.horizontal, 16)
+                        .padding(.horizontal, 24)
                     }
                     .scrollIndicators(.hidden)
-                    .padding(.horizontal, 8)
                 }
-                .padding(.horizontal, 16)
             }
 
             Spacer(minLength: 16).fixedSize()
