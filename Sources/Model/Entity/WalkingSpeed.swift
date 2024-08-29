@@ -27,6 +27,17 @@ public struct WalkingSpeed: Codable {
 }
 
 extension WalkingSpeed {
+    var sampleData: HKQuantitySample {
+        .init(
+            type: .init(.walkingSpeed),
+            quantity: .init(
+                unit: .meter().unitDivided(by: HKUnit.hour()),
+                doubleValue: Double(self.speed)),
+            start: self.start,
+            end: self.end
+        )
+    }
+
     public static let noData: WalkingSpeed = .init(start: Date(), end: Date(), speed: 0)
 
     public static func load(for date: Date) async throws -> WalkingSpeed {
@@ -66,7 +77,7 @@ extension WalkingSpeed {
                 }
 
                 let speed: Float = Float(
-                    truncating: (average.doubleValue(for: .meter().unitDivided(by: HKUnit.second()))) as NSNumber
+                    truncating: (average.doubleValue(for: .meter().unitDivided(by: HKUnit.hour()))) as NSNumber
                 )
 
                 continuation.resume(returning:

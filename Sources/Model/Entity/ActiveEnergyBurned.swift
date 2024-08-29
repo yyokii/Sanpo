@@ -27,6 +27,17 @@ public struct ActiveEnergyBurned: Codable {
 }
 
 extension ActiveEnergyBurned {
+    var sampleData: HKQuantitySample {
+        .init(
+            type: .init(.activeEnergyBurned),
+            quantity: .init(
+                unit: .kilocalorie(),
+                doubleValue: Double(self.energy)),
+            start: self.start,
+            end: self.end
+        )
+    }
+
     public static let noData: ActiveEnergyBurned = .init(start: Date(), end: Date(), energy: 0)
 
     public static func load(for date: Date) async throws -> ActiveEnergyBurned {

@@ -33,6 +33,17 @@ public struct StepCount: Codable {
 }
 
 extension StepCount {
+    var sampleData: HKQuantitySample {
+        .init(
+            type: .init(.stepCount),
+            quantity: .init(
+                unit: .count(),
+                doubleValue: Double(self.number)),
+            start: self.start,
+            end: self.end
+        )
+    }
+
     public static let noData: StepCount = .init(start: Date(), end: Date(), number: 0)
 
     /// 特定期間について、歩数データを日別で取得する

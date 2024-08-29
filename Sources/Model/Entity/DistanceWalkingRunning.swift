@@ -27,6 +27,17 @@ public struct DistanceWalkingRunning: Codable {
 }
 
 extension DistanceWalkingRunning {
+    var sampleData: HKQuantitySample {
+        .init(
+            type: .init(.distanceWalkingRunning),
+            quantity: .init(
+                unit: .meter(),
+                doubleValue: Double(self.distance)),
+            start: self.start,
+            end: self.end
+        )
+    }
+
     public static let noData: DistanceWalkingRunning = .init(start: Date(), end: Date(), distance: 0)
 
     public static func today() async throws -> DistanceWalkingRunning {
