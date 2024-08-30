@@ -68,6 +68,7 @@ extension ActiveEnergyBurned {
                 if let error = error {
                     logger.debug("\(error.localizedDescription)")
                     continuation.resume(throwing: HealthDataError.loadFailed(error))
+                    return
                 }
 
                 guard let statistics,
