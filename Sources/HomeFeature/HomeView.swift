@@ -27,36 +27,36 @@ public struct HomeView: View {
     @StateObject var stepCountData = StepCountData()
     @StateObject var distanceData = DistanceData()
 
-    //    @State private var activeEnergyBurned: ActiveEnergyBurned = .noData // 定期的にloadする感じがいいかも
+    // @State private var activeEnergyBurned: ActiveEnergyBurned = .noData // 定期的にloadする感じがいいかも
     @State private var inputGoal = 0
     @State private var showGoalSetting = false
 
+    // for DEMO
+    @State private var showConfirmSanpo = false
     @State private var imageName = "demo"
 
     public init() {}
 
     public var body: some View {
-        VStack {
-            ScrollView {
-                VStack(spacing: 32) {
-                    VStack(alignment: .center, spacing: 20) {
-                        todayDataView
-                            .padding(.top, 20)
-                        workoutButton
-                        WeatherDataView(
-                            currentWeather: weatherData.currentWeather,
-                            hourlyForecasts: weatherData.hourlyForecasts
-                        )
-                        .asyncState(weatherData.phase)
-                    }
-                }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 16)
+        ScrollView {
+            VStack(alignment: .center, spacing: 20) {
+                todayDataView
+                    .padding(.top, 20)
+                workoutButton
+                WeatherDataView(
+                    currentWeather: weatherData.currentWeather,
+                    hourlyForecasts: weatherData.hourlyForecasts
+                )
+                .asyncState(weatherData.phase)
+
+                startSanpoButton
             }
-            .refreshable {
-                await weatherData.load()
-                await stepCountData.loadTodayStepCount()
-            }
+            .padding(.horizontal, 24)
+            .padding(.bottom, 16)
+        }
+        .refreshable {
+            await weatherData.load()
+            await stepCountData.loadTodayStepCount()
         }
         .navigationTitle("Sanpo")
         .onAppear {
@@ -85,17 +85,39 @@ public struct HomeView: View {
 }
 
 extension HomeView {
+    var startSanpoButton: some View {
+        Button {
+            withAnimation(.easeInOut(duration: 3)) {
+                showConfirmSanpo = true
+            }
+        } label: {
+            Text("start sanpo")
+                .adaptiveFont(.bold, size: 20)
+        }
+    }
+
+    var confirmStartSanpo: some View {
+        VStack(alignment: .center, spacing: 16) {
+            Text("confirm sanpo")
+                .adaptiveFont(.bold, size: 20)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(.ultraThinMaterial, ignoresSafeAreaEdges: .all)
+    }
+
     var workoutButton: some View {
         VStack(alignment: .center, spacing: 16) {
             Button {
-                workoutData.startWorkout()
+                Task {
+                    try await workoutData.startWorkout()
+                }
             } label: {
                 Text("start Sanpo")
             }
 
             Button {
                 Task {
-                  try await workoutData.finishWorkout()
+                    try await workoutData.finishWorkout()
                 }
             } label: {
                 Text("finish Sanpo")
@@ -196,7 +218,7 @@ extension HomeView {
 
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
+        NavigationStack {
             HomeView()
         }
         .environmentObject(WeatherData.preview)
