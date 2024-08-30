@@ -30,12 +30,17 @@ public class WorkoutData: NSObject, ObservableObject {
     }
 
     // https://developer.apple.com/documentation/healthkit/workouts_and_activity_rings/creating_a_workout_route
-    public func startWorkout() {
+    public func startWorkout() async throws {
+        errorMessage = nil
+
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.startUpdatingLocation()
-        workoutStartDate = .now
+
+        let workoutStartDate: Date = .now
+        try await workoutBuilder.beginCollection(at: workoutStartDate)
+
+        self.workoutStartDate = workoutStartDate
         isWalking = true
-        errorMessage = nil
     }
 
     public func finishWorkout() async throws {
@@ -74,7 +79,11 @@ public class WorkoutData: NSObject, ObservableObject {
                 samples.append(stepLength.sampleData)
             }
 
-            try await workoutBuilder.addSamples(samples)
+            if !samples.isEmpty {
+                try await workoutBuilder.addSamples(samples)
+            }
+
+            try await workoutBuilder.endCollection(at: endDate)
 
             guard let workout = try await workoutBuilder.finishWorkout() else {
                 return
