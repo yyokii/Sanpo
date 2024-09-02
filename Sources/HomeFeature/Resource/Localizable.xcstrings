@@ -20,6 +20,15 @@
         }
       }
     },
+    "aaaaa" : {
+
+    },
+    "cancel" : {
+
+    },
+    "confirm sanpo" : {
+
+    },
     "current-weather-title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -80,8 +89,31 @@
     "Sanpo" : {
 
     },
+    "start" : {
+
+    },
+    "start sanpo" : {
+
+    },
     "start Sanpo" : {
 
+    },
+    "start-walking" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start walking"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ウォーキングを開始します"
+          }
+        }
+      }
     },
     "steps" : {
 
