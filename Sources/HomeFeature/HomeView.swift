@@ -34,6 +34,8 @@ public struct HomeView: View {
     // for DEMO
     @State private var showConfirmSanpo = false
     @State private var imageName = "demo"
+    @State private var isWalkingViewPresented = false
+    @State private var isConfirmSanpoAlertPresented = false
 
     public init() {}
 
@@ -42,14 +44,15 @@ public struct HomeView: View {
             VStack(alignment: .center, spacing: 20) {
                 todayDataView
                     .padding(.top, 20)
+                #if DEBUG
                 workoutButton
+                startSanpoButton
+                #endif
                 WeatherDataView(
                     currentWeather: weatherData.currentWeather,
                     hourlyForecasts: weatherData.hourlyForecasts
                 )
                 .asyncState(weatherData.phase)
-
-                startSanpoButton
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 16)
@@ -77,6 +80,14 @@ public struct HomeView: View {
                 }
             }
         }
+        .alert(String(localized: "start-walking", bundle: .module), isPresented: $isConfirmSanpoAlertPresented) {
+            Button("cancel", role: .cancel) {}
+            Button {
+                isWalkingViewPresented = true
+            } label: {
+                Text("start", bundle: .module)
+            }
+        }
         .sheet(isPresented: $showGoalSetting) {
             goalSettingView()
                 .presentationDetents([.height(170)])
@@ -87,22 +98,11 @@ public struct HomeView: View {
 extension HomeView {
     var startSanpoButton: some View {
         Button {
-            withAnimation(.easeInOut(duration: 3)) {
-                showConfirmSanpo = true
-            }
+            isConfirmSanpoAlertPresented = true
         } label: {
             Text("start sanpo")
                 .adaptiveFont(.bold, size: 20)
         }
-    }
-
-    var confirmStartSanpo: some View {
-        VStack(alignment: .center, spacing: 16) {
-            Text("confirm sanpo")
-                .adaptiveFont(.bold, size: 20)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(.ultraThinMaterial, ignoresSafeAreaEdges: .all)
     }
 
     var workoutButton: some View {
