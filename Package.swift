@@ -26,6 +26,7 @@ let package = Package(
         .library(
             name: "Preview",
             targets: [
+                "OnBoardingFeature",
                 "HomeFeature",
                 "SettingsFeature",
                 "StyleGuide"
@@ -76,6 +77,12 @@ let package = Package(
                 "Constant",
                 "Extension",
                 "Service"
+            ]
+        ),
+        .target(
+            name: "OnBoardingFeature",
+            dependencies: [
+                "Extension",
             ]
         ),
         .target(
