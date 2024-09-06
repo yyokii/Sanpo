@@ -74,10 +74,10 @@ extension CurrentWeather {
     public static var mock: Self = .init(
         date: Date(),
         symbolName: "sun.max",
-        humidity: 0.34,
-        temperature: .ValueType(value: 35.4, unit: .celsius),
+        humidity: 0.34567891111,
+        temperature: .ValueType(value: 34.567, unit: .celsius),
         uvIndexCategory: .moderate,
-        windSpeed: .ValueType(value: 12, unit: .kilometersPerHour),
+        windSpeed: .ValueType(value: 12.3456777, unit: .kilometersPerHour),
         windDirection: .north
     )
 }

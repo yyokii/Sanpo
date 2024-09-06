@@ -129,7 +129,7 @@ private extension WeatherDataView {
                     .frame(height: 40)
                 currentWeatherItem(
                     titleKey: "humidity-title",
-                    value: "\(weather.humidity * 100)",
+                    value: "\((round(weather.humidity * 1000) * 100) / 1000)", // ex: 0.3456 → 34.6% 丸め誤差がでないように先に掛け算をする
                     unit: "%"
                 )
                 .frame(maxWidth: .infinity)
@@ -138,7 +138,7 @@ private extension WeatherDataView {
                 currentWeatherItem(
                     titleKey: "wind-title",
                     description: "\(weather.windDirection.description)",
-                    value: "\(weather.windSpeed.value)",
+                    value: "\(round(weather.windSpeed.value * 10) / 10)",
                     unit: weather.windSpeed.unit.symbol
                 )
                 .frame(maxWidth: .infinity)
