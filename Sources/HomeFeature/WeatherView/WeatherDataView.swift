@@ -138,7 +138,7 @@ private extension WeatherDataView {
                 currentWeatherItem(
                     titleKey: "wind-title",
                     description: "\(weather.windDirection.description)",
-                    value: "\(round(weather.windSpeed.value * 10) / 10)",
+                    value: "\(round(weather.windSpeed.value * 10) / 10)", // 少数第一位までの数で表す
                     unit: weather.windSpeed.unit.symbol
                 )
                 .frame(maxWidth: .infinity)

@@ -31,6 +31,9 @@ public struct HomeView: View {
     @State private var inputGoal = 0
     @State private var showGoalSetting = false
 
+    // TODO: 選べるようにする
+    @State private var imageName = "demo"
+
     public init() {}
 
     public var body: some View {
@@ -117,9 +120,13 @@ extension HomeView {
             }
             .padding(.horizontal, 24)
         }
+        .foregroundStyle(checkIsLight(of: imageName) ? .black : .white)
         .frame(maxWidth: .infinity)
         .padding(.top, 12)
         .padding(.bottom, 20)
+        .background {
+            Image(imageName, bundle: .module)
+        }
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .adaptiveShadow()
     }

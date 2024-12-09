@@ -23,12 +23,6 @@
     "aaaaa" : {
 
     },
-    "cancel" : {
-
-    },
-    "confirm sanpo" : {
-
-    },
     "current-weather-title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -45,9 +39,6 @@
           }
         }
       }
-    },
-    "finish Sanpo" : {
-
     },
     "hourly-weather-title" : {
       "extractionState" : "manual",
@@ -87,15 +78,6 @@
 
     },
     "Sanpo" : {
-
-    },
-    "start" : {
-
-    },
-    "start sanpo" : {
-
-    },
-    "start Sanpo" : {
 
     },
     "start-walking" : {
