@@ -45,7 +45,6 @@ extension UIColor {
         return 0.2126 * components.red + 0.7152 * components.green + 0.0722 * components.blue
     }
 
-    // swiftlint:disable large_tuple
     private var components: (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) {
         var redComponent: CGFloat = 0
         var greenComponent: CGFloat = 0

@@ -26,7 +26,6 @@ public struct StepCount: Codable {
     }
 
     public func saveAsDisplayedInWidget() {
-        // swiftlint:disable force_try
         let data = try! JSONEncoder().encode(self)
         UserDefaults.standard.set(data, forKey: UserDefaultsKey.displayedStepCountDataInWidget.rawValue)
     }
