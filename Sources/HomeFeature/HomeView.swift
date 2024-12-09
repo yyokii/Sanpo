@@ -31,12 +31,6 @@ public struct HomeView: View {
     @State private var inputGoal = 0
     @State private var showGoalSetting = false
 
-    // for DEMO
-    @State private var showConfirmSanpo = false
-    @State private var imageName = "demo"
-    @State private var isWalkingViewPresented = false
-    @State private var isConfirmSanpoAlertPresented = false
-
     public init() {}
 
     public var body: some View {
@@ -44,10 +38,6 @@ public struct HomeView: View {
             VStack(alignment: .center, spacing: 20) {
                 todayDataView
                     .padding(.top, 20)
-                #if DEBUG
-                workoutButton
-                startSanpoButton
-                #endif
                 WeatherDataView(
                     currentWeather: weatherData.currentWeather,
                     hourlyForecasts: weatherData.hourlyForecasts
@@ -80,14 +70,6 @@ public struct HomeView: View {
                 }
             }
         }
-        .alert(String(localized: "start-walking", bundle: .module), isPresented: $isConfirmSanpoAlertPresented) {
-            Button("cancel", role: .cancel) {}
-            Button {
-                isWalkingViewPresented = true
-            } label: {
-                Text("start", bundle: .module)
-            }
-        }
         .sheet(isPresented: $showGoalSetting) {
             goalSettingView()
                 .presentationDetents([.height(170)])
@@ -96,38 +78,6 @@ public struct HomeView: View {
 }
 
 extension HomeView {
-    var startSanpoButton: some View {
-        Button {
-            isConfirmSanpoAlertPresented = true
-        } label: {
-            Text("start sanpo")
-                .adaptiveFont(.bold, size: 20)
-        }
-    }
-
-    var workoutButton: some View {
-        VStack(alignment: .center, spacing: 16) {
-            Button {
-                Task {
-                    try await workoutData.startWorkout()
-                }
-            } label: {
-                Text("start Sanpo")
-            }
-
-            Button {
-                Task {
-                    try await workoutData.finishWorkout()
-                }
-            } label: {
-                Text("finish Sanpo")
-            }
-
-            if let errorMessage = workoutData.errorMessage {
-                Text(errorMessage)
-            }
-        }
-    }
 
     var todayDataView: some View {
         VStack(alignment: .center, spacing: 16) {
@@ -167,13 +117,9 @@ extension HomeView {
             }
             .padding(.horizontal, 24)
         }
-        .foregroundStyle(checkIsLight(of: imageName) ? .black : .white)
         .frame(maxWidth: .infinity)
         .padding(.top, 12)
         .padding(.bottom, 20)
-        .background {
-            Image(imageName, bundle: .module)
-        }
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .adaptiveShadow()
     }

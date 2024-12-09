@@ -28,6 +28,7 @@ let package = Package(
             targets: [
                 "OnBoardingFeature",
                 "HomeFeature",
+                "HistoricalDataFeature",
                 "SettingsFeature",
                 "StyleGuide"
             ]

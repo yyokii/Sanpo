@@ -10,11 +10,7 @@ import StyleGuide
 public struct HistoricalDataView: View {
     private let logger = Logger(category: .view)
 
-    // Specific date data
-    @State private var selectedDate: Date = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
-    @State private var stepCount: StepCount = .noData
-    @State private var walkingSpeed: WalkingSpeed = .noData
-    @State private var walkingStepLength: WalkingStepLength = .noData
+    @State var specificDateViewData: SpecificDateDataView.ViewData?
 
     @AsyncState private var stepCounts: [Date: StepCount] = [:]
     private let calendar: Calendar = .current
@@ -22,39 +18,49 @@ public struct HistoricalDataView: View {
     public init() {}
 
     public var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 0) {
+            Text("歩数")
+                .adaptiveFont(.bold, size: 33)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 16)
 
-            SpecificDateDataView(
-                selectedDate: selectedDate,
-                stepCount: stepCount,
-                walkingSpeed: walkingSpeed,
-                walkingStepLength: walkingStepLength
+            Spacer(minLength: 16).fixedSize()
+
+            CalendarView(
+                stepCounts: stepCounts,
+                selectDateAction: { date in
+                    loadSpecificDateData(date)
+                }
             )
-                .padding(.horizontal, 20)
+//            .asyncState(
+//                _stepCounts,
+//                initialContent: ProgressView()
+//                    .progressViewStyle(.circular),
+//                loadingContent: ProgressView()
+//                    .progressViewStyle(.circular),
+//                emptyContent: Text("データが存在しません"),
+//                failureContent: Text("読み込みに失敗しました。")
+//            )
 
-                CalendarView(
-                    stepCounts: stepCounts,
-                    selectDateAction: { date in
-                        selectedDate = date
-                        loadSpecificDateData(date)
-                    }
-                ).asyncState(
-                    _stepCounts,
-                    initialContent: ProgressView()
-                        .progressViewStyle(.circular),
-                    loadingContent: ProgressView()
-                        .progressViewStyle(.circular),
-                    emptyContent: Text("データが存在しません"),
-                    failureContent: Text("読み込みに失敗しました。")
-                )
-                .frame(height: 514)
+            // シートで出すので良さそう
+            //            if let selectedDate {
+            //                SpecificDateDataView(
+            //                    selectedDate: selectedDate,
+            //                    stepCount: stepCount,
+            //                    walkingSpeed: walkingSpeed,
+            //                    walkingStepLength: walkingStepLength
+            //                )
+            //                .padding(.horizontal, 20)
+            //            }
+            .frame(height: 514)
         }
-        .padding()
         .onAppear {
             if stepCounts.isEmpty {
                 load()
-                loadSpecificDateData(selectedDate)
             }
+        }
+        .sheet(item: $specificDateViewData) { data in
+            
         }
     }
 }
@@ -62,7 +68,7 @@ public struct HistoricalDataView: View {
 private extension HistoricalDataView {
 
     func loadSpecificDateData(_ date: Date) {
-        Task.detached { @MainActor in
+        Task { @MainActor in
             async let stepCount = StepCount.load(for: date)
             async let walkingSpeed = WalkingSpeed.load(for: date)
             async let stepLength = WalkingStepLength.load(for: date)
@@ -70,9 +76,12 @@ private extension HistoricalDataView {
             guard let datas = try? await (count: stepCount, speed: walkingSpeed, length: stepLength) else {
                 return
             }
-            self.stepCount = datas.count
-            self.walkingSpeed = datas.speed
-            self.walkingStepLength = datas.length
+            specificDateViewData = .init(
+                selectedDate: date,
+                stepCount: datas.count,
+                walkingSpeed: datas.speed,
+                walkingStepLength: datas.length
+            )
         }
     }
 
@@ -92,7 +101,6 @@ private extension HistoricalDataView {
     }
 }
 
-/*
  // preview crash
  #if DEBUG
 
@@ -103,4 +111,3 @@ private extension HistoricalDataView {
  }
 
  #endif
- */
