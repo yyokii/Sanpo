@@ -7,7 +7,7 @@ let package = Package(
     name: "Sanpo",
     defaultLocalization: "ja",
     platforms: [
-        .iOS(.v16)
+        .iOS(.v17)
     ],
     products: [
         .library(
