@@ -9,8 +9,14 @@ struct CalendarMonthView: View {
     private let monthNameFormatter: DateFormatter
     private let days: [Day]
     private let stepCounts: [Date: StepCount]
+    private let dateTappedAction: (Date) -> Void
 
-    init(yearMonth: YearMonth, calendar: Calendar = .current, stepCounts: [Date: StepCount]) {
+    init(
+        yearMonth: YearMonth,
+        calendar: Calendar = .current,
+        stepCounts: [Date: StepCount],
+        dateTappedAction: @escaping (Date) -> Void
+    ) {
         self.yearMonth = yearMonth
         self.calendar = calendar
 
@@ -24,6 +30,7 @@ struct CalendarMonthView: View {
 
         self.days = Day.makeForMonth(of: yearMonth, calendar: calendar)
         self.stepCounts = stepCounts
+        self.dateTappedAction = dateTappedAction
     }
 
     var body: some View {
@@ -49,28 +56,45 @@ struct CalendarMonthView: View {
 
             // 日付表示グリッド
             LazyVGrid(
-                columns: Array(repeating: GridItem(.flexible(minimum: 20), spacing: 0), count: 7), // 1行に表示するアイテムの設定
-                spacing: 0 // vertical spacing
+                columns: Array(repeating: GridItem(.flexible(minimum: 20), spacing: 4), count: 7), // 1行に表示するアイテムの設定
+                spacing: 4 // vertical spacing
             ) {
                 ForEach(days) { day in
-                    VStack(alignment: .center, spacing: 4) {
-                        Text("\(calendar.component(.day, from: day.date))")
-                            .font(.body)
-                            .foregroundColor(day.ignored ? .secondary : .primary)
-                            .accessibilityHidden(day.ignored)
-                        if let step = stepCounts[day.date], !day.ignored {
-                            Text("\(step.number)")
-                                .font(.caption2)
-                                .foregroundColor(.secondary)
+                    Button {
+                        dateTappedAction(day.date)
+                    } label: {
+                        VStack(alignment: .center, spacing: 4) {
+                            Text("\(calendar.component(.day, from: day.date))")
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundColor(day.ignored ? .secondary : .primary)
+                                .accessibilityHidden(day.ignored)
+                            if let step = stepCounts[day.date], !day.ignored {
+                                Text("\(step.number)")
+                                    .font(.system(size: 11, weight: .medium))
+                                    .foregroundColor(.white)
+                                    .padding(4)
+                                    .background(
+                                        Color.green.opacity(
+                                            step.number <= 5000
+                                            ? 0.2
+                                            : step.number <= 10000 ? 0.5 : 1.0
+                                        )
+                                    )
+                                    .cornerRadius(4)
+                            }
+                            Spacer()
                         }
-                        Spacer()
+                        .frame(height: 56)
+                        .frame(maxWidth: .infinity)
+                        .background(
+                            day.ignored ? Color.clear : Color(.systemGray6)
+                        )
+                        .cornerRadius(8)
                     }
-                    .frame(height: 50)
+                    .buttonStyle(.plain)
                 }
             }
         }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 4)
     }
 
     /// 表示中の月のタイトル文字列を生成
@@ -97,13 +121,16 @@ struct MultiYearCalendarListView: View {
     private let months: [YearMonth]
     private let calendar: Calendar
     private let stepCounts: [Date: StepCount]
+    private let dateTappedAction: (Date) -> Void
 
     init(
         stepCounts: [Date: StepCount],
-        calendar: Calendar = .current
+        calendar: Calendar = .current,
+        dateTappedAction: @escaping (Date) -> Void
     ) {
         self.calendar = calendar
         self.stepCounts = stepCounts
+        self.dateTappedAction = dateTappedAction
 
         let yearMonths = stepCounts.keys.compactMap { date -> YearMonth? in
             let components = calendar.dateComponents([.year, .month], from: date)
@@ -122,7 +149,12 @@ struct MultiYearCalendarListView: View {
         List {
             ForEach(months, id: \.self) { month in
                 Section {
-                    CalendarMonthView(yearMonth: month, calendar: calendar, stepCounts: stepCounts)
+                    CalendarMonthView(
+                        yearMonth: month,
+                        calendar: calendar,
+                        stepCounts: stepCounts,
+                        dateTappedAction: dateTappedAction
+                    )
                 }
             }
         }
@@ -149,7 +181,10 @@ struct MultiYearCalendarListView: View {
 
     NavigationStack {
         MultiYearCalendarListView(
-            stepCounts: mockStepCounts
+            stepCounts: mockStepCounts,
+            dateTappedAction: { date in
+                print("\(date) tapped")
+            }
         )
     }
 }
