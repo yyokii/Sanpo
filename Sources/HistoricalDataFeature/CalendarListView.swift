@@ -99,14 +99,23 @@ struct MultiYearCalendarListView: View {
     private let stepCounts: [Date: StepCount]
 
     init(
-        start: YearMonth,
-        end: YearMonth,
-        calendar: Calendar = .current,
-        stepCounts: [Date: StepCount]
+        stepCounts: [Date: StepCount],
+        calendar: Calendar = .current
     ) {
         self.calendar = calendar
-        self.months = Array(MonthRange(start: start, end: end)).reversed()
         self.stepCounts = stepCounts
+
+        let yearMonths = stepCounts.keys.compactMap { date -> YearMonth? in
+            let components = calendar.dateComponents([.year, .month], from: date)
+            guard let year = components.year, let month = components.month else { return nil }
+            return YearMonth(year: year, month: month)
+        }
+
+        if let start = yearMonths.min(), let end = yearMonths.max() {
+            self.months = Array(MonthRange(start: start, end: end)).reversed()
+        } else {
+            self.months = []
+        }
     }
 
     var body: some View {
@@ -128,7 +137,7 @@ struct MultiYearCalendarListView: View {
         var data: [Date: StepCount] = [:]
 
         if let startDate = calendar.date(from: DateComponents(year: 2024, month: 11, day: 1)) {
-            for dayOffset in 0..<30 {
+            for dayOffset in 0..<90 {
                 if let date = calendar.date(byAdding: .day, value: dayOffset, to: startDate) {
                     data[date] = .init(start: date, end: date, number: Int.random(in: 1000...15000))
                 }
@@ -140,8 +149,6 @@ struct MultiYearCalendarListView: View {
 
     NavigationStack {
         MultiYearCalendarListView(
-            start: YearMonth(year: 2022, month: 1),
-            end: YearMonth(year: 2024, month: 12),
             stepCounts: mockStepCounts
         )
     }
