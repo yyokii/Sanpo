@@ -41,8 +41,6 @@ extension WalkingStepLength {
     public static let noData: WalkingStepLength = .init(start: Date(), end: Date(), length: 0)
 
     public static func load(for date: Date) async throws -> WalkingStepLength {
-        let walkingStepLengthQuantityType = HKQuantityType.quantityType(forIdentifier: .walkingStepLength)!
-
         let startOfDay = Calendar.current.startOfDay(for: date)
         let endOfDay = Calendar.current.endOfDay(for: date)
         return try await load(start: startOfDay, end: endOfDay)

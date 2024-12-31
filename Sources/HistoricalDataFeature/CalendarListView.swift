@@ -115,9 +115,8 @@ struct CalendarMonthView: View {
     }
 }
 
-/// 複数年分のカレンダーを連続してリスト表示するビュー
-/// 指定した年月範囲でスクロール表示させることができる。
-struct MultiYearCalendarListView: View {
+/// 複数年分のカレンダーのリスト
+struct CalendarListView: View {
     private let months: [YearMonth]
     private let calendar: Calendar
     private let stepCounts: [Date: StepCount]
@@ -159,7 +158,6 @@ struct MultiYearCalendarListView: View {
             }
         }
         .listStyle(.plain)
-        .navigationTitle("カレンダー")
     }
 }
 
@@ -180,7 +178,7 @@ struct MultiYearCalendarListView: View {
     }()
 
     NavigationStack {
-        MultiYearCalendarListView(
+        CalendarListView(
             stepCounts: mockStepCounts,
             dateTappedAction: { date in
                 print("\(date) tapped")

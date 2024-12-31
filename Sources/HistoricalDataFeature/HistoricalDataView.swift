@@ -8,59 +8,21 @@ import Model
 import StyleGuide
 
 public struct HistoricalDataView: View {
-    private let logger = Logger(category: .view)
+    @Environment(MyDataModel.self) private var myDataModel
 
-    @State var specificDateViewData: SpecificDateDataView.ViewData?
+    @State private var specificDateViewData: SpecificDateDataView.ViewData?
 
-    @AsyncState private var stepCounts: [Date: StepCount] = [:]
     private let calendar: Calendar = .current
+    private let logger = Logger(category: .view)
 
     public init() {}
 
     public var body: some View {
-        VStack(spacing: 0) {
-            Text("歩数")
-                .adaptiveFont(.bold, size: 33)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 16)
-
-            Spacer(minLength: 16).fixedSize()
-
-            CalendarView(
-                stepCounts: stepCounts,
-                selectDateAction: { date in
-                    loadSpecificDateData(date)
-                }
-            )
-//            .asyncState(
-//                _stepCounts,
-//                initialContent: ProgressView()
-//                    .progressViewStyle(.circular),
-//                loadingContent: ProgressView()
-//                    .progressViewStyle(.circular),
-//                emptyContent: Text("データが存在しません"),
-//                failureContent: Text("読み込みに失敗しました。")
-//            )
-
-            // シートで出すので良さそう
-            //            if let selectedDate {
-            //                SpecificDateDataView(
-            //                    selectedDate: selectedDate,
-            //                    stepCount: stepCount,
-            //                    walkingSpeed: walkingSpeed,
-            //                    walkingStepLength: walkingStepLength
-            //                )
-            //                .padding(.horizontal, 20)
-            //            }
-            .frame(height: 514)
-        }
-        .onAppear {
-            if stepCounts.isEmpty {
-                load()
+        VStack(alignment: .center, spacing: 0) {
+            CalendarListView(stepCounts: myDataModel.stepCounts) { date in
             }
         }
         .sheet(item: $specificDateViewData) { data in
-            
         }
     }
 }
@@ -84,30 +46,16 @@ private extension HistoricalDataView {
             )
         }
     }
-
-    func load() {
-        Task {
-            let calendar = Calendar.current
-            // HealthKit is available from iOS 8(2014/9/17)
-            let startDate = DateComponents(year: 2014, month: 9, day: 1, hour: 0, minute: 0, second: 0)
-
-            await _stepCounts.fetch {
-                try await StepCount.range(
-                    start: calendar.date(from: startDate)!,
-                    end: Date()
-                )
-            }
-        }
-    }
 }
 
- // preview crash
- #if DEBUG
+#Preview {
+    @Previewable @State var myDataModel = MyDataModel(healthDataClient: MockHealthDataClient())
 
- struct HistoricalDataView_Previews: PreviewProvider {
-     static var previews: some View {
-         HistoricalDataView()
-     }
- }
-
- #endif
+    HistoricalDataView()
+        .environment(myDataModel)
+        .onAppear {
+            Task {
+              await  myDataModel.loadStepCounts()
+            }
+        }
+}

@@ -9,6 +9,8 @@ struct iOSApp: App {
     @StateObject var weatherData = WeatherData()
     @StateObject var workoutData = WorkoutData()
 
+    @State private var myDataModel = MyDataModel(healthDataClient: HealthDataClient.shared)
+
     init() {
         let userDefaults = UserDefaults(suiteName: UserDefaultsSuitName.app.rawValue)!
 
@@ -22,6 +24,12 @@ struct iOSApp: App {
             MainTabView()
                 .environmentObject(weatherData)
                 .environmentObject(workoutData)
+                .environment(myDataModel)
+                .onAppear {
+                    Task {
+                       await myDataModel.loadStepCounts()
+                    }
+                }
         }
     }
 }

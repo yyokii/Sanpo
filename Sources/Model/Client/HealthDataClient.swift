@@ -19,8 +19,12 @@ public protocol HealthDataClientProtocol {
     func loadWalkingStepLength(for date: Date) async throws -> WalkingStepLength
 }
 
-public struct HealthDataClient: HealthDataClientProtocol {
+public class HealthDataClient: HealthDataClientProtocol {
+    public static let shared = HealthDataClient()
+
     private let logger = Logger(category: .model)
+
+    private init() {}
 
     public func loadActiveEnergyBurned(for date: Date) async throws -> ActiveEnergyBurned {
         let start = Calendar.current.startOfDay(for: date)
@@ -44,7 +48,7 @@ public struct HealthDataClient: HealthDataClientProtocol {
             ) { _, statistics, error in
 
                 if let error = error {
-                    logger.debug("\(error.localizedDescription)")
+                    self.logger.debug("\(error.localizedDescription)")
                     continuation.resume(throwing: HealthDataError.loadFailed(error))
                     return
                 }
@@ -93,7 +97,7 @@ public struct HealthDataClient: HealthDataClientProtocol {
             ) { _, statistics, error in
 
                 if let error = error {
-                    logger.debug("\(error.localizedDescription)")
+                    self.logger.debug("\(error.localizedDescription)")
                     continuation.resume(throwing: HealthDataError.loadFailed(error))
                     return
                 }
@@ -143,7 +147,7 @@ public struct HealthDataClient: HealthDataClientProtocol {
         return try await withCheckedThrowingContinuation { continuation in
             query.initialResultsHandler = { _, collection, error in
                 if let error = error {
-                    logger.debug("\(error.localizedDescription)")
+                    self.logger.debug("\(error.localizedDescription)")
                     continuation.resume(throwing: HealthDataError.loadFailed(error))
                     return
                 }
@@ -194,7 +198,7 @@ public struct HealthDataClient: HealthDataClientProtocol {
             ) { _, statistics, error in
 
                 if let error = error {
-                    logger.debug("\(error.localizedDescription)")
+                    self.logger.debug("\(error.localizedDescription)")
                     continuation.resume(throwing: HealthDataError.loadFailed(error))
                     return
                 }
@@ -256,7 +260,7 @@ public struct HealthDataClient: HealthDataClientProtocol {
             ) { _, statistics, error in
 
                 if let error = error {
-                    logger.debug("\(error.localizedDescription)")
+                    self.logger.debug("\(error.localizedDescription)")
                     continuation.resume(throwing: HealthDataError.loadFailed(error))
                     return
                 }
@@ -304,7 +308,7 @@ public struct HealthDataClient: HealthDataClientProtocol {
             ) { _, statistics, error in
 
                 if let error = error {
-                    logger.debug("\(error.localizedDescription)")
+                    self.logger.debug("\(error.localizedDescription)")
                     continuation.resume(throwing: HealthDataError.loadFailed(error))
                     return
                 }
