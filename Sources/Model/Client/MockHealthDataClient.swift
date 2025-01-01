@@ -29,7 +29,36 @@ public struct MockHealthDataClient: HealthDataClientProtocol {
 
         return data
     }
-    
+
+    public func loadYearlyStepCount(startYear: Int, endYear: Int) async throws -> [Int : StepCount] {
+        return [
+            2023: .init(start: .now, end: .now, number: .random(in: 100...50000)),
+            2024: .init(start: .now, end: .now, number: .random(in: 100...50000)),
+            2025: .init(start: .now, end: .now, number: .random(in: 100...50000))
+        ]
+    }
+
+    public func loadMonthlyStepCount(start: Date, end: Date) async throws -> [Date : StepCount] {
+        let calendar = Calendar.current
+        let now = Date()
+        let startOfCurrentMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: now))!
+
+        var mockData: [Date: StepCount] = [:]
+
+        for i in 0..<3 {
+            if let monthStartDate = calendar.date(byAdding: .month, value: -i, to: startOfCurrentMonth) {
+                let monthEndDate = calendar.date(byAdding: DateComponents(month: 1, day: -1), to: monthStartDate)!
+                mockData[monthStartDate] = StepCount(
+                    start: monthStartDate,
+                    end: monthEndDate,
+                    number: .random(in: 100...50000)
+                )
+            }
+        }
+
+        return mockData
+    }
+
     public func loadStepCount(for date: Date) async throws -> StepCount {
         let start = Calendar.current.startOfDay(for: date)
         let end = Calendar.current.endOfDay(for: date)
