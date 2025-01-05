@@ -30,30 +30,45 @@ public struct MockHealthDataClient: HealthDataClientProtocol {
         return data
     }
 
-    public func loadYearlyStepCount(startYear: Int, endYear: Int) async throws -> [Int : StepCount] {
-        return [
-            2023: .init(start: .now, end: .now, number: .random(in: 100...50000)),
-            2024: .init(start: .now, end: .now, number: .random(in: 100...50000)),
-            2025: .init(start: .now, end: .now, number: .random(in: 100...50000))
-        ]
-    }
-
-    public func loadMonthlyStepCount(start: Date, end: Date) async throws -> [Date : StepCount] {
+    public func loadWeeklyAverageStepCount(start: Date, end: Date) async throws -> [Date: StepCount] {
         let calendar = Calendar.current
-        let now = Date()
-        let startOfCurrentMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: now))!
+
+        // Calculate the start of the first week and the end of the last week based on the provided range
+        let startOfFirstWeek = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: start))!
+        let endOfLastWeek = calendar.date(byAdding: DateComponents(day: 6), to: calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: end))!)!
 
         var mockData: [Date: StepCount] = [:]
 
-        for i in 0..<3 {
-            if let monthStartDate = calendar.date(byAdding: .month, value: -i, to: startOfCurrentMonth) {
-                let monthEndDate = calendar.date(byAdding: DateComponents(month: 1, day: -1), to: monthStartDate)!
-                mockData[monthStartDate] = StepCount(
-                    start: monthStartDate,
-                    end: monthEndDate,
-                    number: .random(in: 100...50000)
-                )
-            }
+        // Generate mock data for each week in the range
+        var currentStart = startOfFirstWeek
+        while currentStart <= endOfLastWeek {
+            let currentEnd = calendar.date(byAdding: DateComponents(day: 6), to: currentStart)!
+            mockData[currentStart] = StepCount(
+                start: currentStart,
+                end: currentEnd,
+                number: .random(in: 1000...70000) // Random steps for the week
+            )
+            currentStart = calendar.date(byAdding: .day, value: 7, to: currentStart)!
+        }
+        return mockData
+    }
+
+    public func loadMonthlyAverageStepCount(start: Date, end: Date) async throws -> [Date: StepCount] {
+        let calendar = Calendar.current
+        let startOfFirstMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: start))!
+        let endOfLastMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: end))!
+
+        var mockData: [Date: StepCount] = [:]
+
+        var currentMonth = startOfFirstMonth
+        while currentMonth <= endOfLastMonth {
+            let monthEndDate = calendar.date(byAdding: DateComponents(month: 1, day: -1), to: currentMonth)!
+            mockData[currentMonth] = StepCount(
+                start: currentMonth,
+                end: monthEndDate,
+                number: .random(in: 1000...70000) // Random steps for the month
+            )
+            currentMonth = calendar.date(byAdding: .month, value: 1, to: currentMonth)!
         }
 
         return mockData

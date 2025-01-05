@@ -10,8 +10,8 @@ public protocol HealthDataClientProtocol {
 
     func loadStepCount(for date: Date) async throws -> StepCount
     func loadStepCount(start: Date, end: Date) async throws -> [Date: StepCount]
-    func loadMonthlyStepCount(start: Date, end: Date) async throws -> [Date: StepCount]
-    func loadYearlyStepCount(startYear: Int, endYear: Int) async throws -> [Int : StepCount]
+    func loadWeeklyAverageStepCount(start: Date, end: Date) async throws -> [Date: StepCount]
+    func loadMonthlyAverageStepCount(start: Date, end: Date) async throws -> [Date: StepCount]
     func fetchDisplayedDataInWidget() -> StepCount
 
     /// 特定日の平均歩行時速（時速）
@@ -337,6 +337,115 @@ public class HealthDataClient: HealthDataClientProtocol {
             HKHealthStore.shared.execute(query)
         }
     }
+
+    /// start ~ endまでの各週の平均歩数を取得する
+    ///
+    /// 戻り値のDateは各週の開始日
+    public func loadWeeklyAverageStepCount(start: Date, end: Date) async throws -> [Date: StepCount] {
+        guard HKHealthStore.isHealthDataAvailable() else {
+            throw HealthDataError.notAvailable
+        }
+
+        let calendar = Calendar.current
+        let startOfFirstWeek = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: start))!
+        let endOfLastWeek = calendar.date(byAdding: DateComponents(day: 6), to: calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: end))!)!
+
+        let type = HKSampleType.quantityType(forIdentifier: .stepCount)!
+        let predicate = HKQuery.predicateForSamples(withStart: startOfFirstWeek, end: endOfLastWeek)
+
+        let query = HKStatisticsCollectionQuery(
+            quantityType: type,
+            quantitySamplePredicate: predicate,
+            options: .cumulativeSum,
+            anchorDate: calendar.startOfDay(for: startOfFirstWeek),
+            intervalComponents: DateComponents(day: 7)
+        )
+
+        return try await withCheckedThrowingContinuation { continuation in
+            query.initialResultsHandler = { _, collection, error in
+                if let error = error {
+                    self.logger.debug("Failed to load weekly average step count: \(error.localizedDescription)")
+                    continuation.resume(throwing: HealthDataError.loadFailed(error))
+                    return
+                }
+
+                guard let statistics = collection?.statistics() else {
+                    continuation.resume(throwing: HealthDataError.loadFailed(nil))
+                    return
+                }
+
+                var weeklyAverages: [Date: StepCount] = [:]
+                statistics.forEach { data in
+                    let totalSteps = data.sumQuantity()?.doubleValue(for: .count()) ?? 0
+                    let averageSteps = totalSteps / 7.0 // Each week has 7 days
+                    weeklyAverages[data.startDate] = .init(
+                        start: data.startDate,
+                        end: data.endDate,
+                        number: Int(round(averageSteps))
+                    )
+                }
+                continuation.resume(returning: weeklyAverages)
+            }
+            HKHealthStore.shared.execute(query)
+        }
+    }
+
+    public func loadMonthlyAverageStepCount(start: Date, end: Date) async throws -> [Date: StepCount] {
+        guard HKHealthStore.isHealthDataAvailable() else {
+            throw HealthDataError.notAvailable
+        }
+
+        let calendar = Calendar.current
+        let startOfFirstMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: start))!
+        let endOfLastMonth = calendar.date(
+            byAdding: DateComponents(month: 1, day: -1),
+            to: calendar.date(from: calendar.dateComponents([.year, .month], from: end))!
+        )!
+
+        let type = HKSampleType.quantityType(forIdentifier: .stepCount)!
+        let predicate = HKQuery.predicateForSamples(withStart: startOfFirstMonth, end: endOfLastMonth)
+
+        let query = HKStatisticsCollectionQuery(
+            quantityType: type,
+            quantitySamplePredicate: predicate,
+            options: .cumulativeSum,
+            anchorDate: calendar.startOfDay(for: startOfFirstMonth),
+            intervalComponents: DateComponents(month: 1)
+        )
+
+        return try await withCheckedThrowingContinuation { continuation in
+            query.initialResultsHandler = { _, collection, error in
+                if let error = error {
+                    self.logger.debug("Failed to load monthly average step count: \(error.localizedDescription)")
+                    continuation.resume(throwing: HealthDataError.loadFailed(error))
+                    return
+                }
+
+                guard let statistics = collection?.statistics() else {
+                    continuation.resume(throwing: HealthDataError.loadFailed(nil))
+                    return
+                }
+
+                var monthlySteps: [Date: StepCount] = [:]
+                statistics.forEach { data in
+                    let totalSteps = data.sumQuantity()?.doubleValue(for: .count()) ?? 0
+                    let numberOfDays = Double(calendar.range(of: .day, in: .month, for: data.startDate)?.count ?? 0)
+                    let averageSteps = totalSteps / numberOfDays
+
+                    let stepCount = StepCount(
+                        start: data.startDate,
+                        end: data.endDate,
+                        number: Int(averageSteps)
+                    )
+                    monthlySteps[data.startDate] = stepCount
+                }
+
+                continuation.resume(returning: monthlySteps)
+            }
+            HKHealthStore.shared.execute(query)
+        }
+    }
+
 
     public func fetchDisplayedDataInWidget() -> StepCount {
         var result: StepCount
