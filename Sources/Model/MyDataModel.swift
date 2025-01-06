@@ -1,8 +1,8 @@
 import Foundation
 
 public struct StepCountSummary {
-    let weekly: [Date: StepCount]
-    let monthly: [Date: StepCount]
+    public let weekly: [Date: StepCount]
+    public let monthly: [Date: StepCount]
 }
 
 @Observable

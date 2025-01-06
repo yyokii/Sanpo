@@ -46,7 +46,7 @@ public struct MockHealthDataClient: HealthDataClientProtocol {
             mockData[currentStart] = StepCount(
                 start: currentStart,
                 end: currentEnd,
-                number: .random(in: 1000...70000) // Random steps for the week
+                number: .random(in: 1000...20000) // Random steps for the week
             )
             currentStart = calendar.date(byAdding: .day, value: 7, to: currentStart)!
         }
