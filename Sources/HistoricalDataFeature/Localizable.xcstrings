@@ -1,0 +1,46 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@%lld (%@%%)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@%2$lld (%3$@%%)"
+          }
+        }
+      }
+    },
+    "%@のデータ" : {
+
+    },
+    "%lld" : {
+
+    },
+    "%lld week ago" : {
+
+    },
+    "Average Steps" : {
+
+    },
+    "from last week" : {
+
+    },
+    "Monthly" : {
+
+    },
+    "Steps" : {
+
+    },
+    "This week" : {
+
+    },
+    "Weekly" : {
+
+    },
+    "x" : {
+
+    }
+  },
+  "version" : "1.0"
+}

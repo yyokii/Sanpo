@@ -8,9 +8,25 @@ struct SummaryView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                weeklySummaryData(data: myDataModel.stepCountSummary.weekly)
+            VStack(alignment: .leading, spacing: 0) {
+                Text("Weekly", bundle: .module)
+                    .font(.title2)
+                    .bold()
+                    .foregroundStyle(.black)
+                Spacer(minLength: 16).fixedSize()
+                weeklySummaryData
+                    .padding(.horizontal, 8)
+                Spacer(minLength: 24).fixedSize()
+                Text("Monthly", bundle: .module)
+                    .font(.title2)
+                    .bold()
+                    .foregroundStyle(.black)
+                Spacer(minLength: 16).fixedSize()
+                monthlySummaryData
+                    .padding(.horizontal, 8)
+                Spacer(minLength: 24).fixedSize()
             }
+            .padding(.horizontal, 8)
         }
     }
 }
@@ -19,36 +35,47 @@ private extension SummaryView {
     func weekAgoText(for date: Date) -> String {
         let weeksAgo = Calendar.current.dateComponents([.weekOfYear], from: date, to: Date()).weekOfYear ?? 0
         if weeksAgo == 0 {
-            return "This week"
+            return String(localized: "This week", bundle: .module)
         } else {
-            return "\(weeksAgo) week ago"
+            return String(localized: "\(weeksAgo) week ago", bundle: .module)
         }
     }
 
-    var sortedWeeklyData: [Dictionary<Date, StepCount>.Element] {
-        myDataModel.stepCountSummary.weekly.sorted(by: { $0.key < $1.key })
-    }
-
-    var lastWeekData: Dictionary<Date, StepCount>.Element? {
-        if sortedWeeklyData.count > 2 {
-            sortedWeeklyData[sortedWeeklyData.count - 2]
+    func monthAgoText(for date: Date) -> String {
+        let weeksAgo = Calendar.current.dateComponents([.weekOfYear], from: date, to: Date()).weekOfYear ?? 0
+        if weeksAgo == 0 {
+            return String(localized: "This week", bundle: .module)
         } else {
-            nil
+            return String(localized: "\(weeksAgo) week ago", bundle: .module)
         }
     }
+
+    var lastWeekData: StepCountSummary.ChartData? {
+        guard myDataModel.stepCountSummary.weekly.count > 2 else {
+            return nil
+        }
+        return  myDataModel.stepCountSummary.weekly[1]
+    }
+
+    var lastMonthData: StepCountSummary.ChartData? {
+        guard myDataModel.stepCountSummary.monthly.count > 2 else {
+            return nil
+        }
+        return  myDataModel.stepCountSummary.monthly[1]
+    }
+
 
     @ViewBuilder
-    func weeklySummaryData(data: [Date:StepCount]) -> some View {
+    var weeklySummaryData: some View {
         if let lastWeekData {
             VStack(alignment: .center, spacing: 0) {
-
                 averageStepsText(
-                    stepCount: sortedWeeklyData.last?.value.number ?? 0,
-                    lastWeekStepCount: lastWeekData.value.number
+                    myDataModel.stepCountSummary.weekly.first?.y ?? 0,
+                    comparisonStepCount: lastWeekData.y
                 )
                 .padding(.horizontal, 8)
-                Spacer(minLength: 16).fixedSize()
-                chartView(data: sortedWeeklyData)
+                Spacer(minLength: 20).fixedSize()
+                chartView(data: myDataModel.stepCountSummary.weekly.reversed())
             }
             .padding(.vertical, 16)
             .padding(.horizontal, 8)
@@ -58,9 +85,29 @@ private extension SummaryView {
         }
     }
 
-    func averageStepsText(stepCount: Int, lastWeekStepCount: Int) -> some View {
-        let diff = stepCount - lastWeekStepCount
-        let diffPercentage = calculatePercentage(current: stepCount, previous: lastWeekStepCount)
+    @ViewBuilder
+    var monthlySummaryData: some View {
+        if let lastMonthData {
+            VStack(alignment: .center, spacing: 0) {
+                averageStepsText(
+                    myDataModel.stepCountSummary.monthly.first?.y ?? 0,
+                    comparisonStepCount: lastMonthData.y
+                )
+                .padding(.horizontal, 8)
+                Spacer(minLength: 20).fixedSize()
+                chartView(data: myDataModel.stepCountSummary.monthly.reversed())
+            }
+            .padding(.vertical, 16)
+            .padding(.horizontal, 8)
+            .background(.white)
+            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .adaptiveShadow()
+        }
+    }
+
+    func averageStepsText(_ stepCount: Int, comparisonStepCount: Int) -> some View {
+        let diff = stepCount - comparisonStepCount
+        let diffPercentage = calculatePercentage(current: stepCount, previous: comparisonStepCount)
         return VStack(alignment: .leading, spacing: 0) {
             Spacer(minLength: 4).fixedSize()
 
@@ -76,7 +123,7 @@ private extension SummaryView {
                     HStack(alignment: .center, spacing: 8) {
                         Image(systemName: diff >= 0 ? "arrow.up.right.circle.fill" : "arrow.down.right.circle.fill")
                             .foregroundStyle(diff >= 0 ? .green : .red)
-                        Text("\(diff >= 0 ? "+" : "-")\(diff) (\(String(format: "%.1f", diffPercentage))%)")
+                        Text("\(diff >= 0 ? "+" : "")\(diff) (\(String(format: "%.1f", diffPercentage))%)")
                             .font(.caption)
                             .foregroundStyle(diff >= 0 ? .green : .red)
                         Text("from last week")
@@ -98,13 +145,13 @@ private extension SummaryView {
     }
 
     @ViewBuilder
-    func chartView(data: [Dictionary<Date, StepCount>.Element]) -> some View {
+    func chartView(data: [StepCountSummary.ChartData]) -> some View {
         VStack(alignment: .center, spacing: 0) {
             Chart {
-                ForEach(data, id: \ .key) { week, stepCount in
+                ForEach(data, id: \.self) { chartData in
                     BarMark(
-                        x: .value("Week", weekAgoText(for: week)),
-                        y: .value("Steps", stepCount.number),
+                        x: .value("x", chartData.x),
+                        y: .value("Steps", chartData.y),
                         width: .ratio(0.5)
                     )
                     .foregroundStyle(
@@ -114,7 +161,7 @@ private extension SummaryView {
                             endPoint: .top)
                     )
                     .annotation(position: .top) {
-                        Text("\(stepCount.number)")
+                        Text("\(chartData.y)")
                             .font(.caption2)
                             .foregroundColor(.secondary)
                     }

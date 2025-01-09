@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "Sanpo",
-    defaultLocalization: "ja",
+    defaultLocalization: "en",
     platforms: [
         .iOS(.v17)
     ],

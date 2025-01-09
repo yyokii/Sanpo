@@ -1,15 +1,20 @@
 import Foundation
 
 public struct StepCountSummary {
-    public let weekly: [Date: StepCount]
-    public let monthly: [Date: StepCount]
+    public let weekly: [ChartData]
+    public let monthly: [ChartData]
+
+    public struct ChartData: Hashable {
+        public let x: String
+        public let y: Int
+    }
 }
 
 @Observable
 public class MyDataModel {
 
     public var stepCounts: [Date: StepCount] = [:]
-    public var stepCountSummary: StepCountSummary = .init(weekly: [:], monthly: [:])
+    public var stepCountSummary: StepCountSummary = .init(weekly: [], monthly: [])
 
     private let healthDataClient: HealthDataClientProtocol
 
@@ -42,6 +47,31 @@ public class MyDataModel {
         async let monthlyData = healthDataClient.loadMonthlyAverageStepCount(start: startOfMonthlyData, end: now)
 
         let (weeklyResult, monthlyResult) = try await (weeklyData, monthlyData)
-        self.stepCountSummary = .init(weekly: weeklyResult, monthly: monthlyResult)
+        self.stepCountSummary = .init(
+            weekly: weeklyResult
+                .sorted(by: { $0.key > $1.key })
+                .map {.init(x: makeWeekAgoText(for: $0.key), y: $0.value.number)},
+            monthly: monthlyResult
+                .sorted(by: { $0.key > $1.key })
+                .map {.init(x: makeMonthAgoText(for: $0.key), y: $0.value.number)}
+        )
+    }
+
+    func makeWeekAgoText(for date: Date) -> String {
+        let weeksAgo = Calendar.current.dateComponents([.weekOfYear], from: date, to: Date()).weekOfYear ?? 0
+        if weeksAgo == 0 {
+            return String(localized: "This week", bundle: .module)
+        } else {
+            return String(localized: "\(weeksAgo) weeks ago", bundle: .module)
+        }
+    }
+
+    func makeMonthAgoText(for date: Date) -> String {
+        let monthsAgo = Calendar.current.dateComponents([.month], from: date, to: Date()).month ?? 0
+        if monthsAgo == 0 {
+            return String(localized: "This month", bundle: .module)
+        } else {
+            return String(localized: "\(monthsAgo) months ago", bundle: .module)
+        }
     }
 }

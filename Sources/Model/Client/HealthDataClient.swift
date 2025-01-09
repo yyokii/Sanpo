@@ -9,6 +9,9 @@ public protocol HealthDataClientProtocol {
     func loadDistanceWalkingRunning(for date: Date) async throws -> DistanceWalkingRunning
 
     func loadStepCount(for date: Date) async throws -> StepCount
+    /// 引数で指定された期間で、毎日の歩数を取得する
+    ///
+    /// StepCount自体もdate情報を持つが、日付の指定によってはデータがおおくなるのでo(1)でアクセスできるように戻り値を辞書型にしている
     func loadStepCount(start: Date, end: Date) async throws -> [Date: StepCount]
     func loadWeeklyAverageStepCount(start: Date, end: Date) async throws -> [Date: StepCount]
     func loadMonthlyAverageStepCount(start: Date, end: Date) async throws -> [Date: StepCount]
@@ -173,9 +176,6 @@ public class HealthDataClient: HealthDataClientProtocol {
         }
     }
 
-    /// 引数で指定された期間で、毎日の歩数を取得する
-    ///
-    /// StepCount自体もdate情報を持つが、日付の指定によってはデータがおおくなるのでo(1)でアクセスできるように戻り値を辞書型にしている
     public func loadStepCount(start: Date, end: Date) async throws -> [Date : StepCount] {
         guard HKHealthStore.isHealthDataAvailable() else {
             throw HealthDataError.notAvailable
