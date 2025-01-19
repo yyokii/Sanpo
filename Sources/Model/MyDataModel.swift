@@ -10,11 +10,20 @@ public struct StepCountSummary {
     }
 }
 
+public struct WalkingDataForSpecificDate {
+    public let date: Date
+    public let stepCount: StepCount
+    public let distance: DistanceWalkingRunning
+    public let walkingSpeed: WalkingSpeed
+    public let walkingStepLength: WalkingStepLength
+}
+
 @Observable
 public class MyDataModel {
 
     public var stepCounts: [Date: StepCount] = [:]
     public var stepCountSummary: StepCountSummary = .init(weekly: [], monthly: [])
+    public var walkingDataForSpecificDate: WalkingDataForSpecificDate?
 
     private let healthDataClient: HealthDataClientProtocol
 
@@ -54,6 +63,21 @@ public class MyDataModel {
             monthly: monthlyResult
                 .sorted(by: { $0.key > $1.key })
                 .map {.init(x: makeMonthAgoText(for: $0.key), y: $0.value.number)}
+        )
+    }
+
+    public func loadWalkingData(for date: Date) async throws {
+        async let stepCount = healthDataClient.loadStepCount(for: date)
+        async let distance = healthDataClient.loadDistanceWalkingRunning(for: date)
+        async let walkingSpeed = healthDataClient.loadWalkingSpeed(for: date)
+        async let walkingStepLength = healthDataClient.loadWalkingStepLength(for: date)
+        let (stepCountResult, distanceResult, walkingSpeedResult, walkingStepLengthResult) = try await (stepCount, distance, walkingSpeed, walkingStepLength)
+        self.walkingDataForSpecificDate = .init(
+            date: date,
+            stepCount: stepCountResult,
+            distance: distanceResult,
+            walkingSpeed: walkingSpeedResult,
+            walkingStepLength: walkingStepLengthResult
         )
     }
 

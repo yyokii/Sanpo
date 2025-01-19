@@ -120,7 +120,8 @@ struct CalendarListView: View {
     private let months: [YearMonth]
     private let calendar: Calendar
     private let stepCounts: [Date: StepCount]
-    private let dateTappedAction: (Date) -> Void
+
+    @State private var selectedDate: SelectedDate?
 
     init(
         stepCounts: [Date: StepCount],
@@ -129,7 +130,6 @@ struct CalendarListView: View {
     ) {
         self.calendar = calendar
         self.stepCounts = stepCounts
-        self.dateTappedAction = dateTappedAction
 
         let yearMonths = stepCounts.keys.compactMap { date -> YearMonth? in
             let components = calendar.dateComponents([.year, .month], from: date)
@@ -152,13 +152,24 @@ struct CalendarListView: View {
                         yearMonth: month,
                         calendar: calendar,
                         stepCounts: stepCounts,
-                        dateTappedAction: dateTappedAction
+                        dateTappedAction:  { date in
+                            selectedDate = .init(date: date)
+                        }
                     )
                 }
             }
         }
         .listStyle(.plain)
+        // TODO: 特定の日のデータ表示
+//        .sheet(item: $selectedDate) { date in
+//            
+//        }
     }
+}
+
+struct SelectedDate: Identifiable {
+    let date: Date
+    var id: Date { date }
 }
 
 #Preview {
