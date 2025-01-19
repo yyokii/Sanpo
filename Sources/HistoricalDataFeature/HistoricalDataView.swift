@@ -11,6 +11,8 @@ public struct HistoricalDataView: View {
     @Environment(MyDataModel.self) private var myDataModel
 
     @State private var specificDateViewData: SpecificDateDataView.ViewData?
+    @State private var dataSegment: DataSegment = .calendar
+    @State private var dataSegmentScrollPositionID: String?
 
     private let calendar: Calendar = .current
     private let logger = Logger(category: .view)
@@ -18,16 +20,45 @@ public struct HistoricalDataView: View {
     public init() {}
 
     public var body: some View {
-        VStack(alignment: .center, spacing: 0) {
-            CalendarListView(stepCounts: myDataModel.stepCounts) { date in
+        VStack(alignment: .center, spacing: 16) {
+            Picker("Data segment", selection: $dataSegment) {
+                ForEach(DataSegment.allCases, id: \.self) { segment in
+                    Text(segment.title)
+                }
+            }
+            .pickerStyle(.segmented)
+            .padding(.horizontal, 16)
+
+            Group {
+                switch dataSegment {
+                case .summary:
+                    SummaryView()
+                case .calendar:
+                    CalendarListView(stepCounts: myDataModel.stepCounts) { date in }
+                }
             }
         }
         .sheet(item: $specificDateViewData) { data in
         }
+        .navigationTitle("historical-data-title")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
 private extension HistoricalDataView {
+    enum DataSegment: Hashable, CaseIterable{
+        case summary
+        case calendar
+
+        var title: String {
+            switch self {
+            case .summary:
+                return String(localized: "summary", bundle: .module)
+            case .calendar:
+                return String(localized: "calendar", bundle: .module)
+            }
+        }
+    }
 
     func loadSpecificDateData(_ date: Date) {
         Task { @MainActor in
@@ -51,11 +82,14 @@ private extension HistoricalDataView {
 #Preview {
     @Previewable @State var myDataModel = MyDataModel(healthDataClient: MockHealthDataClient())
 
-    HistoricalDataView()
-        .environment(myDataModel)
-        .onAppear {
-            Task {
-              await  myDataModel.loadStepCounts()
+    NavigationStack {
+        HistoricalDataView()
+            .environment(myDataModel)
+            .onAppear {
+                Task {
+                    await  myDataModel.loadStepCounts()
+                    try? await myDataModel.loadStepCountSummary()
+                }
             }
-        }
+    }
 }

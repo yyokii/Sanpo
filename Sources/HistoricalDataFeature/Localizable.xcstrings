@@ -11,9 +11,6 @@
         }
       }
     },
-    "%@のデータ" : {
-
-    },
     "%lld" : {
 
     },
@@ -23,6 +20,12 @@
     "Average Steps" : {
 
     },
+    "calendar" : {
+
+    },
+    "Data segment" : {
+
+    },
     "from last week" : {
 
     },
@@ -30,6 +33,9 @@
 
     },
     "Steps" : {
+
+    },
+    "summary" : {
 
     },
     "This week" : {

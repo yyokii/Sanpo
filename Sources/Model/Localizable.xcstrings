@@ -9,13 +9,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Last month"
+                  "value" : "Last mo."
                 }
               },
               "other" : {
                 "stringUnit" : {
-                  "state" : "new",
-                  "value" : "%lld months ago"
+                  "state" : "translated",
+                  "value" : "%lld mo. \nago"
                 }
               }
             }
@@ -31,13 +31,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Lhis week"
+                  "value" : "Last wk."
                 }
               },
               "other" : {
                 "stringUnit" : {
-                  "state" : "new",
-                  "value" : "%lld weeks ago"
+                  "state" : "translated",
+                  "value" : "%lld wks ago"
                 }
               }
             }
@@ -46,10 +46,24 @@
       }
     },
     "This month" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This mo."
+          }
+        }
+      }
     },
     "This week" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This wk."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

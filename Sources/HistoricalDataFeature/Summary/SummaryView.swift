@@ -32,24 +32,6 @@ struct SummaryView: View {
 }
 
 private extension SummaryView {
-    func weekAgoText(for date: Date) -> String {
-        let weeksAgo = Calendar.current.dateComponents([.weekOfYear], from: date, to: Date()).weekOfYear ?? 0
-        if weeksAgo == 0 {
-            return String(localized: "This week", bundle: .module)
-        } else {
-            return String(localized: "\(weeksAgo) week ago", bundle: .module)
-        }
-    }
-
-    func monthAgoText(for date: Date) -> String {
-        let weeksAgo = Calendar.current.dateComponents([.weekOfYear], from: date, to: Date()).weekOfYear ?? 0
-        if weeksAgo == 0 {
-            return String(localized: "This week", bundle: .module)
-        } else {
-            return String(localized: "\(weeksAgo) week ago", bundle: .module)
-        }
-    }
-
     var lastWeekData: StepCountSummary.ChartData? {
         guard myDataModel.stepCountSummary.weekly.count > 2 else {
             return nil
