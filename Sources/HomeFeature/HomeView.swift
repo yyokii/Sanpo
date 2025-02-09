@@ -13,13 +13,16 @@ public struct HomeView: View {
         UserDefaultsKey.dailyTargetSteps.rawValue,
         store: UserDefaults.app
     )
-    var dailyTargetSteps: Int = 3000
+    private var dailyTargetSteps: Int = 3000
 
     @AppStorage(
         UserDefaultsKey.dailyTargetActiveEnergyBurned.rawValue,
         store: UserDefaults.app
     )
-    var dailyTargetActiveEnergyBurned: Int = 2000
+    private var dailyTargetActiveEnergyBurned: Int = 2000
+
+    @AppStorage(UserDefaultsKey.cardBackgroundImageName.rawValue)
+    private var selectedCardImage = ""
 
     @EnvironmentObject private var weatherData: WeatherData
     @EnvironmentObject private var workoutData: WorkoutData
@@ -31,16 +34,25 @@ public struct HomeView: View {
     @State private var inputGoal = 0
     @State private var showGoalSetting = false
 
-    // TODO: 選べるようにする
-    @State private var imageName = "demo"
+    @State private var isSelectCardImageViewPresented = false
 
     public init() {}
 
     public var body: some View {
         ScrollView {
-            VStack(alignment: .center, spacing: 20) {
-                todayDataView
-                    .padding(.top, 20)
+            VStack(alignment: .center, spacing: 0) {
+                Spacer(minLength: 20).fixedSize()
+                Button {
+                    isSelectCardImageViewPresented = true
+                } label: {
+                    TodayDataCard(
+                        stepCount: stepCountData.todayStepCount?.number ?? 0,
+                        yesterdayStepCount: stepCountData.yesterdayStepCount?.number ?? 0,
+                        distance: distanceData.todayDistance?.distance ?? 0,
+                        backgroundImageName: selectedCardImage
+                    )
+                }
+                Spacer(minLength: 20).fixedSize()
                 WeatherDataView(
                     currentWeather: weatherData.currentWeather,
                     hourlyForecasts: weatherData.hourlyForecasts
@@ -77,73 +89,13 @@ public struct HomeView: View {
             goalSettingView()
                 .presentationDetents([.height(170)])
         }
+        .navigationDestination(isPresented: $isSelectCardImageViewPresented) {
+            SelectCardImageView()
+        }
     }
 }
 
 extension HomeView {
-
-    var todayDataView: some View {
-        VStack(alignment: .center, spacing: 16) {
-            HStack(alignment: .center, spacing: 8) {
-                Image(systemName: "figure.walk")
-                    .adaptiveFont(.bold, size: 16)
-                Text("Today")
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .adaptiveFont(.bold, size: 16)
-            }
-            .padding(.horizontal, 16)
-
-            VStack(alignment: .center, spacing: 16) {
-                VStack(alignment: .center, spacing: 0) {
-                    Text("\(stepCountData.todayStepCount?.number ?? 0)")
-                        .adaptiveFont(.bold, size: 42)
-                    Text("steps")
-                        .adaptiveFont(.normal, size: 12)
-                        .foregroundStyle(.gray)
-                }
-                Divider()
-                LazyVGrid(
-                    columns: Array(repeating: .init(.flexible(), spacing: 0, alignment: .top), count: 2),
-                    spacing: 24
-                ) {
-                    detailDataItem(
-                        title: "距離",
-                        value: distanceData.todayDistance?.distance ?? 0,
-                        unit: "m"
-                    )
-                    detailDataItem(
-                        title: "昨日",
-                        value: stepCountData.yesterdayStepCount?.number ?? 0,
-                        unit: "steps"
-                    )
-                }
-            }
-            .padding(.horizontal, 24)
-        }
-        .foregroundStyle(checkIsLight(of: imageName) ? .black : .white)
-        .frame(maxWidth: .infinity)
-        .padding(.top, 12)
-        .padding(.bottom, 20)
-        .background {
-            Image(imageName, bundle: .module)
-        }
-        .clipShape(RoundedRectangle(cornerRadius: 20))
-        .adaptiveShadow()
-    }
-
-    func detailDataItem(title: String, value: Int, unit: String) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(title)
-                .adaptiveFont(.bold, size: 12)
-            HStack(alignment: .lastTextBaseline, spacing: 2) {
-                Text("\(value)")
-                    .adaptiveFont(.normal, size: 16)
-                Text(unit)
-                    .adaptiveFont(.normal, size: 12)
-            }
-        }
-    }
-
     func goalSettingView() -> some View {
         VStack(spacing: 16) {
             TextField("目標歩数", value: $inputGoal, formatter: NumberFormatter())

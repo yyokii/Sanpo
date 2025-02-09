@@ -30,6 +30,7 @@ struct iOSApp: App {
                        await myDataModel.loadStepCounts()
                     }
                 }
+                .tint(.black)
         }
     }
 }

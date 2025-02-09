@@ -14,9 +14,6 @@
     "%lld" : {
 
     },
-    "%lld week ago" : {
-
-    },
     "Average Steps" : {
 
     },
@@ -29,6 +26,9 @@
     "from last week" : {
 
     },
+    "historical-data-title" : {
+
+    },
     "Monthly" : {
 
     },
@@ -36,9 +36,6 @@
 
     },
     "summary" : {
-
-    },
-    "This week" : {
 
     },
     "Weekly" : {

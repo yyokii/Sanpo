@@ -5,7 +5,7 @@
       "scale" : "1x"
     },
     {
-      "filename" : "スクリーンショット 2024-07-28 10.51.45.png",
+      "filename" : "lake-1.jpg",
       "idiom" : "universal",
       "scale" : "2x"
     },
@@ -17,5 +17,8 @@
   "info" : {
     "author" : "xcode",
     "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
   }
 }
