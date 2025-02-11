@@ -113,13 +113,6 @@ extension HomeView {
         }
         .padding(20)
     }
-
-    func checkIsLight(of imageName: String) -> Bool {
-        let image = UIImage(named: imageName, in: .module, with: nil)
-        let averageColor = image?.averageColor
-        let relativeLuminance = averageColor?.relativeLuminance ?? 1
-        return relativeLuminance > 0.7
-    }
 }
 
 #if DEBUG
