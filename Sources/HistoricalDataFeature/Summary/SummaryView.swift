@@ -108,9 +108,6 @@ private extension SummaryView {
                         Text("\(diff >= 0 ? "+" : "")\(diff) (\(String(format: "%.1f", diffPercentage))%)")
                             .font(.caption)
                             .foregroundStyle(diff >= 0 ? .green : .red)
-                        Text("from last week")
-                            .font(.caption)
-                            .foregroundStyle(diff >= 0 ? .green : .red)
                     }
                 }
             }

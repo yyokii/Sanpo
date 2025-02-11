@@ -29,7 +29,8 @@ struct iOSApp: App {
                 .environment(todayDataModel)
                 .onAppear {
                     Task {
-                       await myDataModel.loadStepCounts()
+                        await myDataModel.loadStepCounts()
+                        try? await myDataModel.loadStepCountSummary()
                     }
                 }
                 .tint(.black)
