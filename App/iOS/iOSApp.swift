@@ -10,6 +10,7 @@ struct iOSApp: App {
     @StateObject var workoutData = WorkoutData()
 
     @State private var myDataModel = MyDataModel(healthDataClient: HealthDataClient.shared)
+    @State private var todayDataModel = TodayDataModel(healthDataClient: HealthDataClient.shared)
 
     init() {
         let userDefaults = UserDefaults(suiteName: UserDefaultsSuitName.app.rawValue)!
@@ -25,6 +26,7 @@ struct iOSApp: App {
                 .environmentObject(weatherData)
                 .environmentObject(workoutData)
                 .environment(myDataModel)
+                .environment(todayDataModel)
                 .onAppear {
                     Task {
                        await myDataModel.loadStepCounts()

@@ -5,6 +5,7 @@ DerivedData/
 .DS_Store
 db.sqlite
 .swiftpm
+Secret.swift
 
 # Firebase
 GoogleService-Info.plist

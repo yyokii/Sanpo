@@ -1,12 +1,11 @@
-import SwiftUI
-import WidgetKit
-
 import Combine
 import Constant
 import Extension
 import Model
 import Service
 import StyleGuide
+import SwiftUI
+import WidgetKit
 
 public struct HomeView: View {
     @AppStorage(
@@ -26,6 +25,7 @@ public struct HomeView: View {
 
     @EnvironmentObject private var weatherData: WeatherData
     @EnvironmentObject private var workoutData: WorkoutData
+    @Environment(TodayDataModel.self) private var todayDataModel
 
     @StateObject var stepCountData = StepCountData()
     @StateObject var distanceData = DistanceData()
@@ -70,6 +70,9 @@ public struct HomeView: View {
         .onAppear {
             inputGoal = dailyTargetSteps
             weatherData.requestLocationAuth()
+//            Task {
+//                try? await todayDataModel.generateAdvise()
+//            }
         }
         .onReceive(HealthKitAuthService.shared.$authStatus) { status in
             if let status,

@@ -14,7 +14,8 @@ Simple Pedometer App
 
 * Entity: Represents data information
 * Service: Communicate with outside of application. (Web server, DB, OS, etc.)
-* Model: Aggregate entity for domain logic
+* Model: Aggregate entity for domain logic. 
+  * 機能単位ごとの粒度で定義する。画面ごとで定義した場合に同じようなロジックを別で書く可能性がでてくるのと、そのモデルがさまざまな機能をもち肥大化しやすいので。
 
 ## Develop
 

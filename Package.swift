@@ -34,7 +34,9 @@ let package = Package(
             ]
         ),
     ],
-    dependencies: [],
+    dependencies: [
+        .package(url: "https://github.com/MacPaw/OpenAI.git", from: "0.3.2")
+    ],
     targets: [
         .target(
             name: "Constant",
@@ -75,6 +77,7 @@ let package = Package(
         .target(
             name: "Model",
             dependencies: [
+                .product(name: "OpenAI", package: "OpenAI"),
                 "Constant",
                 "Extension",
                 "Service"
