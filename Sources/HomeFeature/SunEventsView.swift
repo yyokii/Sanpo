@@ -14,12 +14,6 @@ struct SunEventsView: View {
 
     var body: some View {
         VStack(alignment: .center, spacing: 8) {
-            HStack(alignment: .center, spacing: 0) {
-                badgeText("日の出")
-                Spacer(minLength: 8)
-                badgeText("日の入り")
-            }
-            .frame(maxWidth: .infinity)
             ZStack(alignment: .leading) {
                 RoundedRectangle(cornerRadius: 24)
                     .fill(
@@ -52,20 +46,26 @@ struct SunEventsView: View {
 
 extension SunEventsView {
     struct MainSunEvents {
+        /// 太陽の中心が地平線下18°に位置する時刻。この時、空に僅かな光が差し始め、星が徐々に見えなくなる。
         var astronomicalDawn: Date
+
+        ///  日の出
         var sunrise: Date
+
+        /// 太陽が空で最も高い位置に達する時刻
         var solarNoon: Date
+
+        /// 日の入り
         var sunset: Date
+
+        /// 太陽の中心が地平線下18°に達し、空が完全に暗くなり、天体観測に支障がなくなる時刻。
         var astronomicalDusk: Date
+
 
         private var totalDuration: TimeInterval {
             astronomicalDusk.timeIntervalSince(astronomicalDawn)
         }
 
-        // SunEventsのそれぞれのDateは必ずしも順番にはなっていない
-        // 例えばastronomicalDuskが2024-02-17 10:15:43 +0000だったとしても
-        // solarMidnightが2024-02-16 14:09:39 +0000となることもある
-        // 現状の実装は順番になる前提であるので、ちゃんとやるならその辺りも考慮したほうが良い
         init?(from sunEvents: SunEvents) {
             // できれば nil を許容した表示にもしたい
             guard let astronomicalDawn = sunEvents.astronomicalDawn,
