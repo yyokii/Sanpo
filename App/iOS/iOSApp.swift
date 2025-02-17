@@ -1,8 +1,8 @@
-import SwiftUI
-
 import Constant
 import MainTab
 import Model
+import Service
+import SwiftUI
 
 @main
 struct iOSApp: App {
@@ -10,7 +10,11 @@ struct iOSApp: App {
     @StateObject var workoutData = WorkoutData()
 
     @State private var myDataModel = MyDataModel(healthDataClient: HealthDataClient.shared)
-    @State private var todayDataModel = TodayDataModel(healthDataClient: HealthDataClient.shared)
+    @State private var todayDataModel = TodayDataModel(
+        healthDataClient: HealthDataClient.shared,
+        weatherDataClient: WeatherDataClient.shared,
+        locationManager: LocationManager.shared
+    )
 
     init() {
         let userDefaults = UserDefaults(suiteName: UserDefaultsSuitName.app.rawValue)!

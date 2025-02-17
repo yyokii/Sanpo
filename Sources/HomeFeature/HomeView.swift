@@ -53,6 +53,9 @@ public struct HomeView: View {
                     )
                 }
                 Spacer(minLength: 20).fixedSize()
+                if let mainSunEvents = todayDataModel.mainSunEvents {
+                    SunEventsView(now: .now, sunEvents: mainSunEvents)
+                }
                 WeatherDataView(
                     currentWeather: weatherData.currentWeather,
                     hourlyForecasts: weatherData.hourlyForecasts
@@ -70,9 +73,10 @@ public struct HomeView: View {
         .onAppear {
             inputGoal = dailyTargetSteps
             weatherData.requestLocationAuth()
-//            Task {
+            Task {
+                await todayDataModel.load()
 //                try? await todayDataModel.generateAdvise()
-//            }
+            }
         }
         .onReceive(HealthKitAuthService.shared.$authStatus) { status in
             if let status,
@@ -125,6 +129,7 @@ struct HomeView_Previews: PreviewProvider {
         .environmentObject(WeatherData.preview)
         .environmentObject(WorkoutData())
     }
+    // TODO: todayDataModelを設定してないけどいいの？
 }
 
 #endif
