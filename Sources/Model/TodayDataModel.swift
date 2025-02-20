@@ -25,6 +25,7 @@ public class TodayDataModel {
 
         // 位置情報が更新されたら天候データの再取得を行う
         // https://forums.developer.apple.com/forums/thread/746466
+        // https://www.youtube.com/watch?v=DAq-eA98O4g
         _ = withObservationTracking {
             self.locationManager.location
         } onChange: {

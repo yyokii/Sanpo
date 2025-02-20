@@ -53,9 +53,8 @@ public struct HomeView: View {
                     )
                 }
                 Spacer(minLength: 20).fixedSize()
-                if let mainSunEvents = todayDataModel.mainSunEvents {
-                    SunEventsView(now: .now, sunEvents: mainSunEvents)
-                }
+                sunEventsCard
+                Spacer(minLength: 20).fixedSize()
                 WeatherDataView(
                     currentWeather: weatherData.currentWeather,
                     hourlyForecasts: weatherData.hourlyForecasts
@@ -75,7 +74,6 @@ public struct HomeView: View {
             weatherData.requestLocationAuth()
             Task {
                 await todayDataModel.load()
-//                try? await todayDataModel.generateAdvise()
             }
         }
         .onReceive(HealthKitAuthService.shared.$authStatus) { status in
@@ -103,6 +101,50 @@ public struct HomeView: View {
 }
 
 extension HomeView {
+
+    @ViewBuilder
+    var sunEventsCard: some View {
+        if let mainSunEvents = todayDataModel.mainSunEvents {
+            VStack(alignment: .leading, spacing: 0) {
+                HStack(alignment: .center, spacing: 8) {
+                    Image(systemName: "sun.haze")
+                        .adaptiveFont(.bold, size: 16)
+                    Text("Sun Events")
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .adaptiveFont(.bold, size: 16)
+                }
+                .padding(.horizontal, 16)
+                SunEventsView(now: .now, sunEvents: mainSunEvents)
+                    .padding(.horizontal, 24)
+                Spacer(minLength: 12).fixedSize()
+                HStack(alignment: .center, spacing: 0) {
+                    detailDataItem(title: "Sunrise", value: "bbb")
+                        .frame(maxWidth: .infinity)
+                    detailDataItem(title: "Sunset", value: "bbb")
+                        .frame(maxWidth: .infinity)
+                }
+            }
+            .padding(.top, 12)
+            .padding(.bottom, 20)
+            .background {
+                Rectangle()
+                    .fill(Color.adaptiveWhite)
+                    .cornerRadius(20)
+                    .adaptiveShadow()
+            }
+        }
+    }
+
+    func detailDataItem(title: String, value: String) -> some View {
+        VStack(alignment: .center, spacing: 8) {
+            Text(title)
+                .adaptiveFont(.normal, size: 12)
+                .foregroundStyle(.black)
+            Text("\(value)")
+                .adaptiveFont(.bold, size: 16)
+        }
+    }
+
     func goalSettingView() -> some View {
         VStack(spacing: 16) {
             TextField("目標歩数", value: $inputGoal, formatter: NumberFormatter())
@@ -121,15 +163,23 @@ extension HomeView {
 
 #if DEBUG
 
-struct HomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        NavigationStack {
-            HomeView()
-        }
-        .environmentObject(WeatherData.preview)
-        .environmentObject(WorkoutData())
-    }
-    // TODO: todayDataModelを設定してないけどいいの？
-}
+#Preview {
+    @Previewable @State var todayDataModel = TodayDataModel(
+        healthDataClient: MockHealthDataClient(),
+        weatherDataClient: MockWeatherDataClient(),
+        locationManager: MockLocationManager()
+    )
 
+    NavigationStack {
+        HomeView()
+    }
+    .onAppear {
+        Task {
+          try? await todayDataModel.load()
+        }
+    }
+    .environmentObject(WeatherData.preview)
+    .environmentObject(WorkoutData())
+    .environment(todayDataModel)
+}
 #endif
