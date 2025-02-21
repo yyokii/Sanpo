@@ -9,19 +9,17 @@ import WidgetKit
 
 public struct HomeView: View {
     @AppStorage(
-        UserDefaultsKey.dailyTargetSteps.rawValue,
-        store: UserDefaults.app
+        UserDefaultsKey.dailyTargetSteps.rawValue
     )
     private var dailyTargetSteps: Int = 3000
 
     @AppStorage(
-        UserDefaultsKey.dailyTargetActiveEnergyBurned.rawValue,
-        store: UserDefaults.app
+        UserDefaultsKey.dailyTargetActiveEnergyBurned.rawValue
     )
     private var dailyTargetActiveEnergyBurned: Int = 2000
 
     @AppStorage(UserDefaultsKey.cardBackgroundImageName.rawValue)
-    private var selectedCardImage = ""
+    private var selectedCardImage = "cliff-sea-1"
 
     @EnvironmentObject private var weatherData: WeatherData
     @EnvironmentObject private var workoutData: WorkoutData
@@ -66,11 +64,18 @@ public struct HomeView: View {
             .padding(.horizontal, 24)
             .padding(.bottom, 16)
         }
+        .background {
+            Image(selectedCardImage, bundle: .module)
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+                .blur(radius: 70)
+        }
+        .navigationTitle("Sanpo")
         .refreshable {
             await weatherData.load()
             await stepCountData.loadTodayStepCount()
         }
-        .navigationTitle("Sanpo")
         .onAppear {
             inputGoal = dailyTargetSteps
             weatherData.requestLocationAuth()

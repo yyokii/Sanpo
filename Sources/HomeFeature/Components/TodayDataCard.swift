@@ -60,6 +60,8 @@ struct TodayDataCard: View {
         .padding(.bottom, 16)
         .background {
             Image(backgroundImageName, bundle: .module)
+                .resizable()
+                .scaledToFill()
         }
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .adaptiveShadow()

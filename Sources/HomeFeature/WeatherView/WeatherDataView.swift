@@ -15,7 +15,7 @@ public struct WeatherDataView: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .center, spacing: 8) {
-                Image(systemName: "sun.haze")
+                Image(systemName: "thermometer.sun")
                     .adaptiveFont(.bold, size: 16)
                 Text("Weather")
                     .frame(maxWidth: .infinity, alignment: .leading)
