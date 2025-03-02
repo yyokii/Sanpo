@@ -13,7 +13,7 @@ public struct WeatherDataView: View {
     let hourlyForecasts: [Model.HourWeather]?
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        CardView {
             HStack(alignment: .center, spacing: 8) {
                 Image(systemName: "thermometer.sun")
                     .adaptiveFont(.bold, size: 16)
@@ -80,14 +80,7 @@ public struct WeatherDataView: View {
                 }
                 .padding(.horizontal, 16)
             }
-        }
-        .padding(.top, 12)
-        .padding(.bottom, 20)
-        .background {
-            Rectangle()
-                .fill(Color.adaptiveWhite)
-                .cornerRadius(20)
-                .adaptiveShadow()
+            Spacer(minLength: 8).fixedSize()
         }
         .task {
             weatherAttribution = try? await weatherService.attribution

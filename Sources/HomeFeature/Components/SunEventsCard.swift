@@ -5,7 +5,7 @@ struct SunEventsCard: View {
     let mainSunEvents: MainSunEvents
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        CardView {
             HStack(alignment: .center, spacing: 8) {
                 Image(systemName: "sun.haze")
                     .adaptiveFont(.bold, size: 16)
@@ -23,14 +23,7 @@ struct SunEventsCard: View {
                 detailDataItem(title: "Sunset", value: mainSunEvents.sunset)
             }
             .padding(.horizontal, 16)
-        }
-        .padding(.top, 12)
-        .padding(.bottom, 20)
-        .background {
-            Rectangle()
-                .fill(Color.adaptiveWhite)
-                .cornerRadius(20)
-                .adaptiveShadow()
+            Spacer(minLength: 8).fixedSize()
         }
     }
 
