@@ -13,16 +13,14 @@ struct SunEventsCard: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .adaptiveFont(.bold, size: 16)
             }
-            .padding(.horizontal, 16)
             SunEventsView(now: .now, sunEvents: mainSunEvents)
-                .padding(.horizontal, 24)
+                .padding(.horizontal, 8)
             Spacer(minLength: 12).fixedSize()
             HStack(alignment: .center, spacing: 0) {
                 detailDataItem(title: "Sunrise", value: mainSunEvents.sunrise)
                 Spacer(minLength: 8)
                 detailDataItem(title: "Sunset", value: mainSunEvents.sunset)
             }
-            .padding(.horizontal, 16)
             Spacer(minLength: 8).fixedSize()
         }
     }

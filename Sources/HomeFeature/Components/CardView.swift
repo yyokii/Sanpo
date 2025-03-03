@@ -13,9 +13,8 @@ struct CardView<Content: View>: View {
         VStack(alignment: .leading, spacing: 0) {
             content()
         }
-        .frame(maxWidth: .infinity)
-        .padding(.top, 12)
-        .padding(.bottom, 12)
+        .padding(.vertical, 12)
+        .padding(.horizontal, 16)
         .background {
             Rectangle()
                 .fill(Color.adaptiveWhite)

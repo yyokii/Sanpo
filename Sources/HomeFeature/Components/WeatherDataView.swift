@@ -21,7 +21,6 @@ public struct WeatherDataView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .adaptiveFont(.bold, size: 16)
             }
-            .padding(.horizontal, 16)
 
             Spacer(minLength: 28).fixedSize()
 
@@ -34,7 +33,6 @@ public struct WeatherDataView: View {
                     currentWeatherItem(currentWeather)
                         .padding(.horizontal, 8)
                 }
-                .padding(.horizontal, 16)
             }
 
             Spacer(minLength: 28).fixedSize()
@@ -45,7 +43,6 @@ public struct WeatherDataView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .adaptiveFont(.bold, size: 12)
                         .foregroundStyle(.gray)
-                        .padding(.horizontal, 16)
 
                     ScrollView(.horizontal) {
                         HStack(alignment: .center, spacing: 10) {
@@ -53,7 +50,7 @@ public struct WeatherDataView: View {
                                 hourlyWeatherDataItem(forecast)
                             }
                         }
-                        .padding(.horizontal, 24)
+                        .padding(.horizontal, 8)
                     }
                     .scrollIndicators(.hidden)
                 }
@@ -78,7 +75,6 @@ public struct WeatherDataView: View {
                         showWeatherKitLegalLink.toggle()
                     }
                 }
-                .padding(.horizontal, 16)
             }
             Spacer(minLength: 8).fixedSize()
         }
