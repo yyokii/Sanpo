@@ -33,6 +33,8 @@ public struct HomeView: View {
 
     @State private var isSelectCardImageViewPresented = false
 
+    let todayCardViewHeight: CGFloat = 270
+
     public init() {}
 
     public var body: some View {
@@ -40,7 +42,7 @@ public struct HomeView: View {
             VStack(alignment: .center, spacing: 0) {
                 Image(selectedCardImage, bundle: .module)
                     .resizable()
-                    .frame(height: 320)
+                    .frame(height: todayCardViewHeight)
                     .scaledToFill()
                     .blur(radius: 40)
                     .overlay {
@@ -53,10 +55,14 @@ public struct HomeView: View {
                                 distance: distanceData.todayDistance?.distance ?? 0,
                                 backgroundImageName: selectedCardImage
                             )
+                            .frame(height: todayCardViewHeight)
                         }
                         .padding(.horizontal, 24)
                     }
-                Spacer(minLength: 20).fixedSize()
+                Spacer(minLength: 32).fixedSize()
+                titleRow("Goal")
+                    .padding(.horizontal, 12)
+                Spacer(minLength: 24).fixedSize()
                 DailyStepGoalView(
                     todaySteps: todayDataModel.todayStepCount.number,
                     goal: dailyTargetSteps,
@@ -66,7 +72,10 @@ public struct HomeView: View {
                     )
                 )
                 .padding(.horizontal, 24)
-                Spacer(minLength: 20).fixedSize()
+                Spacer(minLength: 24).fixedSize()
+                titleRow("Weather")
+                    .padding(.horizontal, 12)
+                Spacer(minLength: 24).fixedSize()
                 if let sunEvents = todayDataModel.mainSunEvents {
                     SunEventsCard(mainSunEvents: sunEvents)
                         .padding(.horizontal, 24)
@@ -121,6 +130,13 @@ public struct HomeView: View {
 }
 
 extension HomeView {
+    func titleRow(_ title: String) -> some View {
+        Text(title)
+            .font(.large)
+            .bold()
+            .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
     func goalSettingView() -> some View {
         VStack(spacing: 16) {
             TextField("目標歩数", value: $inputGoal, formatter: NumberFormatter())

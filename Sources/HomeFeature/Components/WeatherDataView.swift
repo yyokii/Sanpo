@@ -17,7 +17,7 @@ public struct WeatherDataView: View {
             HStack(alignment: .center, spacing: 8) {
                 Image(systemName: "thermometer.sun")
                     .adaptiveFont(.bold, size: 16)
-                Text("Weather")
+                Text("Current")
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .adaptiveFont(.bold, size: 16)
             }
@@ -25,14 +25,8 @@ public struct WeatherDataView: View {
             Spacer(minLength: 28).fixedSize()
 
             if let currentWeather {
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("current-weather-title", bundle: .module)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .adaptiveFont(.bold, size: 12)
-                        .foregroundStyle(.gray)
                     currentWeatherItem(currentWeather)
                         .padding(.horizontal, 8)
-                }
             }
 
             Spacer(minLength: 28).fixedSize()
@@ -51,8 +45,8 @@ public struct WeatherDataView: View {
                             }
                         }
                         .padding(.horizontal, 8)
+                        .padding(.bottom, 12)
                     }
-                    .scrollIndicators(.hidden)
                 }
             }
 

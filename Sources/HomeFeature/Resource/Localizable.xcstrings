@@ -57,6 +57,9 @@
         }
       }
     },
+    "Current" : {
+
+    },
     "current-weather-title" : {
       "extractionState" : "manual",
       "localizations" : {
