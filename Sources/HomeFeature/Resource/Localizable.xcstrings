@@ -10,18 +10,52 @@
     "%lld" : {
 
     },
-    "%lld/%lld%@" : {
+    "aaaaa" : {
+
+    },
+    "achieved today" : {
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld/%2$lld%3$@"
+            "state" : "translated",
+            "value" : "Awesome job today—your goal was met with flying colors! Enjoy your success! 🎉\n"
           }
         }
       }
     },
-    "aaaaa" : {
-
+    "achieved today %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're on 🔥%@ days in a row, including today! Keep up the brilliant work!"
+          }
+        }
+      }
+    },
+    "achieved yesterday" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Great job yesterday—your target was met! Your effort shines bright 🌟. Let’s build an unstoppable streak soon!"
+          }
+        }
+      }
+    },
+    "awesome job today" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Awesome"
+          }
+        }
+      }
     },
     "current-weather-title" : {
       "extractionState" : "manual",
@@ -36,6 +70,42 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "現在の天気"
+          }
+        }
+      }
+    },
+    "fire %@ days" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "🔥%@ days"
+          }
+        }
+      }
+    },
+    "goal streak %@ days" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're on 🔥%@ days in a row of smashing your goals! Let's keep it going!"
+          }
+        }
+      }
+    },
+    "Goal: %lldsteps" : {
+
+    },
+    "great job yesterday" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Great"
           }
         }
       }
@@ -77,6 +147,17 @@
     "Link" : {
 
     },
+    "missed yesterday" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep pushing forward—despite missing yesterday, your drive still burns strong 💪. Tomorrow is a fresh new start!"
+          }
+        }
+      }
+    },
     "Sanpo" : {
 
     },
@@ -108,6 +189,17 @@
     },
     "Today" : {
 
+    },
+    "tomorrow is a fresh new start" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tomorrow is a fresh new start"
+          }
+        }
+      }
     },
     "uv-extreme" : {
       "extractionState" : "manual",
@@ -233,9 +325,6 @@
           }
         }
       }
-    },
-    "目標を設定" : {
-
     },
     "目標歩数" : {
 

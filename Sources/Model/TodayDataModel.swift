@@ -5,9 +5,18 @@ import Service
 
 @Observable
 public class TodayDataModel {
+    static var stepCountFormatter: DateFormatter {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .short
+        dateFormatter.timeStyle = .none
+        dateFormatter.timeZone = .current
+        dateFormatter.locale = .init(identifier: "en_US_POSIX")
+        return dateFormatter
+    }
 
     public var todayStepCount: StepCount = .noData
     public var mainSunEvents: MainSunEvents?
+    public var goalStreak: Int = 0
 
     private let healthDataClient: HealthDataClientProtocol
     private let weatherDataClient: WeatherDataClientProtocol
@@ -87,13 +96,38 @@ public class TodayDataModel {
         }
     }
 
-    static var stepCountFormatter: DateFormatter {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .short
-        dateFormatter.timeStyle = .none
-        dateFormatter.timeZone = .current
-        dateFormatter.locale = .init(identifier: "en_US_POSIX")
-        return dateFormatter
+    /// 昨日から過去100日分の歩数データで、指定した目標歩数を達成した連続日数を更新
+    public func updateCurrentStepGoalStreak(goal: Int) async throws {
+        let calendar = Calendar.current
+        let startOfToday = calendar.startOfDay(for: .now)
+
+        // 本日の途中データは含めず、昨日を基準にする
+        guard let yesterday = calendar.date(byAdding: .day, value: -1, to: startOfToday) else {
+            return
+        }
+        // 昨日からさかのぼって、最大100日分（昨日含む）のデータをチェックするため、昨日の99日前の日付を取得
+        guard let startDate = calendar.date(byAdding: .day, value: -99, to: yesterday) else {
+            return
+        }
+
+        let stepData = try await healthDataClient.loadStepCount(start: startDate, end: yesterday)
+
+        var streak = 0
+        var currentDate = yesterday
+
+        // 昨日から最大100日分ループ（100日以上の連続達成なら "99+" として返す）
+        for _ in 0..<100 {
+            let day = calendar.startOfDay(for: currentDate)
+            guard let stepCount = stepData[day] else { break }
+            if stepCount.number >= goal {
+                streak += 1
+            } else {
+                break
+            }
+            guard let previousDay = calendar.date(byAdding: .day, value: -1, to: currentDate) else { break }
+            currentDate = previousDay
+        }
+        goalStreak = streak
     }
 }
 

@@ -22,7 +22,6 @@ public struct HomeView: View {
     private var selectedCardImage = "cliff-sea-1"
 
     @EnvironmentObject private var weatherData: WeatherData
-    @EnvironmentObject private var workoutData: WorkoutData
     @Environment(TodayDataModel.self) private var todayDataModel
 
     @StateObject var stepCountData = StepCountData()
@@ -39,20 +38,38 @@ public struct HomeView: View {
     public var body: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 0) {
+                Image(selectedCardImage, bundle: .module)
+                    .resizable()
+                    .frame(height: 320)
+                    .scaledToFill()
+                    .blur(radius: 40)
+                    .overlay {
+                        Button {
+                            isSelectCardImageViewPresented = true
+                        } label: {
+                            TodayDataCard(
+                                stepCount: stepCountData.todayStepCount?.number ?? 0,
+                                yesterdayStepCount: stepCountData.yesterdayStepCount?.number ?? 0,
+                                distance: distanceData.todayDistance?.distance ?? 0,
+                                backgroundImageName: selectedCardImage
+                            )
+                        }
+                        .padding(.horizontal, 24)
+                    }
                 Spacer(minLength: 20).fixedSize()
-                Button {
-                    isSelectCardImageViewPresented = true
-                } label: {
-                    TodayDataCard(
-                        stepCount: stepCountData.todayStepCount?.number ?? 0,
-                        yesterdayStepCount: stepCountData.yesterdayStepCount?.number ?? 0,
-                        distance: distanceData.todayDistance?.distance ?? 0,
-                        backgroundImageName: selectedCardImage
+                DailyStepGoalView(
+                    todaySteps: todayDataModel.todayStepCount.number,
+                    goal: dailyTargetSteps,
+                    goalAchievementStatus: .init(
+                        isTodayAchieved: todayDataModel.todayStepCount.number >= dailyTargetSteps,
+                        consecutiveDays: todayDataModel.goalStreak
                     )
-                }
+                )
+                .padding(.horizontal, 24)
                 Spacer(minLength: 20).fixedSize()
                 if let sunEvents = todayDataModel.mainSunEvents {
                     SunEventsCard(mainSunEvents: sunEvents)
+                        .padding(.horizontal, 24)
                 }
                 Spacer(minLength: 20).fixedSize()
                 WeatherDataView(
@@ -60,18 +77,13 @@ public struct HomeView: View {
                     hourlyForecasts: weatherData.hourlyForecasts
                 )
                 .asyncState(weatherData.phase)
+                .padding(.horizontal, 24)
+
             }
-            .padding(.horizontal, 24)
             .padding(.bottom, 16)
         }
-        .background {
-            Image(selectedCardImage, bundle: .module)
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea()
-                .blur(radius: 70)
-        }
         .navigationTitle("Sanpo")
+        .navigationBarTitleDisplayMode(.inline)
         .refreshable {
             await weatherData.load()
             await stepCountData.loadTodayStepCount()
@@ -81,6 +93,7 @@ public struct HomeView: View {
             weatherData.requestLocationAuth()
             Task {
                 await todayDataModel.load()
+                try await todayDataModel.updateCurrentStepGoalStreak(goal: dailyTargetSteps)
             }
         }
         .onReceive(HealthKitAuthService.shared.$authStatus) { status in
@@ -142,7 +155,6 @@ extension HomeView {
         }
     }
     .environmentObject(WeatherData.preview)
-    .environmentObject(WorkoutData())
     .environment(todayDataModel)
 }
 #endif

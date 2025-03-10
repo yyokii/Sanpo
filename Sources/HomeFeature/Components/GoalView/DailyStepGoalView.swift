@@ -1,17 +1,5 @@
 import SwiftUI
 
-/*
- 前日達成している場合: 先日は目標達成しました。
- "Great job on meeting your goal yesterday! Keep up the amazing work!"
- "You crushed it yesterday—let’s keep that momentum going today!"
- "Yesterday’s achievement was fantastic. Carry that energy into today!"
-
- 2日以上達成している場合: ~日連続で達成しています。
-
- 連続達成しておらず前日も未達成の場合: 今月は~日目標を達成しています。
-
- */
-
 struct DailyStepGoalView: View {
     let todaySteps: Int
     let goal: Int
@@ -21,9 +9,7 @@ struct DailyStepGoalView: View {
         CardView {
             HStack(alignment: .center, spacing: 0) {
                 VStack(alignment: .center, spacing: 0) {
-                    Text(makeAttributedString(
-                        fullText: "goal streak \(10) days",
-                        highlightedSubstring: "goal streak \(10) days"))
+                    Text(goalAchievementStatus.message)
                     Spacer(minLength: 8).fixedSize()
                     Text("Goal: \(goal)steps")
                         .foregroundStyle(.black)
@@ -54,20 +40,98 @@ struct DailyStepGoalView: View {
 
 extension DailyStepGoalView {
     enum GoalAchievementStatus {
-        /// 2日以上連続で達成している場合
+        /// 今日達成している場合
+        case achievedToday(days: Int)
+        /// 今日は未達且つ、2日以上連続で達成している場合
         case consecutive(days: Int)
-        /// 前日だけ達成している場合
+        /// 今日は未達且つ、前日だけ達成している場合
         case achievedYesterday
-        /// 前日未達成の場合（月間の達成日数を保持）
-        case missedYesterday(totalAchievedDays: Int)
+        /// 今日は未達且つ、前日未達成の場合
+        case missedYesterday
+
+        init(isTodayAchieved: Bool, consecutiveDays: Int) {
+            if isTodayAchieved {
+                // 今日達成している場合は、昨日までの連続日数に今日分を加えてカウント
+                self = .achievedToday(days: consecutiveDays + 1)
+            } else {
+                // 今日未達の場合は、昨日までの連続日数に基づいて分岐
+                if consecutiveDays >= 2 {
+                    self = .consecutive(days: consecutiveDays)
+                } else if consecutiveDays == 1 {
+                    self = .achievedYesterday
+                } else {
+                    self = .missedYesterday
+                }
+            }
+        }
+
+        var message: AttributedString {
+            switch self {
+            case let .achievedToday(days):
+                if days > 1 {
+                    let daysText = days > 99 ? "+99" : "\(days)"
+                    return makeAttributedString(
+                        fullText: String(localized: "achieved today \(daysText)", bundle: .module),
+                        highlightedSubstring: String(localized: "fire \(daysText) days", bundle: .module)
+                    )
+                } else {
+                    return makeAttributedString(
+                        fullText: String(localized: "achieved today", bundle: .module),
+                        highlightedSubstring: String(localized: "awesome job today", bundle: .module)
+                    )
+                }
+            case let .consecutive(days):
+                let daysText = days > 99 ? "+99" : "\(days)"
+                return makeAttributedString(
+                    fullText: String(localized: "goal streak \(daysText) days", bundle: .module),
+                    highlightedSubstring: String(localized: "fire \(daysText) days", bundle: .module)
+                )
+            case .achievedYesterday:
+                return makeAttributedString(
+                    fullText: String(localized: "achieved yesterday", bundle: .module),
+                    highlightedSubstring: String(localized: "great job yesterday", bundle: .module)
+                )
+            case .missedYesterday:
+                return makeAttributedString(
+                    fullText: String(localized: "missed yesterday", bundle: .module),
+                    highlightedSubstring: "tomorrow is a fresh new start"
+                )
+            }
+        }
+
+        func makeAttributedString(
+            fullText: String,
+            highlightedSubstring: String
+        ) -> AttributedString {
+            var attributedString = AttributedString(fullText)
+            attributedString.foregroundColor = .gray
+            attributedString.font = .system(size: 14)
+            if let range = attributedString.range(of: highlightedSubstring) {
+                attributedString[range].foregroundColor = .black
+                attributedString[range].font = .system(size: 20, weight: .bold)
+            }
+            return attributedString
+        }
     }
 }
 
 #if DEBUG
 
 #Preview {
-    DailyStepGoalView(todaySteps: 1000, goal: 2000, goalAchievementStatus: .achievedYesterday)
+    ScrollView {
+        VStack(alignment: .center, spacing: 24) {
+            DailyStepGoalView(todaySteps: 2000, goal: 2000, goalAchievementStatus: .achievedToday(days: 1))
+
+            DailyStepGoalView(todaySteps: 1000, goal: 2000, goalAchievementStatus: .achievedToday(days: 199))
+
+            DailyStepGoalView(todaySteps: 1000, goal: 2000, goalAchievementStatus: .consecutive(days: 199))
+
+            DailyStepGoalView(todaySteps: 1000, goal: 2000, goalAchievementStatus: .achievedYesterday)
+
+            DailyStepGoalView(todaySteps: 1000, goal: 2000, goalAchievementStatus: .missedYesterday)
+        }
         .padding(.horizontal, 24)
+    }
 }
 
 #endif
