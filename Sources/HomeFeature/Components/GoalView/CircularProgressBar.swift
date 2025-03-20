@@ -22,9 +22,11 @@ struct CircularProgressBar: View {
 
             HStack(alignment: .bottom, spacing: 2) {
                 Text(String(format: "%.0f", progress * 100.0))
-                    .adaptiveFont(.bold, size: 30)
+                    .font(.large)
+                    .bold()
                 Text("%")
-                    .adaptiveFont(.bold, size: 20)
+                    .font(.medium)
+                    .bold()
             }
         }
         .padding(8) // CircleのstrokeのwidthによりViewの表示領域外にも少しはみ出すので、表示領域に収まるように設定

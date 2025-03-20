@@ -15,9 +15,9 @@ struct DailyStepGoalView: View {
                         .foregroundStyle(.black)
                         .adaptiveFont(.normal, size: 12)
                 }
-                Spacer(minLength: 20)
+                Spacer(minLength: 30)
                 CircularProgressBar(progress: (CGFloat(todaySteps) / CGFloat(goal)))
-                    .frame(width: 120)
+                    .frame(width: 100)
 
             }
         }

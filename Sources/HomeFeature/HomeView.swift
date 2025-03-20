@@ -62,7 +62,7 @@ public struct HomeView: View {
                 Spacer(minLength: 32).fixedSize()
                 titleRow("Goal")
                     .padding(.horizontal, 12)
-                Spacer(minLength: 24).fixedSize()
+                Spacer(minLength: 12).fixedSize()
                 DailyStepGoalView(
                     todaySteps: todayDataModel.todayStepCount.number,
                     goal: dailyTargetSteps,
@@ -75,7 +75,7 @@ public struct HomeView: View {
                 Spacer(minLength: 24).fixedSize()
                 titleRow("Weather")
                     .padding(.horizontal, 12)
-                Spacer(minLength: 24).fixedSize()
+                Spacer(minLength: 12).fixedSize()
                 if let sunEvents = todayDataModel.mainSunEvents {
                     SunEventsCard(mainSunEvents: sunEvents)
                         .padding(.horizontal, 24)
@@ -90,6 +90,10 @@ public struct HomeView: View {
 
             }
             .padding(.bottom, 16)
+        }
+        .background {
+            Color(uiColor: .secondarySystemBackground)
+                .ignoresSafeArea()
         }
         .navigationTitle("Sanpo")
         .navigationBarTitleDisplayMode(.inline)
