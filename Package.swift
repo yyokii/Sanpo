@@ -35,7 +35,8 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/MacPaw/OpenAI.git", from: "0.3.2")
+        .package(url: "https://github.com/MacPaw/OpenAI.git", from: "0.3.2"),
+        .package(url: "https://github.com/firebase/firebase-ios-sdk", from: "11.10.0"),
     ],
     targets: [
         .target(
@@ -80,7 +81,9 @@ let package = Package(
                 .product(name: "OpenAI", package: "OpenAI"),
                 "Constant",
                 "Extension",
-                "Service"
+                "Service",
+                .product(name: "FirebaseAuth", package: "firebase-ios-sdk"),
+                .product(name: "FirebaseFirestore", package: "firebase-ios-sdk"),
             ]
         ),
         .target(
