@@ -1,0 +1,45 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@" : {
+
+    },
+    "%lld" : {
+
+    },
+    "Current" : {
+
+    },
+    "hourly-weather-title" : {
+
+    },
+    "humidity-title" : {
+
+    },
+    "Link" : {
+
+    },
+    "uv-extreme" : {
+
+    },
+    "uv-high" : {
+
+    },
+    "uv-low" : {
+
+    },
+    "uv-moderate" : {
+
+    },
+    "uv-title" : {
+
+    },
+    "uv-veryHigh" : {
+
+    },
+    "wind-title" : {
+
+    }
+  },
+  "version" : "1.0"
+}

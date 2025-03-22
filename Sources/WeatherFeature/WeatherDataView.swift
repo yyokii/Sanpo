@@ -1,7 +1,7 @@
 import SwiftUI
 import WeatherKit
-
 import Model
+import SafariView
 import StyleGuide
 
 public struct WeatherDataView: View {
@@ -13,7 +13,7 @@ public struct WeatherDataView: View {
     let hourlyForecasts: [Model.HourWeather]?
 
     public var body: some View {
-        CardView {
+        VStack {
             HStack(alignment: .center, spacing: 8) {
                 Image(systemName: "thermometer.sun")
                     .adaptiveFont(.bold, size: 16)

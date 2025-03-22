@@ -116,6 +116,7 @@ let package = Package(
             dependencies: [
                 "Constant",
                 "Model",
+                "SafariView",
                 "Service",
                 "StyleGuide"
             ]
@@ -126,6 +127,10 @@ let package = Package(
                 "Constant",
                 "Model"
             ]
+        ),
+        .target(
+            name: "SafariView",
+            dependencies: []
         ),
 
         // Test

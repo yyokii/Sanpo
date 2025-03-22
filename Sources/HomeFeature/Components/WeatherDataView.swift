@@ -3,6 +3,7 @@ import WeatherKit
 
 import Model
 import StyleGuide
+import SafariView
 
 public struct WeatherDataView: View {
     @State var weatherAttribution: WeatherAttribution?
