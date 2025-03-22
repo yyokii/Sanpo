@@ -7,6 +7,7 @@ import os
 import Extension
 import Service
 
+// TODO: WeatherData Modelに移行する
 /**
  The data provider that loads weather forecast data.
  */

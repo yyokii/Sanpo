@@ -4,6 +4,7 @@ import WeatherKit
 public struct CurrentWeather {
     public let date: Date
     public let symbolName: String
+    public let condition: WeatherCondition
     public let humidity: Double
     public let temperature: Measurement<UnitTemperature>
     public let uvIndexCategory: UVIndex.ExposureCategory
@@ -16,6 +17,7 @@ public struct CurrentWeather {
         }
         self.date = currentWeather.date
         self.symbolName = currentWeather.symbolName
+        self.condition = currentWeather.condition
         self.humidity = currentWeather.humidity
         self.temperature = currentWeather.temperature
         self.uvIndexCategory = currentWeather.uvIndex.category
@@ -26,6 +28,7 @@ public struct CurrentWeather {
     public init(
         date: Date,
         symbolName: String,
+        condition: WeatherCondition,
         humidity: Double,
         temperature: Measurement<UnitTemperature>,
         uvIndexCategory: UVIndex.ExposureCategory,
@@ -34,6 +37,7 @@ public struct CurrentWeather {
     ) {
         self.date = date
         self.symbolName = symbolName
+        self.condition = condition
         self.humidity = humidity
         self.temperature = temperature
         self.uvIndexCategory = uvIndexCategory
@@ -68,12 +72,44 @@ public struct HourWeather {
     }
 }
 
+extension WeatherCondition {
+    var title: String {
+        switch self {
+        case .clear, .mostlyClear:
+            return String(localized: "weather-condition-clear", bundle: .module)
+        case .cloudy, .mostlyCloudy, .partlyCloudy:
+            return String(localized: "weather-condition-cloudy", bundle: .module)
+        case .breezy, .windy:
+            return String(localized: "weather-condition-windy", bundle: .module)
+        case .foggy, .haze, .smoky:
+            return String(localized: "weather-condition-fog", bundle: .module)
+        case .drizzle, .rain, .heavyRain, .freezingDrizzle, .freezingRain, .sunShowers:
+            return String(localized: "weather-condition-rain", bundle: .module)
+        case .isolatedThunderstorms, .scatteredThunderstorms, .thunderstorms, .strongStorms, .hurricane, .tropicalStorm:
+            return String(localized: "weather-condition-thunderstorm", bundle: .module)
+        case .blizzard, .blowingSnow, .flurries, .heavySnow, .snow, .sleet, .sunFlurries, .wintryMix:
+            return String(localized: "weather-condition-snow", bundle: .module)
+        case .blowingDust:
+            return String(localized: "weather-condition-dust", bundle: .module)
+        case .hail:
+            return String(localized: "weather-condition-hail", bundle: .module)
+        case .frigid:
+            return String(localized: "weather-condition-frigid", bundle: .module)
+        case .hot:
+            return String(localized: "weather-condition-hot", bundle: .module)
+        @unknown default:
+            return ""
+        }
+    }
+}
+
 #if DEBUG
 
 extension CurrentWeather {
     public static var mock: Self = .init(
         date: Date(),
         symbolName: "sun.max",
+        condition: WeatherCondition(rawValue: "rain")!,
         humidity: 0.34567891111,
         temperature: .ValueType(value: 34.567, unit: .celsius),
         uvIndexCategory: .moderate,

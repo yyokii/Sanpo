@@ -1,70 +1,257 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "%lld months ago" : {
-      "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Last mo."
+    "sourceLanguage" : "en",
+    "strings" : {
+        "%lld months ago" : {
+            "localizations" : {
+                "en" : {
+                    "variations" : {
+                        "plural" : {
+                            "one" : {
+                                "stringUnit" : {
+                                    "state" : "translated",
+                                    "value" : "Last mo."
+                                }
+                            },
+                            "other" : {
+                                "stringUnit" : {
+                                    "state" : "translated",
+                                    "value" : "%lld mo. \nago"
+                                }
+                            }
+                        }
+                    }
                 }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld mo. \nago"
-                }
-              }
             }
-          }
-        }
-      }
-    },
-    "%lld weeks ago" : {
-      "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Last wk."
+        },
+        "%lld weeks ago" : {
+            "localizations" : {
+                "en" : {
+                    "variations" : {
+                        "plural" : {
+                            "one" : {
+                                "stringUnit" : {
+                                    "state" : "translated",
+                                    "value" : "Last wk."
+                                }
+                            },
+                            "other" : {
+                                "stringUnit" : {
+                                    "state" : "translated",
+                                    "value" : "%lld wks ago"
+                                }
+                            }
+                        }
+                    }
                 }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld wks ago"
-                }
-              }
             }
-          }
+        },
+        "This month" : {
+            "localizations" : {
+                "en" : {
+                    "stringUnit" : {
+                        "state" : "translated",
+                        "value" : "This mo."
+                    }
+                }
+            }
+        },
+        "This week" : {
+            "localizations" : {
+                "en" : {
+                    "stringUnit" : {
+                        "state" : "translated",
+                        "value" : "This wk."
+                    }
+                }
+            }
+        },
+        "weather-condition-clear": {
+            "extractionState": "manual",
+            "localizations": {
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Clear"
+                    }
+                },
+                "ja": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "晴れ"
+                    }
+                }
+            }
+        },
+        "weather-condition-cloudy": {
+            "extractionState": "manual",
+            "localizations": {
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Cloudy"
+                    }
+                },
+                "ja": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "曇り"
+                    }
+                }
+            }
+        },
+        "weather-condition-windy": {
+            "extractionState": "manual",
+            "localizations": {
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Windy"
+                    }
+                },
+                "ja": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "風"
+                    }
+                }
+            }
+        },
+        "weather-condition-fog": {
+            "extractionState": "manual",
+            "localizations": {
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Fog"
+                    }
+                },
+                "ja": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "霧"
+                    }
+                }
+            }
+        },
+        "weather-condition-rain": {
+            "extractionState": "manual",
+            "localizations": {
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Rain"
+                    }
+                },
+                "ja": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "雨"
+                    }
+                }
+            }
+        },
+        "weather-condition-thunderstorm": {
+            "extractionState": "manual",
+            "localizations": {
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Thunderstorm"
+                    }
+                },
+                "ja": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "雷雨"
+                    }
+                }
+            }
+        },
+        "weather-condition-snow": {
+            "extractionState": "manual",
+            "localizations": {
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Snow"
+                    }
+                },
+                "ja": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "雪"
+                    }
+                }
+            }
+        },
+        "weather-condition-dust": {
+            "extractionState": "manual",
+            "localizations": {
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Dust"
+                    }
+                },
+                "ja": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "砂塵"
+                    }
+                }
+            }
+        },
+        "weather-condition-hail": {
+            "extractionState": "manual",
+            "localizations": {
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Hail"
+                    }
+                },
+                "ja": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "雹"
+                    }
+                }
+            }
+        },
+        "weather-condition-frigid": {
+            "extractionState": "manual",
+            "localizations": {
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Frigid"
+                    }
+                },
+                "ja": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "極寒"
+                    }
+                }
+            }
+        },
+        "weather-condition-hot": {
+            "extractionState": "manual",
+            "localizations": {
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Hot"
+                    }
+                },
+                "ja": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "暑い"
+                    }
+                }
+            }
         }
-      }
     },
-    "This month" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This mo."
-          }
-        }
-      }
-    },
-    "This week" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This wk."
-          }
-        }
-      }
-    }
-  },
-  "version" : "1.0"
+    "version" : "1.0"
 }

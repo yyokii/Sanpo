@@ -30,7 +30,8 @@ let package = Package(
                 "HomeFeature",
                 "HistoricalDataFeature",
                 "SettingsFeature",
-                "StyleGuide"
+                "StyleGuide",
+                "WeatherFeature",
             ]
         ),
     ],
@@ -109,6 +110,15 @@ let package = Package(
         .target(
             name: "StyleGuide",
             dependencies: []
+        ),
+        .target(
+            name: "WeatherFeature",
+            dependencies: [
+                "Constant",
+                "Model",
+                "Service",
+                "StyleGuide"
+            ]
         ),
         .target(
             name: "WidgetFeature",

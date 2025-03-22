@@ -1,4 +1,4 @@
-import Combine
+import Combine // TODO: いらないかも
 import Constant
 import Extension
 import Model
@@ -109,6 +109,7 @@ public struct HomeView: View {
                 try await todayDataModel.updateCurrentStepGoalStreak(goal: dailyTargetSteps)
             }
         }
+        // TDODO: この辺りのreceive処理はmodelに移動できそう
         .onReceive(HealthKitAuthService.shared.$authStatus) { status in
             if let status,
                status == .unknown ||
