@@ -19,6 +19,7 @@ public class LocationManager: NSObject, LocationManagerProtocol {
         locationManager.delegate = self
     }
 
+    // TODO: 初回で位置情報の取得許可を求める
     public func requestWhenInUseAuthorization() {
         guard locationManager.authorizationStatus == .notDetermined else {
             return
