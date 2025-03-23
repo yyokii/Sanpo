@@ -10,7 +10,7 @@ public struct MockWeatherDataClient: WeatherDataClientProtocol {
         return [
             .init(
                 date: now,
-                symbolName: "sun",
+                symbolName: "sun.max",
                 precipitationChance: .random(in: 0.1...0.9),
                 temperature: .init(value: .random(in: 4...40), unit: .celsius)
             ),
@@ -45,5 +45,9 @@ public struct MockWeatherDataClient: WeatherDataClientProtocol {
             sunset: now.addingTimeInterval(36000),
             astronomicalDusk: now.addingTimeInterval(43200)
         )
+    }
+
+    public func loadWeatherAttribution() async -> WeatherDataAttribution? {
+        .init(imageURL: .init(string: "https://picsum.photos/50"), url: .init(string: "https://www.google.co.jp/"))
     }
 }

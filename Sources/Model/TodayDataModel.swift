@@ -5,6 +5,7 @@ import Service
 
 @Observable
 public class TodayDataModel {
+    // TODO: これ使わずにformattedでいいかも
     static var stepCountFormatter: DateFormatter {
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .short

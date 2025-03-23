@@ -6,6 +6,7 @@ public protocol WeatherDataClientProtocol {
     func loadHourlyForecast(for location: CLLocation) async -> [HourWeather]?
     func loadCurrentWeather(for location: CLLocation) async -> CurrentWeather?
     func loadTodayMainSunEvents(for location: CLLocation) async -> MainSunEvents?
+    func loadWeatherAttribution () async -> WeatherDataAttribution?
 }
 
 public struct WeatherDataClient: WeatherDataClientProtocol {
@@ -41,5 +42,10 @@ public struct WeatherDataClient: WeatherDataClientProtocol {
         }
         // TODO: forecast?.forecast.firstの天気、特にconditionが現地の様子と違う気がするのは、locationの値の問題なのか？要確認
         return .init(from: sunEvents)
+    }
+
+    public func loadWeatherAttribution() async -> WeatherDataAttribution? {
+        let attribution = try? await service.attribution
+        return .init(imageURL: attribution?.combinedMarkLightURL, url: attribution?.legalPageURL)
     }
 }

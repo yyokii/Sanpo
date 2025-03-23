@@ -3,40 +3,79 @@ import WeatherKit
 import Model
 import SafariView
 import StyleGuide
+import Service
 
 public struct WeatherDataView: View {
-    @State var weatherAttribution: WeatherAttribution?
-    @State var showWeatherKitLegalLink = false
+    @Environment(WeatherDataModel.self) private var weatherDataModel
+    @State private var showWeatherKitLegalLink = false
 
-    private let weatherService = WeatherService()
-    let currentWeather: Model.CurrentWeather?
-    let hourlyForecasts: [Model.HourWeather]?
+    public init() {}
 
     public var body: some View {
-        VStack {
-            HStack(alignment: .center, spacing: 8) {
-                Image(systemName: "thermometer.sun")
-                    .adaptiveFont(.bold, size: 16)
-                Text("Current")
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .adaptiveFont(.bold, size: 16)
+        VStack(alignment: .center, spacing: 0) {
+//            ZStack(alignment: .center) {
+//                TypingTextView(text: "")
+//                    .font(.large)
+//                    .padding(.horizontal, 32)
+//            }
+//            .frame(maxHeight: .infinity)
+
+            VStack(alignment: .center, spacing: 0) {
+                if let weatherWalkingAdvice = weatherDataModel.weatherWalkingAdvice {
+                    Text(weatherWalkingAdvice.advice)
+                        .font(.large)
+                    Spacer(minLength: 8).fixedSize()
+                    Text(weatherWalkingAdvice.recommendedTime)
+                        .font(.medium)
+                }
+            }
+            .frame(maxHeight: .infinity)
+            weather()
+        }
+        .background {
+            BlobBackgroundView()
+        }
+        .onAppear {
+            Task {
+                await weatherDataModel.load()
+                try? await weatherDataModel.generateWalkingAdvice()
+            }
+        }
+        .sheet(isPresented: $showWeatherKitLegalLink) {
+            if let weatherDataAttribution = weatherDataModel.weatherDataAttribution {
+                SafariView(url: weatherDataAttribution.url)
+            }
+        }
+    }
+}
+
+private extension WeatherDataView {
+    func weather() -> some View {
+        VStack(alignment: .center, spacing: 0) {
+            if let currentWeather = weatherDataModel.currentWeather,
+               let sunEvents = weatherDataModel.mainSunEvents {
+                VStack(alignment: .center, spacing: 0) {
+                    HStack(alignment: .center, spacing: 0) {
+                        currentWeatherTemperature(currentWeather)
+                        Spacer(minLength: 16)
+                        SunEventsCard(mainSunEvents: sunEvents)
+                            .frame(width: 160)
+                    }
+                    Spacer(minLength: 16).fixedSize()
+                    currentWeatherDetail(currentWeather)
+                }
+                .padding(.horizontal, 16)
             }
 
-            Spacer(minLength: 28).fixedSize()
+            Spacer(minLength: 16).fixedSize()
 
-            if let currentWeather {
-                    currentWeatherItem(currentWeather)
-                        .padding(.horizontal, 8)
-            }
-
-            Spacer(minLength: 28).fixedSize()
-
-            if let hourlyForecasts {
-                VStack(alignment: .leading, spacing: 16) {
+            if let hourlyForecasts = weatherDataModel.hourlyWeather {
+                VStack(alignment: .leading, spacing: 12) {
                     Text("hourly-weather-title", bundle: .module)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .adaptiveFont(.bold, size: 12)
+                        .font(.medium)
                         .foregroundStyle(.gray)
+                        .padding(.horizontal, 16)
 
                     ScrollView(.horizontal) {
                         HStack(alignment: .center, spacing: 10) {
@@ -49,83 +88,48 @@ public struct WeatherDataView: View {
                     }
                 }
             }
-
-            Spacer(minLength: 16).fixedSize()
-
-            if let weatherAttribution {
-                HStack {
-                    Spacer()
-                    AsyncImage(
-                        url: weatherAttribution.combinedMarkLightURL
-                    ) { image in
-                        image
-                            .resizable()
-                            .scaledToFit()
-                            .frame(height: 12)
-                    } placeholder: {
-                        ProgressView()
-                    }
-                    Button("Link") {
-                        showWeatherKitLegalLink.toggle()
-                    }
-                }
-            }
-            Spacer(minLength: 8).fixedSize()
         }
-        .task {
-            weatherAttribution = try? await weatherService.attribution
-        }
-        .sheet(isPresented: $showWeatherKitLegalLink) {
-            if let weatherAttribution {
-                SafariView(url: weatherAttribution.legalPageURL)
+    }
+
+    func currentWeatherTemperature(_ weather: Model.CurrentWeather) -> some View {
+        VStack(alignment: .center, spacing: 4) {
+            Text(weather.condition.title)
+                .font(.x2Large)
+                .bold()
+            HStack(alignment: .lastTextBaseline, spacing: 0) {
+                Text("\(Int(weather.temperature.value))")
+                    .font(.x2Large)
+                    .bold()
+                Text("\(weather.temperature.unit.symbol)")
+                    .font(.medium)
             }
         }
     }
-}
 
-private extension WeatherDataView {
-    func currentWeatherItem(_ weather: Model.CurrentWeather) -> some View {
-        VStack(alignment: .center, spacing: 0) {
-            VStack(alignment: .center, spacing: 4) {
-                Image(systemName: weather.symbolName)
-                    .font(.system(size: 24))
-                    .padding(4)
-                    .bold()
-                HStack(alignment: .lastTextBaseline, spacing: 0) {
-                    Text("\(Int(weather.temperature.value))")
-                        .adaptiveFont(.normal, size: 32)
-                    Text("\(weather.temperature.unit.symbol)")
-                        .adaptiveFont(.normal, size: 28)
-                }
-            }
-
-            Spacer(minLength: 24).fixedSize()
-
-            HStack(alignment: .top, spacing: 0) {
-                currentWeatherItem(
-                    titleKey: "uv-title",
-                    value: weather.uvIndexCategory.label,
-                    unit: nil
-                )
-                .frame(maxWidth: .infinity)
-                Divider()
-                    .frame(height: 40)
-                currentWeatherItem(
-                    titleKey: "humidity-title",
-                    value: "\((round(weather.humidity * 1000) * 100) / 1000)", // ex: 0.3456 → 34.6% 丸め誤差がでないように先に掛け算をする
-                    unit: "%"
-                )
-                .frame(maxWidth: .infinity)
-                Divider()
-                    .frame(height: 40)
-                currentWeatherItem(
-                    titleKey: "wind-title",
-                    description: "\(weather.windDirection.description)",
-                    value: "\(round(weather.windSpeed.value * 10) / 10)", // 少数第一位までの数で表す
-                    unit: weather.windSpeed.unit.symbol
-                )
-                .frame(maxWidth: .infinity)
-            }
+    func currentWeatherDetail(_ weather: Model.CurrentWeather) -> some View {
+        HStack(alignment: .top, spacing: 0) {
+            currentWeatherItem(
+                titleKey: "uv-title",
+                value: weather.uvIndexCategory.label,
+                unit: nil
+            )
+            .frame(maxWidth: .infinity)
+            Divider()
+                .frame(height: 40)
+            currentWeatherItem(
+                titleKey: "humidity-title",
+                value: "\((round(weather.humidity * 1000) * 100) / 1000)", // ex: 0.3456 → 34.6% 丸め誤差がでないように先に掛け算をする
+                unit: "%"
+            )
+            .frame(maxWidth: .infinity)
+            Divider()
+                .frame(height: 40)
+            currentWeatherItem(
+                titleKey: "wind-title",
+                value: "\(round(weather.windSpeed.value * 10) / 10)", // 少数第一位までの数で表す
+                unit: weather.windSpeed.unit.symbol
+            )
+            .frame(maxWidth: .infinity)
         }
     }
 
@@ -138,18 +142,18 @@ private extension WeatherDataView {
         HStack(alignment: .center, spacing: 16) {
             VStack(alignment: .center, spacing: 12) {
                 Text(titleKey, bundle: .module)
-                    .adaptiveFont(.bold, size: 12)
+                    .font(.medium)
                 VStack(alignment: .center, spacing: 0) {
                     if let description {
                         Text(description)
-                            .adaptiveFont(.normal, size: 12)
+                            .font(.medium)
                     }
                     HStack(alignment: .lastTextBaseline, spacing: 2) {
                         Text(value)
-                            .adaptiveFont(.normal, size: 12)
+                            .font(.medium)
                         if let unit {
                             Text(unit)
-                                .adaptiveFont(.normal, size: 10)
+                                .font(.small)
                         }
                     }
                 }
@@ -198,9 +202,12 @@ extension UVIndex.ExposureCategory {
 }
 
 #Preview {
-    return WeatherDataView(
-        currentWeather: .mock,
-        hourlyForecasts: HourWeather.mock
+    @Previewable @State var weatherDataModel = WeatherDataModel(
+        weatherDataClient: MockWeatherDataClient(),
+        locationManager: MockLocationManager(),
+        aiClient: MockAIClient()
     )
-    .padding(.horizontal, 30)
+    
+    return WeatherDataView()
+        .environment(weatherDataModel)
 }

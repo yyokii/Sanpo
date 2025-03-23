@@ -73,7 +73,7 @@ public struct HourWeather {
 }
 
 extension WeatherCondition {
-    var title: String {
+    public var title: String {
         switch self {
         case .clear, .mostlyClear:
             return String(localized: "weather-condition-clear", bundle: .module)
