@@ -6,7 +6,7 @@ import StyleGuide
 import Service
 
 public struct WeatherDataView: View {
-    @Environment(WeatherDataModel.self) private var weatherDataModel
+    @Environment(WeatherModel.self) private var weatherModel
     @State private var showWeatherKitLegalLink = false
 
     public init() {}
@@ -21,7 +21,7 @@ public struct WeatherDataView: View {
 //            .frame(maxHeight: .infinity)
 
             VStack(alignment: .center, spacing: 0) {
-                if let weatherWalkingAdvice = weatherDataModel.weatherWalkingAdvice {
+                if let weatherWalkingAdvice = weatherModel.weatherWalkingAdvice {
                     Text(weatherWalkingAdvice.advice)
                         .font(.large)
                     Spacer(minLength: 8).fixedSize()
@@ -31,18 +31,19 @@ public struct WeatherDataView: View {
             }
             .frame(maxHeight: .infinity)
             weather()
+            Spacer(minLength: 8).fixedSize()
         }
         .background {
             BlobBackgroundView()
         }
         .onAppear {
             Task {
-                await weatherDataModel.load()
-                try? await weatherDataModel.generateWalkingAdvice()
+                await weatherModel.load()
+                try? await weatherModel.generateWalkingAdvice()
             }
         }
         .sheet(isPresented: $showWeatherKitLegalLink) {
-            if let weatherDataAttribution = weatherDataModel.weatherDataAttribution {
+            if let weatherDataAttribution = weatherModel.weatherDataAttribution {
                 SafariView(url: weatherDataAttribution.url)
             }
         }
@@ -52,8 +53,8 @@ public struct WeatherDataView: View {
 private extension WeatherDataView {
     func weather() -> some View {
         VStack(alignment: .center, spacing: 0) {
-            if let currentWeather = weatherDataModel.currentWeather,
-               let sunEvents = weatherDataModel.mainSunEvents {
+            if let currentWeather = weatherModel.currentWeather,
+               let sunEvents = weatherModel.mainSunEvents {
                 VStack(alignment: .center, spacing: 0) {
                     HStack(alignment: .center, spacing: 0) {
                         currentWeatherTemperature(currentWeather)
@@ -69,7 +70,7 @@ private extension WeatherDataView {
 
             Spacer(minLength: 16).fixedSize()
 
-            if let hourlyForecasts = weatherDataModel.hourlyWeather {
+            if let hourlyForecasts = weatherModel.hourlyWeather {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("hourly-weather-title", bundle: .module)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -202,7 +203,7 @@ extension UVIndex.ExposureCategory {
 }
 
 #Preview {
-    @Previewable @State var weatherDataModel = WeatherDataModel(
+    @Previewable @State var weatherDataModel = WeatherModel(
         weatherDataClient: MockWeatherDataClient(),
         locationManager: MockLocationManager(),
         aiClient: MockAIClient()

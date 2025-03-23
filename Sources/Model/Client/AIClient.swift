@@ -7,6 +7,10 @@ public protocol AIClientProtocol {
 }
 
 public struct AIClient: AIClientProtocol {
+    public static let shared = Self()
+
+    public init() {}
+
     private let openAI = OpenAI(apiToken: Secret.openAI.rawValue)
 
     public func generateWalkingAdviceWithWeather(currentWeather: CurrentWeather, hourlyWeather: [HourWeather]) async throws -> WeatherWalkingAdvice {

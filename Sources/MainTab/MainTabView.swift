@@ -1,8 +1,7 @@
-import SwiftUI
-
-import HistoricalDataFeature
 import HomeFeature
 import Model
+import SwiftUI
+import WeatherFeature
 
 public struct MainTabView: View {
     public init() {}
@@ -18,11 +17,11 @@ public struct MainTabView: View {
             }
 
             NavigationStack {
-                HistoricalDataView()
+                WeatherDataView()
             }
             .tabItem {
-                Image(systemName: "calendar.badge.clock")
-                Text("Data")
+                Image(systemName: "sun.horizon")
+                Text("Weather")
             }
         }
         .tint(.black)

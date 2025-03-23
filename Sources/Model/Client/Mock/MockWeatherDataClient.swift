@@ -19,6 +19,42 @@ public struct MockWeatherDataClient: WeatherDataClientProtocol {
                 symbolName: "cloud.sun",
                 precipitationChance: .random(in: 0.1...0.9),
                 temperature: .init(value: .random(in: 1...40), unit: .celsius)
+            ),
+            .init(
+                date: now,
+                symbolName: "sun.max",
+                precipitationChance: .random(in: 0.1...0.9),
+                temperature: .init(value: .random(in: 4...40), unit: .celsius)
+            ),
+            .init(
+                date: now.addingTimeInterval(3600),
+                symbolName: "cloud.sun",
+                precipitationChance: .random(in: 0.1...0.9),
+                temperature: .init(value: .random(in: 1...40), unit: .celsius)
+            ),
+            .init(
+                date: now,
+                symbolName: "sun.max",
+                precipitationChance: .random(in: 0.1...0.9),
+                temperature: .init(value: .random(in: 4...40), unit: .celsius)
+            ),
+            .init(
+                date: now.addingTimeInterval(3600),
+                symbolName: "cloud.sun",
+                precipitationChance: .random(in: 0.1...0.9),
+                temperature: .init(value: .random(in: 1...40), unit: .celsius)
+            ),
+            .init(
+                date: now,
+                symbolName: "sun.max",
+                precipitationChance: .random(in: 0.1...0.9),
+                temperature: .init(value: .random(in: 4...40), unit: .celsius)
+            ),
+            .init(
+                date: now.addingTimeInterval(3600),
+                symbolName: "cloud.sun",
+                precipitationChance: .random(in: 0.1...0.9),
+                temperature: .init(value: .random(in: 1...40), unit: .celsius)
             )
         ]
     }

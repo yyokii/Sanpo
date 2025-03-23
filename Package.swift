@@ -73,7 +73,8 @@ let package = Package(
             name: "MainTab",
             dependencies: [
                 "HomeFeature",
-                "HistoricalDataFeature"
+                "HistoricalDataFeature",
+                "WeatherFeature"
             ]
         ),
         .target(

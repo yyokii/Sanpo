@@ -4,7 +4,7 @@ import Foundation
 import Service
 
 @Observable
-public class WeatherDataModel {
+public class WeatherModel {
     public var mainSunEvents: MainSunEvents?
     public var currentWeather: CurrentWeather?
     public var hourlyWeather: [HourWeather]?

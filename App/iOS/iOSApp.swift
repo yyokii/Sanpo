@@ -15,6 +15,11 @@ struct iOSApp: App {
         weatherDataClient: WeatherDataClient.shared,
         locationManager: LocationManager.shared
     )
+    @State private var weatherModel = WeatherModel(
+        weatherDataClient: WeatherDataClient.shared,
+        locationManager: LocationManager.shared,
+        aiClient: AIClient.shared
+    )
 
     init() {
         let userDefaults = UserDefaults(suiteName: UserDefaultsSuitName.app.rawValue)!
@@ -31,6 +36,7 @@ struct iOSApp: App {
                 .environmentObject(workoutData)
                 .environment(myDataModel)
                 .environment(todayDataModel)
+                .environment(weatherModel)
                 .onAppear {
                     Task {
                         await myDataModel.loadStepCounts()
