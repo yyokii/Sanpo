@@ -21,7 +21,6 @@ public struct HomeView: View {
     @AppStorage(UserDefaultsKey.cardBackgroundImageName.rawValue)
     private var selectedCardImage = "cliff-sea-1"
 
-    @EnvironmentObject private var weatherData: WeatherData
     @Environment(TodayDataModel.self) private var todayDataModel
 
     @StateObject var stepCountData = StepCountData()
@@ -73,21 +72,6 @@ public struct HomeView: View {
                 )
                 .padding(.horizontal, 24)
                 Spacer(minLength: 24).fixedSize()
-                titleRow("Weather")
-                    .padding(.horizontal, 12)
-                Spacer(minLength: 12).fixedSize()
-                if let sunEvents = todayDataModel.mainSunEvents {
-                    SunEventsCard(mainSunEvents: sunEvents)
-                        .padding(.horizontal, 24)
-                }
-                Spacer(minLength: 20).fixedSize()
-                WeatherDataView(
-                    currentWeather: weatherData.currentWeather,
-                    hourlyForecasts: weatherData.hourlyForecasts
-                )
-                .asyncState(weatherData.phase)
-                .padding(.horizontal, 24)
-
             }
             .padding(.bottom, 16)
         }
@@ -98,12 +82,10 @@ public struct HomeView: View {
         .navigationTitle("Sanpo")
         .navigationBarTitleDisplayMode(.inline)
         .refreshable {
-            await weatherData.load()
             await stepCountData.loadTodayStepCount()
         }
         .onAppear {
             inputGoal = dailyTargetSteps
-            weatherData.requestLocationAuth()
             Task {
                 await todayDataModel.load()
                 try await todayDataModel.updateCurrentStepGoalStreak(goal: dailyTargetSteps)
@@ -175,7 +157,6 @@ extension HomeView {
           try? await todayDataModel.load()
         }
     }
-    .environmentObject(WeatherData.preview)
     .environment(todayDataModel)
 }
 #endif

@@ -57,9 +57,6 @@
         }
       }
     },
-    "Current" : {
-
-    },
     "current-weather-title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -147,9 +144,6 @@
         }
       }
     },
-    "Link" : {
-
-    },
     "missed yesterday" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -185,9 +179,6 @@
       }
     },
     "steps" : {
-
-    },
-    "Sun Events" : {
 
     },
     "Today" : {
@@ -305,12 +296,6 @@
           }
         }
       }
-    },
-    "uv-veryHigh" : {
-
-    },
-    "Weather" : {
-
     },
     "wind-title" : {
       "extractionState" : "manual",

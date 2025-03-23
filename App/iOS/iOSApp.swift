@@ -6,7 +6,6 @@ import SwiftUI
 
 @main
 struct iOSApp: App {
-    @StateObject var weatherData = WeatherData()
     @StateObject var workoutData = WorkoutData()
 
     @State private var myDataModel = MyDataModel(healthDataClient: HealthDataClient.shared)
@@ -32,7 +31,6 @@ struct iOSApp: App {
     var body: some Scene {
         WindowGroup {
             MainTabView()
-                .environmentObject(weatherData)
                 .environmentObject(workoutData)
                 .environment(myDataModel)
                 .environment(todayDataModel)
