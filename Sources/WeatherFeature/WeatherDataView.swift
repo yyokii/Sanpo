@@ -13,24 +13,24 @@ public struct WeatherDataView: View {
 
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
-//            ZStack(alignment: .center) {
-//                TypingTextView(text: "")
-//                    .font(.large)
-//                    .padding(.horizontal, 32)
-//            }
-//            .frame(maxHeight: .infinity)
-
             VStack(alignment: .center, spacing: 0) {
                 if let weatherWalkingAdvice = weatherModel.weatherWalkingAdvice {
-                    Text(weatherWalkingAdvice.advice)
-                        .font(.large)
-                    Spacer(minLength: 8).fixedSize()
-                    Text(weatherWalkingAdvice.recommendedTime)
-                        .font(.medium)
+                    VStack(alignment: .center, spacing: 0) {
+                        Text(weatherWalkingAdvice.advice)
+                            .font(.large)
+                        Spacer(minLength: 8).fixedSize()
+                        Text(weatherWalkingAdvice.recommendedTime)
+                            .font(.medium)
+                    }
+                    .transition(.opacity)
                 }
             }
             .frame(maxHeight: .infinity)
+            .animation(.easeInOut(duration: 1), value: weatherModel.weatherWalkingAdvice)
             weather()
+                .animation(.easeInOut(duration: 0.5), value: weatherModel.currentWeather)
+                .animation(.easeInOut(duration: 0.5), value: weatherModel.mainSunEvents)
+                .animation(.easeInOut(duration: 0.5), value: weatherModel.hourlyWeather)
             Spacer(minLength: 8).fixedSize()
         }
         .background {
@@ -61,11 +61,13 @@ private extension WeatherDataView {
                         Spacer(minLength: 16)
                         SunEventsCard(mainSunEvents: sunEvents)
                             .frame(width: 160)
+                            .transition(.opacity)
                     }
                     Spacer(minLength: 16).fixedSize()
                     currentWeatherDetail(currentWeather)
                 }
                 .padding(.horizontal, 16)
+                .transition(.opacity)
             }
 
             Spacer(minLength: 16).fixedSize()
@@ -88,6 +90,7 @@ private extension WeatherDataView {
                         .padding(.bottom, 12)
                     }
                 }
+                .transition(.opacity)
             }
         }
     }
@@ -141,9 +144,10 @@ private extension WeatherDataView {
         unit: String?
     ) -> some View {
         HStack(alignment: .center, spacing: 16) {
-            VStack(alignment: .center, spacing: 12) {
+            VStack(alignment: .center, spacing: 4) {
                 Text(titleKey, bundle: .module)
                     .font(.medium)
+                    .foregroundStyle(.gray)
                 VStack(alignment: .center, spacing: 0) {
                     if let description {
                         Text(description)

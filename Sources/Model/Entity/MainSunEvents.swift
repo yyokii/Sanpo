@@ -1,7 +1,7 @@
 import Foundation
 import WeatherKit
 
-public struct MainSunEvents {
+public struct MainSunEvents: Equatable {
     /// 太陽の中心が地平線下18°に位置する時刻。この時、空に僅かな光が差し始め、星が徐々に見えなくなる。
     public var astronomicalDawn: Date
 

@@ -1,7 +1,7 @@
 import Foundation
 import WeatherKit
 
-public struct CurrentWeather {
+public struct CurrentWeather: Equatable {
     public let date: Date
     public let symbolName: String
     public let condition: WeatherCondition
@@ -46,7 +46,7 @@ public struct CurrentWeather {
     }
 }
 
-public struct HourWeather {
+public struct HourWeather: Equatable {
     public let date: Date
     public let symbolName: String
     public let precipitationChance: Double

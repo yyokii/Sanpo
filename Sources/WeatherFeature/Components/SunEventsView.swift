@@ -82,20 +82,15 @@ struct SunEventsView: View {
 
     /// 現在時刻に合わせた太陽／月のアイコンを返す
     var sunImage: some View {
-        let icon: String
-        if now < sunEvents.sunrise {
-            icon = "🌙"
-        } else if now < sunEvents.astronomicalDusk {
-            icon = "☀️"
-        } else {
-            icon = "🌙"
-        }
-        return Text(icon)
-            .font(.system(size: 30))
-            .padding(4)
-            .background {
+        let isDay = now >= sunEvents.sunrise && now < sunEvents.astronomicalDusk
+        return Circle()
+            .fill(isDay ? Color.yellow : .white)
+            .frame(width: 30)
+            .blur(radius: 8)
+            .overlay {
                 Circle()
-                    .fill(.thinMaterial)
+                    .fill(isDay ? Color.yellow : .white)
+                    .frame(width: 28)
             }
     }
 }

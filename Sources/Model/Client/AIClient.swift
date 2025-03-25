@@ -68,7 +68,7 @@ public struct AIClient: AIClientProtocol {
     }
 }
 
-public struct WeatherWalkingAdvice: Codable {
+public struct WeatherWalkingAdvice: Codable, Equatable {
     public let advice: String
     public let recommendedTime: String
 }
