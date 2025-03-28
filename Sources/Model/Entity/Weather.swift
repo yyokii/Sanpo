@@ -103,8 +103,6 @@ extension WeatherCondition {
     }
 }
 
-#if DEBUG
-
 extension CurrentWeather {
     public static var mock: Self = .init(
         date: Date(),
@@ -162,5 +160,3 @@ extension HourWeather {
         ]
     }()
 }
-
-#endif

@@ -8,8 +8,13 @@ import Service
 public struct WeatherDataView: View {
     @Environment(WeatherModel.self) private var weatherModel
     @State private var showWeatherKitLegalLink = false
-
     public init() {}
+    
+    private var isDataLoaded: Bool {
+        weatherModel.currentWeather != nil &&
+        weatherModel.hourlyWeather != nil &&
+        weatherModel.mainSunEvents != nil
+    }
 
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
@@ -28,6 +33,7 @@ public struct WeatherDataView: View {
             .frame(maxHeight: .infinity)
             .animation(.easeInOut(duration: 1), value: weatherModel.weatherWalkingAdvice)
             weather()
+                .redacted(reason: isDataLoaded ? [] : .placeholder)
                 .animation(.easeInOut(duration: 0.5), value: weatherModel.currentWeather)
                 .animation(.easeInOut(duration: 0.5), value: weatherModel.mainSunEvents)
                 .animation(.easeInOut(duration: 0.5), value: weatherModel.hourlyWeather)
@@ -53,45 +59,45 @@ public struct WeatherDataView: View {
 private extension WeatherDataView {
     func weather() -> some View {
         VStack(alignment: .center, spacing: 0) {
-            if let currentWeather = weatherModel.currentWeather,
-               let sunEvents = weatherModel.mainSunEvents {
-                VStack(alignment: .center, spacing: 0) {
-                    HStack(alignment: .center, spacing: 0) {
-                        currentWeatherTemperature(currentWeather)
-                        Spacer(minLength: 16)
+            let currentWeather = weatherModel.currentWeather ?? .mock
+            VStack(alignment: .center, spacing: 0) {
+                HStack(alignment: .center, spacing: 0) {
+                    currentWeatherTemperature(currentWeather)
+                    Spacer(minLength: 16)
+                    if let sunEvents = weatherModel.mainSunEvents {
                         SunEventsCard(mainSunEvents: sunEvents)
                             .frame(width: 160)
                             .transition(.opacity)
                     }
-                    Spacer(minLength: 16).fixedSize()
-                    currentWeatherDetail(currentWeather)
                 }
-                .padding(.horizontal, 16)
-                .transition(.opacity)
+                Spacer(minLength: 16).fixedSize()
+                currentWeatherDetail(currentWeather)
             }
+            .padding(.horizontal, 16)
+            .transition(.opacity)
 
             Spacer(minLength: 16).fixedSize()
 
-            if let hourlyForecasts = weatherModel.hourlyWeather {
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("hourly-weather-title", bundle: .module)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .font(.medium)
-                        .foregroundStyle(.gray)
-                        .padding(.horizontal, 16)
+            let hourlyForecasts = weatherModel.hourlyWeather ?? HourWeather.mock
 
-                    ScrollView(.horizontal) {
-                        HStack(alignment: .center, spacing: 10) {
-                            ForEach(hourlyForecasts.prefix(12), id: \.date) { forecast in
-                                hourlyWeatherDataItem(forecast)
-                            }
+            VStack(alignment: .leading, spacing: 12) {
+                Text("hourly-weather-title", bundle: .module)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .font(.medium)
+                    .foregroundStyle(.gray)
+                    .padding(.horizontal, 16)
+
+                ScrollView(.horizontal) {
+                    HStack(alignment: .center, spacing: 10) {
+                        ForEach(hourlyForecasts.prefix(12), id: \.date) { forecast in
+                            hourlyWeatherDataItem(forecast)
                         }
-                        .padding(.horizontal, 8)
-                        .padding(.bottom, 12)
                     }
+                    .padding(.horizontal, 8)
+                    .padding(.bottom, 12)
                 }
-                .transition(.opacity)
             }
+            .transition(.opacity)
         }
     }
 
