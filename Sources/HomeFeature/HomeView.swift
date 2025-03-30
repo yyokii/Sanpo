@@ -1,6 +1,6 @@
-import Combine // TODO: いらないかも
 import Constant
 import Extension
+import HistoricalDataFeature
 import Model
 import Service
 import StyleGuide
@@ -31,6 +31,7 @@ public struct HomeView: View {
     @State private var showGoalSetting = false
 
     @State private var isSelectCardImageViewPresented = false
+    @State private var isCalendarPresented = false
 
     let todayCardViewHeight: CGFloat = 270
 
@@ -81,6 +82,17 @@ public struct HomeView: View {
         }
         .navigationTitle("Sanpo")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    isCalendarPresented = true
+                } label: {
+                    Image(systemName: "calendar")
+                        .foregroundStyle(.black)
+                        .font(.medium)
+                }
+            }
+        }
         .refreshable {
             await stepCountData.loadTodayStepCount()
         }
@@ -109,6 +121,11 @@ public struct HomeView: View {
         .sheet(isPresented: $showGoalSetting) {
             goalSettingView()
                 .presentationDetents([.height(170)])
+        }
+        .sheet(isPresented: $isCalendarPresented) {
+            NavigationStack {
+                HistoricalDataView()
+            }
         }
         .navigationDestination(isPresented: $isSelectCardImageViewPresented) {
             SelectCardImageView()
@@ -148,15 +165,21 @@ extension HomeView {
         weatherDataClient: MockWeatherDataClient(),
         locationManager: MockLocationManager()
     )
+    @Previewable @State var myDataModel = MyDataModel(
+        healthDataClient: MockHealthDataClient()
+    )
 
     NavigationStack {
         HomeView()
     }
     .onAppear {
         Task {
-          try? await todayDataModel.load()
+            try? await todayDataModel.load()
+            await  myDataModel.loadStepCounts()
+            try? await myDataModel.loadStepCountSummary()
         }
     }
     .environment(todayDataModel)
+    .environment(myDataModel)
 }
 #endif

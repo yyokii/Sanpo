@@ -64,6 +64,7 @@ let package = Package(
             dependencies: [
                 "Constant",
                 "Extension",
+                "HistoricalDataFeature",
                 "Model",
                 "Service",
                 "StyleGuide"
@@ -73,7 +74,6 @@ let package = Package(
             name: "MainTab",
             dependencies: [
                 "HomeFeature",
-                "HistoricalDataFeature",
                 "WeatherFeature"
             ]
         ),
