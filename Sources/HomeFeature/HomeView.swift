@@ -21,12 +21,9 @@ public struct HomeView: View {
     @AppStorage(UserDefaultsKey.cardBackgroundImageName.rawValue)
     private var selectedCardImage = "cliff-sea-1"
 
+    // TODO: 歩数データは定期的にloadする
     @Environment(TodayDataModel.self) private var todayDataModel
 
-    @StateObject var stepCountData = StepCountData()
-    @StateObject var distanceData = DistanceData()
-
-    // @State private var activeEnergyBurned: ActiveEnergyBurned = .noData // 定期的にloadする感じがいいかも
     @State private var inputGoal = 0
     @State private var showGoalSetting = false
 
@@ -50,9 +47,9 @@ public struct HomeView: View {
                             isSelectCardImageViewPresented = true
                         } label: {
                             TodayDataCard(
-                                stepCount: stepCountData.todayStepCount?.number ?? 0,
-                                yesterdayStepCount: stepCountData.yesterdayStepCount?.number ?? 0,
-                                distance: distanceData.todayDistance?.distance ?? 0,
+                                stepCount: todayDataModel.todayStepCount.number,
+                                yesterdayStepCount: todayDataModel.yesterdayStepCount.number,
+                                distance: todayDataModel.todayDistance.distance,
                                 backgroundImageName: selectedCardImage
                             )
                             .frame(height: todayCardViewHeight)
@@ -93,29 +90,15 @@ public struct HomeView: View {
                 }
             }
         }
+        // TODO: ヘルスデータ権限のチェックエラー時やそれが変わった時のケアをする
         .refreshable {
-            await stepCountData.loadTodayStepCount()
+            await todayDataModel.load()
         }
         .onAppear {
             inputGoal = dailyTargetSteps
             Task {
                 await todayDataModel.load()
                 try await todayDataModel.updateCurrentStepGoalStreak(goal: dailyTargetSteps)
-            }
-        }
-        // TDODO: この辺りのreceive処理はmodelに移動できそう
-        .onReceive(HealthKitAuthService.shared.$authStatus) { status in
-            if let status,
-               status == .unknown ||
-                status == .shouldRequest {
-                HealthKitAuthService.shared.requestAuthorization()
-            }
-        }
-        .onReceive(HealthKitAuthService.shared.$isAuthRequestSuccess) { success in
-            if success {
-                Task {
-                    await stepCountData.loadTodayStepCount()
-                }
             }
         }
         .sheet(isPresented: $showGoalSetting) {

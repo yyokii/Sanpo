@@ -15,8 +15,11 @@ public class TodayDataModel {
         return dateFormatter
     }
 
+    // Today
     public var todayStepCount: StepCount = .noData
-    public var mainSunEvents: MainSunEvents?
+    public var todayDistance: DistanceWalkingRunning = .noData
+    public var yesterdayStepCount: StepCount = .noData
+
     public var goalStreak: Int = 0
 
     private let healthDataClient: HealthDataClientProtocol
@@ -46,8 +49,18 @@ public class TodayDataModel {
     }
 
     public func load() async {
-        guard let location = locationManager.location else { return }
-        mainSunEvents = await weatherDataClient.loadTodayMainSunEvents(for: location)
+        let now: Date = .now
+
+        if let stepCount = try? await healthDataClient.loadStepCount(for: now) {
+            self.todayStepCount = stepCount
+        }
+        if let distance = try? await healthDataClient.loadDistanceWalkingRunning(for: now) {
+            self.todayDistance = distance
+        }
+        if let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: now),
+           let yesterdayStepCount = try? await healthDataClient.loadStepCount(for: yesterday) {
+            self.yesterdayStepCount = yesterdayStepCount
+        }
     }
 
     public func generateAdvise() async throws {

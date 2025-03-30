@@ -109,9 +109,9 @@ extension CurrentWeather {
         symbolName: "sun.max",
         condition: WeatherCondition(rawValue: "rain")!,
         humidity: 0.34567891111,
-        temperature: .ValueType(value: 34.567, unit: .celsius),
+        temperature: .init(value: 34.567, unit: .celsius),
         uvIndexCategory: .moderate,
-        windSpeed: .ValueType(value: 12.3456777, unit: .kilometersPerHour),
+        windSpeed: .init(value: 12.3456777, unit: .kilometersPerHour),
         windDirection: .north
     )
 }
@@ -125,37 +125,37 @@ extension HourWeather {
                 date: Calendar.current.date(byAdding: .hour, value: 0, to: now)!,
                 symbolName: "sun.max",
                 precipitationChance: 0,
-                temperature: .ValueType(value: 24, unit: .celsius)
+                temperature: .init(value: 24, unit: .celsius)
             ),
             .init(
                 date: Calendar.current.date(byAdding: .hour, value: 1, to: now)!,
                 symbolName: "sun.max",
                 precipitationChance: 0,
-                temperature: .ValueType(value: 24, unit: .celsius)
+                temperature: .init(value: 24, unit: .celsius)
             ),
             .init(
                 date: Calendar.current.date(byAdding: .hour, value: 2, to: now)!,
                 symbolName: "sun.max",
                 precipitationChance: 0,
-                temperature: .ValueType(value: 24, unit: .celsius)
+                temperature: .init(value: 24, unit: .celsius)
             ),
             .init(
                 date: Calendar.current.date(byAdding: .hour, value: 3, to: now)!,
                 symbolName: "sun.max",
                 precipitationChance: 0,
-                temperature: .ValueType(value: 24, unit: .celsius)
+                temperature: .init(value: 24, unit: .celsius)
             ),
             .init(
                 date: Calendar.current.date(byAdding: .hour, value: 4, to: now)!,
                 symbolName: "sun.max",
                 precipitationChance: 0,
-                temperature: .ValueType(value: 24, unit: .celsius)
+                temperature: .init(value: 24, unit: .celsius)
             ),
             .init(
                 date: Calendar.current.date(byAdding: .hour, value: 5, to: now)!,
                 symbolName: "sun.max",
                 precipitationChance: 0,
-                temperature: .ValueType(value: 24, unit: .celsius)
+                temperature: .init(value: 24, unit: .celsius)
             )
         ]
     }()

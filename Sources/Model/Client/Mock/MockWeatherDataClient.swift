@@ -65,9 +65,9 @@ public struct MockWeatherDataClient: WeatherDataClientProtocol {
             symbolName: "sun.max",
             condition: WeatherCondition(rawValue: "rain")!,
             humidity: .random(in: 0...0.5),
-            temperature: .ValueType(value: .random(in: 1...40), unit: .celsius),
+            temperature: .init(value: .random(in: 1...40), unit: .celsius),
             uvIndexCategory: .moderate,
-            windSpeed: .ValueType(value: .random(in: 1...20), unit: .kilometersPerHour),
+            windSpeed: .init(value: .random(in: 1...20), unit: .kilometersPerHour),
             windDirection: .north
         )
     }
