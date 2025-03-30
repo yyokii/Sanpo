@@ -10,9 +10,7 @@ struct iOSApp: App {
 
     @State private var myDataModel = MyDataModel(healthDataClient: HealthDataClient.shared)
     @State private var todayDataModel = TodayDataModel(
-        healthDataClient: HealthDataClient.shared,
-        weatherDataClient: WeatherDataClient.shared,
-        locationManager: LocationManager.shared
+        healthDataClient: HealthDataClient.shared
     )
     @State private var weatherModel = WeatherModel(
         weatherDataClient: WeatherDataClient.shared,
@@ -24,7 +22,7 @@ struct iOSApp: App {
         let userDefaults = UserDefaults(suiteName: UserDefaultsSuitName.app.rawValue)!
 
         userDefaults.register(
-            defaults: [UserDefaultsKey.dailyTargetSteps.rawValue: 8000]
+            defaults: [UserDefaultsKey.dailyTargetSteps.rawValue: 3000]
         )
     }
 
