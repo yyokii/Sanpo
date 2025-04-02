@@ -4,6 +4,17 @@ import OpenAI
 
 public protocol AIClientProtocol {
     func generateWalkingAdviceWithWeather(currentWeather: CurrentWeather, hourlyWeather: [HourWeather]) async throws -> WeatherWalkingAdvice
+    func generateStepCountAdvise(stepData: [Date: StepCount]) async throws -> StepCountAnalysis
+}
+
+public struct WeatherWalkingAdvice: Codable, Equatable {
+    public let advice: String
+    public let recommendedTime: String
+}
+
+public struct StepCountAnalysis: Codable, Equatable {
+    public let trend: String
+    public let advice: String
 }
 
 public struct AIClient: AIClientProtocol {
@@ -66,11 +77,55 @@ public struct AIClient: AIClientProtocol {
             throw AIClientError.failedToLoadData(error)
         }
     }
-}
 
-public struct WeatherWalkingAdvice: Codable, Equatable {
-    public let advice: String
-    public let recommendedTime: String
+    static var stepCountFormatter: DateFormatter {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .short
+        dateFormatter.timeStyle = .none
+        dateFormatter.timeZone = .current
+        dateFormatter.locale = .init(identifier: "en_US_POSIX")
+        return dateFormatter
+    }
+
+    public func generateStepCountAdvise(stepData: [Date:StepCount]) async throws -> StepCountAnalysis {
+        let formattedData = stepData
+            .map { (date, stepCount) in "\(Self.stepCountFormatter.string(from: date)): \(stepCount.number)" }
+            .joined(separator: ",")
+
+        let query = ChatQuery(
+            messages: [
+                .init(role: .system, content: "You are a personal trainer in a step counting app. Your personality is cheerful and encouraging.")!,
+                .init(role: .user, content: """
+                Analyze the weekly and monthly trends from the past step count data and provide a brief summary.
+                Based on the analysis, provide specific improvement advice, especially if there's a declining trend.
+                Output should be in JSON format:
+                {"trend":"...", "advice":"..."}
+                No additional keys are needed.
+                
+                Here is the step count data for the past month:
+                \(formattedData)
+                """)!
+            ],
+            model: .gpt4_o,
+            responseFormat: .jsonObject
+        )
+
+        do {
+            let result = try await openAI.chats(query: query)
+            if let contentString = result.choices.first?.message.content?.string,
+               let jsonData = contentString.data(using: .utf8) {
+                do {
+                    return try JSONDecoder().decode(StepCountAnalysis.self, from: jsonData)
+                } catch {
+                    throw AIClientError.failedToDecodeJson
+                }
+            } else {
+                throw AIClientError.failedToLoadData(nil)
+            }
+        } catch {
+            throw AIClientError.failedToLoadData(error)
+        }
+    }
 }
 
 public enum AIClientError: LocalizedError {

@@ -9,4 +9,11 @@ public struct MockAIClient: AIClientProtocol {
             recommendedTime: "Enjoy your walk"
         )
     }
+
+    public func generateStepCountAdvise(stepData: [Date : StepCount]) async throws -> StepCountAnalysis {
+        .init(
+            trend: "loreum ipsum loreum ipsum loreum ipsum loreum ipsum loreum ipsum",
+            advice: "loreum ipsum loreum ipsum loreum ipsum loreum ipsum loreum ipsum"
+        )
+    }
 }

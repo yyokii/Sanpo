@@ -144,7 +144,8 @@ extension HomeView {
 
 #Preview {
     @Previewable @State var todayDataModel = TodayDataModel(
-        healthDataClient: MockHealthDataClient()
+        healthDataClient: MockHealthDataClient(),
+        aiClient: MockAIClient()
     )
     @Previewable @State var myDataModel = MyDataModel(
         healthDataClient: MockHealthDataClient()
