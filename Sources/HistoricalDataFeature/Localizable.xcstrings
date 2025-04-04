@@ -1,20 +1,7 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%@%lld (%@%%)" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@%2$lld (%3$@%%)"
-          }
-        }
-      }
-    },
     "%lld" : {
-
-    },
-    "Average Steps" : {
 
     },
     "calendar" : {
@@ -23,19 +10,7 @@
     "historical-data-title" : {
 
     },
-    "Monthly" : {
-
-    },
-    "Steps" : {
-
-    },
     "summary" : {
-
-    },
-    "Weekly" : {
-
-    },
-    "x" : {
 
     }
   },

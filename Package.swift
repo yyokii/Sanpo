@@ -26,6 +26,7 @@ let package = Package(
         .library(
             name: "Preview",
             targets: [
+                "DataSummaryFeature",
                 "OnBoardingFeature",
                 "HomeFeature",
                 "HistoricalDataFeature",
@@ -43,6 +44,13 @@ let package = Package(
         .target(
             name: "Constant",
             dependencies: []
+        ),
+        .target(
+            name: "DataSummaryFeature",
+            dependencies: [
+                "Model",
+                "StyleGuide"
+            ]
         ),
         .target(
             name: "Extension",
