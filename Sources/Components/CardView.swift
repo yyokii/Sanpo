@@ -1,15 +1,16 @@
 import SwiftUI
+import StyleGuide
 
-struct CardView<Content: View>: View {
+public struct CardView<Content: View>: View {
     let content: () -> Content
     
-    init(
+    public init(
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.content = content
     }
     
-    var body: some View {
+    public var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             content()
         }
@@ -17,8 +18,8 @@ struct CardView<Content: View>: View {
         .padding(.horizontal, 16)
         .background {
             Rectangle()
-                .fill(Color.adaptiveWhite)
-                .cornerRadius(20)
+                .fill(.white)
+                .clipShape(.rect(cornerRadius: 20))
                 .adaptiveShadow()
         }
     }

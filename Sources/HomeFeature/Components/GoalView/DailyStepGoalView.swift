@@ -1,3 +1,4 @@
+import Components
 import SwiftUI
 
 struct DailyStepGoalView: View {

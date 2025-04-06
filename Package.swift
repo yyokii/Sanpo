@@ -26,6 +26,7 @@ let package = Package(
         .library(
             name: "Preview",
             targets: [
+                "Components",
                 "DataSummaryFeature",
                 "OnBoardingFeature",
                 "HomeFeature",
@@ -46,8 +47,15 @@ let package = Package(
             dependencies: []
         ),
         .target(
+            name: "Components",
+            dependencies: [
+                "StyleGuide",
+            ]
+        ),
+        .target(
             name: "DataSummaryFeature",
             dependencies: [
+                "Components",
                 "Model",
                 "StyleGuide"
             ]
@@ -71,6 +79,8 @@ let package = Package(
             name: "HomeFeature",
             dependencies: [
                 "Constant",
+                "Components",
+                "DataSummaryFeature",
                 "Extension",
                 "HistoricalDataFeature",
                 "Model",

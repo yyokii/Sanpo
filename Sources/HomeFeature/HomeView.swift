@@ -1,4 +1,5 @@
 import Constant
+import DataSummaryFeature
 import Extension
 import HistoricalDataFeature
 import Model
@@ -56,10 +57,14 @@ public struct HomeView: View {
                         }
                         .padding(.horizontal, 24)
                     }
+
                 Spacer(minLength: 32).fixedSize()
-                titleRow("Goal")
-                    .padding(.horizontal, 12)
-                Spacer(minLength: 12).fixedSize()
+
+//                titleRow("Goal")
+//                    .padding(.horizontal, 12)
+//
+//                Spacer(minLength: 12).fixedSize()
+
                 DailyStepGoalView(
                     todaySteps: todayDataModel.todayStepCount.number,
                     goal: dailyTargetSteps,
@@ -69,7 +74,12 @@ public struct HomeView: View {
                     )
                 )
                 .padding(.horizontal, 24)
-                Spacer(minLength: 24).fixedSize()
+
+                Spacer(minLength: 32).fixedSize()
+
+                SummaryView()
+
+                Spacer(minLength: 32).fixedSize()
             }
             .padding(.bottom, 16)
         }

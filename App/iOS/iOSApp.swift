@@ -10,7 +10,8 @@ struct iOSApp: App {
 
     @State private var myDataModel = MyDataModel(healthDataClient: HealthDataClient.shared)
     @State private var todayDataModel = TodayDataModel(
-        healthDataClient: HealthDataClient.shared
+        healthDataClient: HealthDataClient.shared,
+        aiClient: AIClient.shared
     )
     @State private var weatherModel = WeatherModel(
         weatherDataClient: WeatherDataClient.shared,

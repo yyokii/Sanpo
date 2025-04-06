@@ -1,33 +1,38 @@
+import Components
 import Model
 import Charts
 import StyleGuide
 import SwiftUI
 
-struct SummaryView: View {
+public struct SummaryView: View {
     @Environment(MyDataModel.self) private var myDataModel
 
-    var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 0) {
-                Text("Weekly", bundle: .module)
-                    .font(.title2)
-                    .bold()
-                    .foregroundStyle(.black)
-                Spacer(minLength: 16).fixedSize()
-                weeklySummaryData
-                    .padding(.horizontal, 8)
-                Spacer(minLength: 24).fixedSize()
-                Text("Monthly", bundle: .module)
-                    .font(.title2)
-                    .bold()
-                    .foregroundStyle(.black)
-                Spacer(minLength: 16).fixedSize()
-                monthlySummaryData
-                    .padding(.horizontal, 8)
-                Spacer(minLength: 24).fixedSize()
+    public  init() {}
+
+    public var body: some View {
+        ScrollView(.horizontal) {
+            HStack(alignment: .center, spacing: 0) {
+                Group {
+                    CardView {
+                        weeklySummaryData
+                    }
+
+                    CardView {
+                        monthlySummaryData
+                    }
+                }
+                .padding(.vertical, 20)
+                .containerRelativeFrame(.horizontal)
+                .scrollTransition(axis: .horizontal) { content, phase in
+                    content
+                        .scaleEffect(phase.isIdentity ? 1.0 : 0.9)
+                }
             }
-            .padding(.horizontal, 8)
+            .scrollTargetLayout()
         }
+        .safeAreaPadding(.horizontal, 40)
+        .scrollTargetBehavior(.paging)
+        .scrollIndicators(.hidden)
     }
 }
 
@@ -51,19 +56,20 @@ private extension SummaryView {
     var weeklySummaryData: some View {
         if let lastWeekData {
             VStack(alignment: .center, spacing: 0) {
+                titleChip("Weekly Average")
+
+                Spacer(minLength: 16).fixedSize()
+
                 averageStepsText(
                     myDataModel.stepCountSummary.weekly.first?.y ?? 0,
                     comparisonStepCount: lastWeekData.y
                 )
                 .padding(.horizontal, 8)
+
                 Spacer(minLength: 20).fixedSize()
+
                 chartView(data: myDataModel.stepCountSummary.weekly.reversed())
             }
-            .padding(.vertical, 16)
-            .padding(.horizontal, 8)
-            .background(.white)
-            .clipShape(RoundedRectangle(cornerRadius: 20))
-            .adaptiveShadow()
         }
     }
 
@@ -71,36 +77,49 @@ private extension SummaryView {
     var monthlySummaryData: some View {
         if let lastMonthData {
             VStack(alignment: .center, spacing: 0) {
+                titleChip("Monthly Average")
+
+                Spacer(minLength: 16).fixedSize()
+
                 averageStepsText(
                     myDataModel.stepCountSummary.monthly.first?.y ?? 0,
                     comparisonStepCount: lastMonthData.y
                 )
                 .padding(.horizontal, 8)
+
                 Spacer(minLength: 20).fixedSize()
+
                 chartView(data: myDataModel.stepCountSummary.monthly.reversed())
             }
-            .padding(.vertical, 16)
-            .padding(.horizontal, 8)
-            .background(.white)
-            .clipShape(RoundedRectangle(cornerRadius: 20))
-            .adaptiveShadow()
         }
+    }
+
+    func titleChip(_ title: String) -> some View {
+        Text(title)
+            .font(.xSmall)
+            .bold()
+            .foregroundStyle(.white)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 4)
+            .background(.black)
+            .clipShape(.rect(cornerRadius: 12))
+            .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     func averageStepsText(_ stepCount: Int, comparisonStepCount: Int) -> some View {
         let diff = stepCount - comparisonStepCount
         let diffPercentage = calculatePercentage(current: stepCount, previous: comparisonStepCount)
         return VStack(alignment: .leading, spacing: 0) {
-            Spacer(minLength: 4).fixedSize()
-
             VStack(alignment: .center, spacing: 0) {
-                Text("Average Steps")
-                    .font(.callout)
-                    .foregroundStyle(.gray)
-                Text("\(stepCount)")
-                    .font(.system(size: 44))
-                    .bold()
-                Spacer(minLength: 2).fixedSize()
+                HStack(alignment: .bottom, spacing: 2) {
+                    Text("\(stepCount)")
+                        .font(.large)
+                        .bold()
+                    Text("steps", bundle: .module)
+                        .font(.small)
+                        .foregroundStyle(.gray)
+                }
+                Spacer(minLength: 4).fixedSize()
                 if let diffPercentage {
                     HStack(alignment: .center, spacing: 8) {
                         Image(systemName: diff >= 0 ? "arrow.up.right.circle.fill" : "arrow.down.right.circle.fill")
@@ -131,7 +150,7 @@ private extension SummaryView {
                     BarMark(
                         x: .value("x", chartData.x),
                         y: .value("Steps", chartData.y),
-                        width: .ratio(0.5)
+                        width: .ratio(0.3)
                     )
                     .foregroundStyle(
                         .linearGradient(
@@ -156,7 +175,7 @@ private extension SummaryView {
             .chartXVisibleDomain(length: 5)
             .chartYAxis(.hidden)
         }
-        .frame(height: 240)
+        .frame(height: 90)
     }
 }
 
