@@ -23,20 +23,23 @@ public struct WeatherDataView: View {
                     VStack(alignment: .center, spacing: 0) {
                         Text(weatherWalkingAdvice.advice)
                             .font(.large)
+                            .multilineTextAlignment(.center)
                         Spacer(minLength: 8).fixedSize()
                         Text(weatherWalkingAdvice.recommendedTime)
                             .font(.medium)
                     }
-                    .transition(.opacity)
                 }
             }
             .frame(maxHeight: .infinity)
-            .animation(.easeInOut(duration: 1), value: weatherModel.weatherWalkingAdvice)
+            .padding(.horizontal, 24)
+//            .animation(.easeInOut(duration: 1), value: weatherModel.weatherWalkingAdvice)
+
             weather()
                 .redacted(reason: isDataLoaded ? [] : .placeholder)
                 .animation(.easeInOut(duration: 0.5), value: weatherModel.currentWeather)
                 .animation(.easeInOut(duration: 0.5), value: weatherModel.mainSunEvents)
                 .animation(.easeInOut(duration: 0.5), value: weatherModel.hourlyWeather)
+
             Spacer(minLength: 8).fixedSize()
         }
         .background {
