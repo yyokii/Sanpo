@@ -121,6 +121,8 @@ extension DailyStepGoalView {
 #Preview {
     ScrollView {
         VStack(alignment: .center, spacing: 24) {
+            DailyStepGoalView(todaySteps: 20000, goal: 2000, goalAchievementStatus: .achievedToday(days: 1))
+
             DailyStepGoalView(todaySteps: 2000, goal: 2000, goalAchievementStatus: .achievedToday(days: 1))
 
             DailyStepGoalView(todaySteps: 1000, goal: 2000, goalAchievementStatus: .achievedToday(days: 199))

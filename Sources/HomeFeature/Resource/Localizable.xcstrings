@@ -46,6 +46,9 @@
         }
       }
     },
+    "Advice" : {
+
+    },
     "awesome job today" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -194,6 +197,9 @@
           }
         }
       }
+    },
+    "Trend" : {
+
     },
     "uv-extreme" : {
       "extractionState" : "manual",

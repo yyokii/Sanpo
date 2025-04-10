@@ -3,11 +3,10 @@ import Service
 
 @Observable
 public class TodayDataModel {
-    // Today
     public var todayStepCount: StepCount = .noData
     public var todayDistance: DistanceWalkingRunning = .noData
     public var yesterdayStepCount: StepCount = .noData
-
+    public var analysis: StepCountAnalysis?
     public var goalStreak: Int = 0
 
     private let healthDataClient: HealthDataClientProtocol
@@ -34,17 +33,19 @@ public class TodayDataModel {
            let yesterdayStepCount = try? await healthDataClient.loadStepCount(for: yesterday) {
             self.yesterdayStepCount = yesterdayStepCount
         }
+
+        try? await generateAdvise()
     }
 
     /// ここ1ヶ月分のデータでアドバイスを生成する
-    public func generateAdvise() async throws -> StepCountAnalysis {
+    public func generateAdvise() async throws {
         let calendar = Calendar.current
         guard let endDate = calendar.date(byAdding: .day, value: -1, to: .now),
               let startDate = calendar.date(byAdding: .month, value: -1, to: endDate) else {
             throw TodayDataModelError.failedToLoadData(nil)
         }
         let stepData = try await healthDataClient.loadStepCount(start: startDate, end: endDate)
-        return try await aiClient.generateStepCountAdvise(stepData: stepData)
+        self.analysis = try await aiClient.generateStepCountAdvise(stepData: stepData)
     }
 
     /// 昨日から過去100日分の歩数データで、指定した目標歩数を達成した連続日数を更新

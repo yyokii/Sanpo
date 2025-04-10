@@ -6,7 +6,7 @@ struct CircularProgressBar: View {
     var body: some View {
         ZStack {
             Circle()
-                .stroke(lineWidth: 12.0)
+                .stroke(lineWidth: 10.0)
                 .opacity(0.3)
                 .foregroundColor(.gray)
 
@@ -14,7 +14,7 @@ struct CircularProgressBar: View {
                 .trim(from: 0, to: min(progress, 1.0))
                 .stroke(
                     .black,
-                    style: .init(lineWidth: 12, lineCap: .round, lineJoin: .round)
+                    style: .init(lineWidth: 10, lineCap: .round, lineJoin: .round)
                 )
                 .foregroundColor(.blue)
                 .rotationEffect(.degrees(-90))
@@ -22,10 +22,10 @@ struct CircularProgressBar: View {
 
             HStack(alignment: .bottom, spacing: 2) {
                 Text(String(format: "%.0f", progress * 100.0))
-                    .font(.large)
+                    .font(progress >= 10.0 ? .medium : .large)
                     .bold()
                 Text("%")
-                    .font(.medium)
+                    .font(progress >= 10.0 ? .small : .medium)
                     .bold()
             }
         }

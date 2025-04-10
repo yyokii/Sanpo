@@ -60,11 +60,6 @@ public struct HomeView: View {
 
                 Spacer(minLength: 32).fixedSize()
 
-//                titleRow("Goal")
-//                    .padding(.horizontal, 12)
-//
-//                Spacer(minLength: 12).fixedSize()
-
                 DailyStepGoalView(
                     todaySteps: todayDataModel.todayStepCount.number,
                     goal: dailyTargetSteps,
@@ -76,6 +71,17 @@ public struct HomeView: View {
                 .padding(.horizontal, 24)
 
                 Spacer(minLength: 32).fixedSize()
+
+                if let analysis = todayDataModel.analysis {
+                    Text("Trend")
+                        .font(.large)
+                        .bold()
+                        .padding(.horizontal, 12)
+                    Spacer(minLength: 12).fixedSize()
+                    AdviceCard(analysis: analysis)
+                        .padding(.horizontal, 24)
+                    Spacer(minLength: 4).fixedSize()
+                }
 
                 SummaryView()
 

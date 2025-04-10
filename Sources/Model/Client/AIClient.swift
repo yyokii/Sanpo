@@ -7,16 +7,6 @@ public protocol AIClientProtocol {
     func generateStepCountAdvise(stepData: [Date: StepCount]) async throws -> StepCountAnalysis
 }
 
-public struct WeatherWalkingAdvice: Codable, Equatable {
-    public let advice: String
-    public let recommendedTime: String
-}
-
-public struct StepCountAnalysis: Codable, Equatable {
-    public let trend: String
-    public let advice: String
-}
-
 public struct AIClient: AIClientProtocol {
     public static let shared = Self()
 
@@ -98,10 +88,10 @@ public struct AIClient: AIClientProtocol {
                 .init(role: .user, content: """
                 Analyze the weekly and monthly trends from the past step count data and provide a brief summary.
                 Based on the analysis, provide specific improvement advice, especially if there's a declining trend.
-                Output should be in JSON format:
-                {"trend":"...", "advice":"..."}
-                No additional keys are needed.
-                
+                Output must be in JSON format with the following keys only:
+                "trend": A short one- or two-sentence summary of the step count trend.
+                "advice": A short one- or two-sentence advice for improvement.
+                Do not include any other keys or extra explanations.
                 Here is the step count data for the past month:
                 \(formattedData)
                 """)!

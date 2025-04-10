@@ -56,7 +56,8 @@ private extension SummaryView {
     var weeklySummaryData: some View {
         if let lastWeekData {
             VStack(alignment: .center, spacing: 0) {
-                titleChip("Weekly Average")
+                TitleChip("Weekly Average")
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                 Spacer(minLength: 16).fixedSize()
 
@@ -77,7 +78,8 @@ private extension SummaryView {
     var monthlySummaryData: some View {
         if let lastMonthData {
             VStack(alignment: .center, spacing: 0) {
-                titleChip("Monthly Average")
+                TitleChip("Monthly Average")
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                 Spacer(minLength: 16).fixedSize()
 
@@ -92,18 +94,6 @@ private extension SummaryView {
                 chartView(data: myDataModel.stepCountSummary.monthly.reversed())
             }
         }
-    }
-
-    func titleChip(_ title: String) -> some View {
-        Text(title)
-            .font(.xSmall)
-            .bold()
-            .foregroundStyle(.white)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 4)
-            .background(.black)
-            .clipShape(.rect(cornerRadius: 12))
-            .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     func averageStepsText(_ stepCount: Int, comparisonStepCount: Int) -> some View {
