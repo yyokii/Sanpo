@@ -44,11 +44,13 @@ public struct Provider: TimelineProvider {
 
             let now = Date()
             let dailyTargetSteps: Int = UserDefaults.app.integer(forKey: UserDefaultsKey.dailyTargetSteps.rawValue)
-            let todayStepCount: StepCount = await StepCount.load(for: now)
-            let displayedDataInWidget: StepCount = StepCount.displayedDataInWidget()
+            guard let todayStepCount: StepCount = try? await StepCount.load(for: now) else {
+                return
+            }
+            let displayedDataInWidget: StepCount = StepCount.fetchDisplayedDataInWidget()
 
             var entry: StepCountDataEntry
-            if Calendar.current.isDate(now, inSameDayAs: displayedDataInWidget.date) {
+            if Calendar.current.isDate(now, inSameDayAs: displayedDataInWidget.start) {
                 let isNewDataIncreasing: Bool = todayStepCount.number > displayedDataInWidget.number
                 let data: StepCount = isNewDataIncreasing ? todayStepCount : displayedDataInWidget
                 data.saveAsDisplayedInWidget()

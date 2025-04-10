@@ -1,6 +1,7 @@
 import Combine
 import CoreLocation
 
+// TODO: location managerに移行してokなはず
 public class LocationService: NSObject, ObservableObject {
     static public let shared = LocationService()
 

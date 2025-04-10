@@ -1,0 +1,28 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@%lld (%@%%)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@%2$lld (%3$@%%)"
+          }
+        }
+      }
+    },
+    "%lld" : {
+
+    },
+    "steps" : {
+
+    },
+    "Steps" : {
+
+    },
+    "x" : {
+
+    }
+  },
+  "version" : "1.0"
+}

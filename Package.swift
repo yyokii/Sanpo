@@ -1,12 +1,13 @@
-// swift-tools-version: 5.7
+// swift-tools-version: 5.9
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
 let package = Package(
     name: "Sanpo",
+    defaultLocalization: "en",
     platforms: [
-        .iOS(.v16)
+        .iOS(.v17)
     ],
     products: [
         .library(
@@ -25,17 +26,39 @@ let package = Package(
         .library(
             name: "Preview",
             targets: [
+                "Components",
+                "DataSummaryFeature",
+                "OnBoardingFeature",
                 "HomeFeature",
+                "HistoricalDataFeature",
                 "SettingsFeature",
-                "StyleGuide"
+                "StyleGuide",
+                "WeatherFeature",
             ]
         ),
     ],
-    dependencies: [],
+    dependencies: [
+        .package(url: "https://github.com/MacPaw/OpenAI.git", from: "0.3.2"),
+        .package(url: "https://github.com/firebase/firebase-ios-sdk", from: "11.10.0"),
+    ],
     targets: [
         .target(
             name: "Constant",
             dependencies: []
+        ),
+        .target(
+            name: "Components",
+            dependencies: [
+                "StyleGuide",
+            ]
+        ),
+        .target(
+            name: "DataSummaryFeature",
+            dependencies: [
+                "Components",
+                "Model",
+                "StyleGuide"
+            ]
         ),
         .target(
             name: "Extension",
@@ -56,7 +79,10 @@ let package = Package(
             name: "HomeFeature",
             dependencies: [
                 "Constant",
+                "Components",
+                "DataSummaryFeature",
                 "Extension",
+                "HistoricalDataFeature",
                 "Model",
                 "Service",
                 "StyleGuide"
@@ -66,15 +92,24 @@ let package = Package(
             name: "MainTab",
             dependencies: [
                 "HomeFeature",
-                "HistoricalDataFeature"
+                "WeatherFeature"
             ]
         ),
         .target(
             name: "Model",
             dependencies: [
+                .product(name: "OpenAI", package: "OpenAI"),
                 "Constant",
                 "Extension",
-                "Service"
+                "Service",
+                .product(name: "FirebaseAuth", package: "firebase-ios-sdk"),
+                .product(name: "FirebaseFirestore", package: "firebase-ios-sdk"),
+            ]
+        ),
+        .target(
+            name: "OnBoardingFeature",
+            dependencies: [
+                "Extension",
             ]
         ),
         .target(
@@ -96,27 +131,26 @@ let package = Package(
             dependencies: []
         ),
         .target(
+            name: "WeatherFeature",
+            dependencies: [
+                "Constant",
+                "Model",
+                "SafariView",
+                "Service",
+                "StyleGuide"
+            ]
+        ),
+        .target(
             name: "WidgetFeature",
             dependencies: [
                 "Constant",
                 "Model"
             ]
         ),
-
-        // Plugin
-        .plugin(
-            name: "SwiftLintPlugin",
-            capability: .buildTool(),
-            dependencies: [
-                .target(name: "SwiftLintBinary"),
-            ]
+        .target(
+            name: "SafariView",
+            dependencies: []
         ),
-        .binaryTarget(
-            name: "SwiftLintBinary",
-            url: "https://github.com/realm/SwiftLint/releases/download/0.48.0/SwiftLintBinary-macos.artifactbundle.zip",
-            checksum: "9c255e797260054296f9e4e4cd7e1339a15093d75f7c4227b9568d63edddba50"
-        ),
-        
 
         // Test
         .testTarget(
@@ -124,15 +158,3 @@ let package = Package(
             dependencies: ["HomeFeature"]),
     ]
 )
-
-// Append common plugins
-package.targets = package.targets.map { target -> Target in
-    if target.type == .regular || target.type == .test {
-        if target.plugins == nil {
-            target.plugins = []
-        }
-        target.plugins?.append(.plugin(name: "SwiftLintPlugin"))
-    }
-
-    return target
-}
