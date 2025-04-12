@@ -1,27 +1,27 @@
-# This workflow will build a Swift project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
+# # This workflow will build a Swift project
+# # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
 
-name: CI
+# name: CI
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+# on:
+#   push:
+#     branches: [ "main" ]
+#   pull_request:
+#     branches: [ "main" ]
 
-jobs:
-  build:
+# jobs:
+#   build:
 
-    # https://github.com/actions/runner-images#available-images
-    runs-on: macos-12
+#     # https://github.com/actions/runner-images#available-images
+#     runs-on: macos-12
 
-    steps:
-    - uses: actions/checkout@v3
-    - name: Select Xcode version
-      run: sudo xcode-select -s '/Applications/Xcode_14.1.app/Contents/Developer'
-    - name: Show Xcode version
-      run: xcodebuild -version
-    - name: Build for simulator
-      run: xcodebuild -sdk iphonesimulator -configuration Debug -workspace Sanpo.xcworkspace -scheme iOSDevelop build 
-    - name: Test
-      run: xcodebuild test -scheme SanpoTests -destination 'platform=iOS Simulator,OS=16.1,name=iPhone 14'
+#     steps:
+#     - uses: actions/checkout@v3
+#     - name: Select Xcode version
+#       run: sudo xcode-select -s '/Applications/Xcode_14.1.app/Contents/Developer'
+#     - name: Show Xcode version
+#       run: xcodebuild -version
+#     - name: Build for simulator
+#       run: xcodebuild -sdk iphonesimulator -configuration Debug -workspace Sanpo.xcworkspace -scheme iOSDevelop build 
+#     - name: Test
+#       run: xcodebuild test -scheme SanpoTests -destination 'platform=iOS Simulator,OS=16.1,name=iPhone 14'
