@@ -6,19 +6,28 @@ import Extension
 
 @MainActor
 public class HealthKitAuthService: NSObject, ObservableObject {
-    private let logger = Logger(category: .service)
-
     static public let shared = HealthKitAuthService()
 
     @Published public var isAuthRequestSuccess: Bool = false
     @Published public var authStatus: HKAuthorizationRequestStatus?
 
+    private let logger = Logger(category: .service)
+
+    // The quantity type to write to the health store.
+    let typesToShare: Set = [
+        HKQuantityType.workoutType(),
+        HKSeriesType.workoutRoute()
+    ]
+
     let readTypes = Set(
         [
+            HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned)!,
             HKQuantityType.quantityType(forIdentifier: .stepCount)!,
             HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!,
             HKQuantityType.quantityType(forIdentifier: .walkingSpeed)!,
-            HKQuantityType.quantityType(forIdentifier: .walkingStepLength)!
+            HKQuantityType.quantityType(forIdentifier: .walkingStepLength)!,
+            HKQuantityType.workoutType(),
+            HKSeriesType.workoutRoute()
         ]
     )
 
@@ -32,8 +41,7 @@ public class HealthKitAuthService: NSObject, ObservableObject {
     }
 
     public func loadAuthorization() {
-        HKHealthStore.shared.getRequestStatusForAuthorization(toShare: [], read: readTypes) { status, error in
-
+        HKHealthStore.shared.getRequestStatusForAuthorization(toShare: typesToShare, read: readTypes) { status, error in
             if let error {
                 self.logger.debug("\(error.localizedDescription)")
             }
@@ -45,7 +53,7 @@ public class HealthKitAuthService: NSObject, ObservableObject {
     }
 
     public func requestAuthorization() {
-        HKHealthStore.shared.requestAuthorization(toShare: [], read: readTypes) { success, error in
+        HKHealthStore.shared.requestAuthorization(toShare: typesToShare, read: readTypes) { success, error in
             if let error {
                 self.logger.debug("\(error.localizedDescription)")
             }

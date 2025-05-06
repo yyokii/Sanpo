@@ -1,53 +1,41 @@
-import SwiftUI
-
-import HistoricalDataFeature
 import HomeFeature
+import Model
+import SwiftUI
+import WeatherFeature
 
 public struct MainTabView: View {
-    enum TabItem {
-        case home
-        case historicalData
-    }
-    @State var selectedItem: TabItem = .home
-
     public init() {}
 
     public var body: some View {
-        TabView(selection: $selectedItem) {
-            NavigationView {
+        TabView {
+            NavigationStack {
                 HomeView()
             }
             .tabItem {
-                Image(systemName: "person.crop.circle")
-                Text("Home")
-
+                Image(systemName: "figure.walk")
+                Text("Sanpo")
             }
-            .tag(TabItem.home)
 
-            HistoricalDataView()
-                .tabItem {
-                    Image(systemName: "clock")
-                    Text("Data")
-
-                }
-                .tag(TabItem.historicalData)
+            NavigationStack {
+                WeatherDataView()
+            }
+            .tabItem {
+                Image(systemName: "sun.horizon")
+                Text("Weather")
+            }
         }
+        .tint(.black)
     }
 }
 
-#if DEBUG
-
-struct MainTabView_Previews: PreviewProvider {
-    static var previews: some View {
-
-        Group {
-            MainTabView()
-                .environment(\.colorScheme, .light)
-
-            MainTabView()
-                .environment(\.colorScheme, .dark)
-        }
-    }
-}
-
-#endif
+// クラッシュするのでコメントアウト
+//#if DEBUG
+//
+//struct MainTabView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        MainTabView()
+//            .environmentObject(WeatherData())
+//    }
+//}
+//
+//#endif

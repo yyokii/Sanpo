@@ -5,55 +5,48 @@ import Model
 import StyleGuide
 
 public struct SpecificDateDataView: View {
+    @Environment(MyDataModel.self) private var myDataModel
 
-    // Specific date data
-    private let selectedDate: Date
-    private var stepCount: StepCount = .noData
-    private var walkingSpeed: WalkingSpeed = .noData
-    private var walkingStepLength: WalkingStepLength = .noData
+    let date: Date
 
-    private let formatter: DateFormatter
-
-    public init(
-        selectedDate: Date,
-        stepCount: StepCount,
-        walkingSpeed: WalkingSpeed,
-        walkingStepLength: WalkingStepLength
-    ) {
-        self.selectedDate = selectedDate
-        self.stepCount = stepCount
-        self.walkingSpeed = walkingSpeed
-        self.walkingStepLength = walkingStepLength
-
-        formatter = DateFormatter()
+    private static var formatter: DateFormatter {
+        let formatter = DateFormatter()
         formatter.dateStyle = .medium
         formatter.timeStyle = .none
+        return formatter
+    }
+
+    public init(
+        date: Date
+    ) {
+        self.date = date
     }
 
     public var body: some View {
-        ZStack(alignment: .leading) {
-            Rectangle()
-                .fill(Color.adaptiveWhite)
-                .cornerRadius(20)
-                .adaptiveShadow()
-
-            VStack(alignment: .leading, spacing: 24) {
-                Text("\(formatter.string(from: selectedDate))のデータ")
-                    .adaptiveFont(.bold, size: 18)
-
-                VStack(alignment: .leading, spacing: 8) {
-                    specificDateDataRowView(title: "👣 歩数", detail: "\(stepCount.number)歩")
-                    specificDateDataRowView(title: "💨 平均歩行速度", detail: String(format: "%.2fm/s", walkingSpeed.speed))
-                    specificDateDataRowView(title: "📏 平均歩幅", detail: String(format: "%.2fm", walkingStepLength.length))
-                }
-            }
-            .padding(.horizontal, 18)
+        VStack(alignment: .leading, spacing: 24) {
+//            Text("\(formatter.string(from: viewData.selectedDate))のデータ")
+//                .adaptiveFont(.bold, size: 18)
+//
+//            VStack(alignment: .leading, spacing: 8) {
+//                specificDateDataRowView(title: "👣 歩数", detail: "\(viewData.stepCount.number)歩")
+//                specificDateDataRowView(title: "💨 平均歩行速度", detail: String(format: "%.2fm/s", viewData.walkingSpeed.speed))
+//                specificDateDataRowView(title: "📏 平均歩幅", detail: String(format: "%.2fm", viewData.walkingStepLength.length))
+//            }
         }
-        .frame(height: 160)
+        .padding(.horizontal, 18)
     }
 }
 
-extension SpecificDateDataView {
+public extension SpecificDateDataView {
+    struct ViewData: Identifiable {
+        public var id: Date {
+            selectedDate
+        }
+        let selectedDate: Date
+        let stepCount: StepCount
+        let walkingSpeed: WalkingSpeed
+        let walkingStepLength: WalkingStepLength
+    }
 
     func specificDateDataRowView(title: String, detail: String) -> some View {
         HStack(spacing: 16) {
@@ -67,15 +60,17 @@ extension SpecificDateDataView {
 
 #if DEBUG
 
-struct SpecificDateDataView_Previews: PreviewProvider {
-    static var previews: some View {
-        SpecificDateDataView(
-            selectedDate: Date(),
-            stepCount: .noData,
-            walkingSpeed: .noData,
-            walkingStepLength: .noData
-        )
-    }
-}
+//struct SpecificDateDataView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        SpecificDateDataView(
+//            viewData: .init(
+//                selectedDate: Date(),
+//                stepCount: .noData,
+//                walkingSpeed: .noData,
+//                walkingStepLength: .noData
+//            )
+//        )
+//    }
+//}
 
 #endif

@@ -1,5 +1,7 @@
 import SwiftUI
 
+// TODO: ヒラギノじゃないものにした方がぽさはでるかも。
+// FontTokenを受け取れるextension作成する
 public enum FontName: String {
     case normal = "HiraginoSans-W3"
     case bold = "HiraginoSans-W6"
@@ -48,6 +50,13 @@ struct Font_Previews: PreviewProvider {
     static var previews: some View {
 
         VStack(alignment: .leading, spacing: 12) {
+            Text("ABCDEFGypあいうえお")
+                .font(.custom("MenloItalic", fixedSize: 22))
+            Text("ABCDEFGypあいうえお")
+                .font(.custom("Optima-Bold", fixedSize: 22))
+            Text("ABCDEFGypあいうえお")
+                .font(.custom("Optima-Bold", fixedSize: 22))
+
             ForEach(
                 [12, 14, 16, 18, 24, 32, 60].reversed(),
                 id: \.self

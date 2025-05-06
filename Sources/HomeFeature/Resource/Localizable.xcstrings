@@ -1,0 +1,331 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%" : {
+
+    },
+    "%@" : {
+
+    },
+    "%lld" : {
+
+    },
+    "aaaaa" : {
+
+    },
+    "achieved today" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Awesome job today—your goal was met with flying colors! Enjoy your success! 🎉\n"
+          }
+        }
+      }
+    },
+    "achieved today %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're on 🔥%@ days in a row, including today! Keep up the brilliant work!"
+          }
+        }
+      }
+    },
+    "achieved yesterday" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Great job yesterday—your target was met! Your effort shines bright 🌟. Let’s build an unstoppable streak soon!"
+          }
+        }
+      }
+    },
+    "Advice" : {
+
+    },
+    "awesome job today" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Awesome"
+          }
+        }
+      }
+    },
+    "current-weather-title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Now"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "現在の天気"
+          }
+        }
+      }
+    },
+    "fire %@ days" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "🔥%@ days"
+          }
+        }
+      }
+    },
+    "goal streak %@ days" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're on 🔥%@ days in a row of smashing your goals! Let's keep it going!"
+          }
+        }
+      }
+    },
+    "Goal: %lldsteps" : {
+
+    },
+    "great job yesterday" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Great"
+          }
+        }
+      }
+    },
+    "hourly-weather-title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hourly weather"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1時間ごと"
+          }
+        }
+      }
+    },
+    "humidity-title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Humidity"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "湿度"
+          }
+        }
+      }
+    },
+    "missed yesterday" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep pushing forward—despite missing yesterday, your drive still burns strong 💪. Tomorrow is a fresh new start!"
+          }
+        }
+      }
+    },
+    "Sanpo" : {
+
+    },
+    "select-background-image-title" : {
+
+    },
+    "start-walking" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start walking"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ウォーキングを開始します"
+          }
+        }
+      }
+    },
+    "steps" : {
+
+    },
+    "Today" : {
+
+    },
+    "tomorrow is a fresh new start" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tomorrow is a fresh new start"
+          }
+        }
+      }
+    },
+    "Trend" : {
+
+    },
+    "uv-extreme" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extreme"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "極端に高い"
+          }
+        }
+      }
+    },
+    "uv-high" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "High"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "高"
+          }
+        }
+      }
+    },
+    "uv-low" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Low"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "低"
+          }
+        }
+      }
+    },
+    "uv-moderate" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moderate"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中"
+          }
+        }
+      }
+    },
+    "uv-title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UV"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UV"
+          }
+        }
+      }
+    },
+    "uv-very-high" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Very High"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "非常に高い"
+          }
+        }
+      }
+    },
+    "wind-title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wind"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "風速"
+          }
+        }
+      }
+    },
+    "目標歩数" : {
+
+    },
+    "設定する" : {
+
+    }
+  },
+  "version" : "1.0"
+}
